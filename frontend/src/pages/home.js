@@ -1,6 +1,6 @@
 const Home = () => {
     return(
-        <p>Home</p>
+        <p className="text-[20px] font-bold">Home</p>
     )
 }
 export default Home;
