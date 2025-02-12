@@ -1,6 +1,7 @@
 const Home = () => {
     return(
-        <p className="text-[20px] font-bold">Home</p>
+        // <Banner/>
+        <p>hi</p>
     )
 }
 export default Home;
