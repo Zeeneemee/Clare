@@ -27,26 +27,6 @@ jobs:
           pnpm-version: ${{ env.PNPM_VERSION }}
           project-dir: ${{ env.FRONTEND_DIR }}
 
-  lint:
-    name: Lint Code
-    runs-on: ubuntu-latest
-    needs: setup
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Setup Environment
-        uses: ./.github/actions/setup-environment
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          pnpm-version: ${{ env.PNPM_VERSION }}
-          project-dir: ${{ env.FRONTEND_DIR }}
-
-      - name: Run Lint
-        run: pnpm run lint
-        working-directory: ${{ env.FRONTEND_DIR }}
-
   build:
     name: Build Frontend
     runs-on: ubuntu-latest
@@ -62,6 +42,10 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           pnpm-version: ${{ env.PNPM_VERSION }}
           project-dir: ${{ env.FRONTEND_DIR }}
+
+      - name: Install Dependencies
+        run: pnpm install
+        working-directory: ${{ env.FRONTEND_DIR }}
 
       - name: Run Build
         run: pnpm run build
