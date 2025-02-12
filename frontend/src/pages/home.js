@@ -1,6 +1,6 @@
+import Camera from "../component/camera";
 const Home = () => {
-    return(
-        <p className="text-[20px] font-bold">Home</p>
-    )
-}
+  return <Camera />;
+};
+
 export default Home;
