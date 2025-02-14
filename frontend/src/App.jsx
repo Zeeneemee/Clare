@@ -2,8 +2,9 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Nav from "./components/Nav";
 import Home from "./pages/home";
 import AboutUs from "./pages/about";
-import CameraCapture from "./components/Camera";
-import './App.css'; 
+import CameraCapture from "./pages/Camera";
+import "./App.css";
+import Products from "./pages/products";
 
 const router = createBrowserRouter([
   {
@@ -13,6 +14,7 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: "about", element: <AboutUs /> },
       { path: "camera", element: <CameraCapture /> },
+      { path: "products", element: <Products /> },
     ],
   },
 ]);
