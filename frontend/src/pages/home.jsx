@@ -20,10 +20,10 @@ const Home = () => {
           Understand Your Skin with AI-Powered Insights
         </p>
       </div>
-      <div>
+      <div className="flex justify-center">
         <Link to="/camera">
-          <button className="bg-blue-500 text-green p-4 rounded hover:bg-blue-600 transition">
-            Go to Target Page
+          <button className="bg-blue-500 text-[#FFF] p-[6px] rounded-[] hover:bg-blue-600 transition">
+            Upload Your Photo
           </button>
         </Link>
       </div>

@@ -1,6 +1,5 @@
 import { Link, Outlet } from "react-router-dom";
 import Logo from "../assets/logo.png";
-import bg from "../assets/bg.png";
 
 const Layout = () => {
   return (
@@ -10,12 +9,12 @@ const Layout = () => {
           <img src={Logo} alt="Clare" className="p-[15px]" />
           {/* <img src={bg} alt="bg" className="h-16 w-auto" /> */}
         </section>
-        <ul className="flex gap-[1rem] ">
+        <ul className="flex gap-[1rem]" style={{ textDecoration: "none" }}>
           <li className="m-2">
             <Link
               to="/"
               className=" no-underline list-none  text-[#FFF] list-none"
-              style={{ "text-decoration": "none" }}
+              style={{ textDecoration: "none" }}
             >
               Home
             </Link>

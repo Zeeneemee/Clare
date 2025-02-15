@@ -1,10 +1,13 @@
 import React, { useRef, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const CameraCapture = () => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [image, setImage] = useState(null);
+  const [loading, setLoading] = useState(false); // To manage loading state
+  const [progress, setProgress] = useState(0); // To track the progress of upload
 
   // Start the camera
   const startCamera = async (facingMode = "user") => {
@@ -67,14 +70,25 @@ const CameraCapture = () => {
         <button onClick={() => startCamera("environment")}>
           Start Back Camera
         </button>
-        <button onClick={captureImage}>Capture & Upload</button>
+        <button onClick={captureImage}>
+          <Link
+            to="/loading"
+            className="text-white hover:text-gray-300 transition no-underline text-[#FFF]"
+          >
+            Capture & Upload
+          </Link>
+        </button>
       </div>
 
-      {image && (
+      {image && !loading && (
         <img
           src={image}
           alt="Captured"
-          style={{ marginTop: "20px", width: "300px" }}
+          style={{
+            marginTop: "20px",
+            width: "300px",
+            transform: "scaleX(-1)", // This will mirror the image horizontally
+          }}
         />
       )}
     </div>
