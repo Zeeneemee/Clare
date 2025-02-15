@@ -1,18 +1,30 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-const Results = () => {
+const Loading = () => {
   const [progress, setProgress] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const interval = setInterval(() => {
       setProgress((prev) => {
-        let newProgress = prev + Math.random() * 10;
-        return newProgress >= 100 ? 100 : newProgress;
+        let newProgress = prev + Math.random() * 15;
+        if (newProgress >= 95) {
+          clearInterval(interval);
+          return 100;
+        }
+        return newProgress;
       });
     }, 500);
 
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (progress === 100) {
+      navigate("/result"); // Navigate to result page when progress hits 100%
+    }
+  }, [progress, navigate]);
 
   return (
     <div className="h-screen flex flex-col items-center justify-center bg-gray-100">
@@ -34,4 +46,4 @@ const Results = () => {
   );
 };
 
-export default Results;
+export default Loading;

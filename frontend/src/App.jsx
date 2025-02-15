@@ -6,6 +6,7 @@ import CameraCapture from "./pages/Camera";
 import "./App.css";
 import Products from "./pages/products";
 import Loading from "./pages/LoadingPage";
+import Result from "./pages/ResultPage";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,7 @@ const router = createBrowserRouter([
       { path: "camera", element: <CameraCapture /> },
       { path: "products", element: <Products /> },
       { path: "loading", element: <Loading /> },
+      { path: "result", element: <Result /> },
     ],
   },
 ]);
