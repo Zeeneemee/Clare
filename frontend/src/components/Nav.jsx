@@ -9,7 +9,7 @@ const Layout = () => {
           <img src={Logo} alt="Clare" className="p-[15px]" />
           {/* <img src={bg} alt="bg" className="h-16 w-auto" /> */}
         </section>
-        <ul className="flex gap-[1rem] list-none" style={{ textDecoration: "none" }}>
+        <ul className="flex justify-center items-center gap-[1rem] list-none">
           <li className="m-2">
             <Link
               to="/"
@@ -30,7 +30,7 @@ const Layout = () => {
           <li>
             <Link
               to="/about"
-              className="text- hover:text-gray-300 transition no-underline"
+              className="text-white hover:text-gray-300 transition no-underline"
             >
               About Us
             </Link>

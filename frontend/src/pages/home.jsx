@@ -10,8 +10,7 @@ const Home = () => {
         <img src={bg} alt="Background" className="w-full h-full object-cover" />
       </div>
 
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black bg-opacity-30"></div>
+    
 
       {/* Content */}
       <div className="relative flex flex-col items-center justify-center h-full text-center text-white">
