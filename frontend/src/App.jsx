@@ -2,7 +2,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Nav from "./components/Nav";
 import Home from "./pages/home";
 import AboutUs from "./pages/about";
-import CameraCapture from "./components/Camera";
+import CameraCapture from "./components/camera";
 import './App.css'; 
 
 const router = createBrowserRouter([
