@@ -8,11 +8,14 @@ const Loading = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setProgress((prev) => {
-        let newProgress = prev + Math.random() * 15;
-        if (newProgress >= 95) {
+        let newProgress = prev + Math.random() * 20;
+
+        // If progress reaches or exceeds 100, stop the interval and set progress to 100
+        if (newProgress >= 100) {
           clearInterval(interval);
           return 100;
         }
+
         return newProgress;
       });
     }, 500);
@@ -21,8 +24,9 @@ const Loading = () => {
   }, []);
 
   useEffect(() => {
-    if (progress === 100) {
-      navigate("/result"); // Navigate to result page when progress hits 100%
+    // Navigate to /result if progress is between 90 and 120
+    if (progress >= 90 && progress <= 120) {
+      navigate("/result");
     }
   }, [progress, navigate]);
 

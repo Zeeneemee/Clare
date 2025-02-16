@@ -2,6 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const cors = require("cors");
 const path = require("path");
+const fs = require("fs");
 
 const app = express();
 app.use(cors());
@@ -11,7 +12,21 @@ app.use(express.json());
 const storage = multer.diskStorage({
   destination: "uploads/",
   filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
+    const latestFilePath = path.join(__dirname, "uploads", "latest-image.png");
+
+    // Check if "latest-image.png" exists and rename it to a unique name
+    if (fs.existsSync(latestFilePath)) {
+      const timestamp = Date.now();
+      const oldFilePath = path.join(__dirname, "uploads", "latest-image.png");
+      const newFileName = `image-${timestamp}.png`;
+      const newFilePath = path.join(__dirname, "uploads", newFileName);
+
+      // Rename the previous latest image to a unique name
+      fs.renameSync(oldFilePath, newFilePath);
+    }
+
+    // Save the new image as "latest-image.png"
+    cb(null, "latest-image.png");
   },
 });
 
