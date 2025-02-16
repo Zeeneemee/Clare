@@ -3,7 +3,7 @@ import Nav from "./components/Nav";
 import Home from "./pages/home";
 import AboutUs from "./pages/about";
 import CameraCapture from "./pages/Camera";
-import "./App.css";
+import "./index.css";
 import Products from "./pages/products";
 import Loading from "./pages/LoadingPage";
 import Result from "./pages/ResultPage";
