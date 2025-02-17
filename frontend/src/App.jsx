@@ -1,5 +1,5 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import Nav from "./components/Nav";
+import Nav from "./components/NavBar";
 import Home from "./pages/home";
 import AboutUs from "./pages/about";
 import CameraCapture from "./pages/Camera";
