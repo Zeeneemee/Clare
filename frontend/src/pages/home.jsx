@@ -6,11 +6,9 @@ const Home = () => {
     <div>
       {/* className="relative w-full h-screen overflow-hidden" */}
       {/* Background Image */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 -z-10">
         <img src={bg} alt="Background" className="w-full h-full object-cover" />
       </div>
-
-    
 
       {/* Content */}
       <div className="relative flex flex-col items-center justify-center h-full text-center text-white">

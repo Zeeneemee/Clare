@@ -1,0 +1,5 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@1,500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fanwood+Text&display=swap");

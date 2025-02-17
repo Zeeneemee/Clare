@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import bg from "../assets/bg.png";
 
 const CameraCapture = () => {
   const videoRef = useRef(null);
@@ -27,8 +28,11 @@ const CameraCapture = () => {
     const video = videoRef.current;
     const context = canvas.getContext("2d");
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    const fixedWidth = 379;
+    const fixedHeight = 346;
+    canvas.width = fixedWidth;
+    canvas.height = fixedHeight;
+    fixedWidth, fixedHeight;
 
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
@@ -55,13 +59,33 @@ const CameraCapture = () => {
   };
 
   return (
-    <div style={{ textAlign: "center", padding: "20px" }}>
-      <h2>Camera Capture & Upload</h2>
+    <div
+      className="flex flex-col items-center justify-center  text-center"
+      style={{ textAlign: "center", margin: "0px" }}
+    >
+      <div className="absolute inset-0 -z-10">
+        <img src={bg} alt="Background" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-black opacity-50"></div>
+      </div>
+
+      <h2
+        className=" text-[48px] text-[#FFF]"
+        style={{ textAlign: "center", margin: "0px", paddingTop: "100px" }}
+      >
+        Understand Your Skin Like Never Before
+      </h2>
+      <p
+        className="font-lato font-medium italic text-[26px] text-[#FFF]"
+        style={{ marginTop: "0px" }}
+      >
+        Upload a photo and let our AI analyze your skin for personalized
+        recommendations.
+      </p>
 
       <video
         ref={videoRef}
         autoPlay
-        style={{ width: "300px", border: "2px solid black" }}
+        style={{ height: "300px", width: "300px", border: "2px solid black" }}
       ></video>
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
 
@@ -70,12 +94,27 @@ const CameraCapture = () => {
         <button onClick={() => startCamera("environment")}>
           Start Back Camera
         </button>
-        <button onClick={captureImage}>
+        <button
+          onClick={captureImage}
+          className="p-4 px-20"
+          style={{
+            borderRadius: "50px", // Rounded corners with 50% radius
+            border: "2px solid #FFF",
+            backgroundColor: "transparent",
+          }}
+        >
           <Link
             to="/loading"
-            className="text-white hover:text-gray-300 transition no-underline text-[#FFF]"
+            className=" hover:text-gray-300 transition no-underline text-[#FFF] "
+            style={{
+              fontFamily: "Lato",
+              fontWeight: 500,
+              fontSize: "26px",
+
+              textAlign: "center",
+            }}
           >
-            Capture & Upload
+            Capture Your Photo
           </Link>
         </button>
       </div>

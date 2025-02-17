@@ -9,7 +9,7 @@ const Layout = () => {
           <img src={Logo} alt="Clare" className="p-[15px]" />
           {/* <img src={bg} alt="bg" className="h-16 w-auto" /> */}
         </section>
-        <ul className="flex justify-center items-center gap-[1rem] list-none">
+        <ul className="flex justify-center items-center gap-[3rem] list-none mr-20 text-[24px]">
           <li className="m-2">
             <Link
               to="/"

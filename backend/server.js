@@ -32,15 +32,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// Upload endpoint
+// Upload endpoint without any message
 app.post("/upload", upload.single("image"), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ message: "No file uploaded." });
-  }
-  res.json({
-    message: "Image uploaded successfully!",
-    file: req.file.filename,
-  });
+  // No response sent here
 });
 
 // Serve uploaded images statically
