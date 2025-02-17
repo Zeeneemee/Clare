@@ -1,0 +1,78 @@
+/* Our Products Section Styles */
+.our-products-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 20px;
+  margin-top: 200px; /* Adds margin to push the section further down */
+  background-color: white; /* Set white background */
+  color: black;
+}
+
+.our-products-heading {
+  font-family: "Fanwood Text", serif;
+  font-size: 2.3rem;
+  color: #001f3f; /* Dark blue color */
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.products-container {
+  margin-top: -80px; /* Negative margin to bring the product section up */
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.product-card {
+  width: 300px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 20px;
+  text-align: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+}
+
+.product-image {
+  width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  margin-bottom: 20px;
+  border-radius: 15px; /* Added rounded corners to the product image frame */
+}
+
+.product-name {
+  font-family: "Lato", sans-serif;
+  font-weight: bold;
+  font-size: 1.3rem; /* Reduced font size */
+  color: #001f3f; /* Dark blue color */
+  margin-bottom: 10px;
+}
+
+.product-description {
+  font-family: "Lato", sans-serif;
+  font-size: 0.9rem; /* Reduced font size */
+  color: #001f3f; /* Dark blue color */
+}
+
+.see-more-btn {
+  font-family: "Lato", sans-serif;
+  font-weight: bold;
+  background-color: #001f3f; /* Dark blue button background */
+  color: white;
+  padding: 15px 30px; /* Increased padding to make the button longer */
+  border: none;
+  border-radius: 25px; /* Increased border radius for a more rounded button */
+  margin-top: 30px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.see-more-btn:hover {
+  background-color: #003366; /* Slightly lighter shade of dark blue */
+}

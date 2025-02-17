@@ -1,0 +1,19 @@
+.about-us {
+  opacity: 1;
+  transition: opacity 1s ease-in-out; /* Smooth transition for opacity */
+}
+
+.about-us.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.about-us.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Optional: Target about content for smooth transitions */
+.about-us .container {
+  transition: opacity 1s ease-in-out;
+}
