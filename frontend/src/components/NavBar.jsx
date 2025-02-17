@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function NavBar() {
   const [scrolled, setScrolled] = useState(false);
@@ -13,9 +13,9 @@ function NavBar() {
   }, []);
 
   return (
-    <nav className={`fixed top-0 w-full flex justify-between items-center py-[20px] px-[50px] transition-colors duration-300 ease-in-out z-[1000] ${
-      scrolled ? 'bg-white shadow-md' : 'bg-transparent'
-    }`}>
+    <nav className={`fixed top-0 w-full flex justify-between items-center py-[20px] px-[50px] transition-colors duration-300 ease-in-out z-[1000] 
+      'bg-black bg-opacity-90'
+    `}>
       <div className={`text-[36px] font-fanwood font-normal ${
         scrolled ? 'text-custom-blue' : 'text-white'
       }`}>

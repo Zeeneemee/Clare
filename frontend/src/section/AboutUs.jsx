@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import '../styles/AboutUs.css';
+import  { useEffect, useState } from 'react';
 
 function AboutUs() {
   const [fadeOut, setFadeOut] = useState(false);
@@ -19,7 +18,7 @@ function AboutUs() {
         <h1 className="about-heading">About Us</h1>
         <div className="about-content">
           <img 
-            src={require('../assets/face.png')} 
+            src='../assets/face.png' 
             alt="Woman Face" 
             className="about-image" 
           />

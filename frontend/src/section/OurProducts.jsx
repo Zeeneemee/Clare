@@ -1,8 +1,6 @@
-import React from "react";
-import "./OurProducts.css";
-import daycream from "./assets/daycream.png";
-import formen from "./assets/formen.png";
-import handcream from "./assets/handcream.png";
+import daycream from "../assets/daycream.png";
+import formen from "../assets/formen.png";
+import handcream from "../assets/handcream.png";
 
 const OurProducts = () => {
   return (

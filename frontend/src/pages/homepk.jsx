@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './styles/NavBar.css';
 import './styles/HeroSection.css';
 import './styles/AboutUs.css';
 import './styles/OurProducts.css';
-import OurProducts from './OurProducts.js';
+import OurProducts from '../section/OurProducts.jsx';
 
 function App() {
   const [scrollY, setScrollY] = useState(0);
@@ -148,4 +148,3 @@ function App() {
 }
 
 export default App;
-

@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 //import './styles/NavBar.css';
 //import './styles/HeroSection.css';
 //import './styles/AboutUs.css';
 //import './styles/OurProducts.css';
-//import OurProducts from './OurProducts.js';
+import OurProducts from '../section/OurProducts.jsx';
 import NavBar from '../components/NavBar.jsx';
+import AboutUs from '../section/AboutUs.jsx';
+import HeroSection from '../section/HeroSection.jsx';
 
 function Home() {
   const [scrollY, setScrollY] = useState(0);
@@ -82,7 +84,7 @@ function Home() {
   return (
     <div className="App">
       {/* Navigation Bar */}
-      <NavBar></NavBar>
+      <NavBar/>
 
       {/* Hero Section */}
       <header className="hero" style={{ opacity: Math.max(1 - scrollY / 300, 0) }}>
@@ -108,7 +110,7 @@ function Home() {
 
           <div className="about-content">
             <img 
-              src={require('./assets/face.png')} 
+              src='../assets/face.png'
               alt="Woman Face" 
               className="about-image" 
             />
@@ -123,7 +125,7 @@ function Home() {
                 <ul>
                   <li><strong>AI-Powered Skin Analysis:</strong> Upload a simple photo and receive a detailed skin evaluation.</li>
                   <li><strong>Personalized Recommendations:</strong> Get science-backed skincare routines tailored to your needs.</li>
-                  <li><strong>Progress Tracking:</strong> Monitor your skin's improvement over time with AI-driven insights.</li>
+                  <li><strong>Progress Tracking:</strong> Monitor your skin&apos;s improvement over time with AI-driven insights.</li>
                 </ul>
               </div>
             </div>

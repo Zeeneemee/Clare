@@ -1,6 +1,6 @@
-import React from 'react';
-import './styles/HeroSection.css';
 
+
+// eslint-disable-next-line react/prop-types
 function HeroSection({ scrollY }) {
     const fadeEffect = Math.max(0, 1 - scrollY / 600); // Fade slower at 600px scroll instead of 400px
 
