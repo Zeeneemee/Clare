@@ -1,8 +1,4 @@
 import { useEffect, useState } from 'react';
-//import './styles/NavBar.css';
-//import './styles/HeroSection.css';
-//import './styles/AboutUs.css';
-//import './styles/OurProducts.css';
 import OurProducts from '../section/OurProducts.jsx';
 import NavBar from '../components/NavBar.jsx';
 import AboutUs from '../section/AboutUs.jsx';
