@@ -57,9 +57,14 @@ export default function CameraCapture() {
       formData.append("image", blob, "captured-image.jpg");
 
       try {
-        await axios.post("http://localhost:5000/upload", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        const response = await axios.post(
+          "http://localhost:5000/upload",
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
+        localStorage.setItem("img", response);
         navigate("/loading");
       } catch (error) {
         console.error("Error uploading image:", error);
@@ -113,16 +118,16 @@ export default function CameraCapture() {
           </p>
           <div className="flex gap-4">
             <button
-              onClick={proceed}
-              className="font-lato text-lg font-light bg-[#003366] text-white py-3 px-12 rounded-full transition-all duration-300 hover:bg-[#ADD8E6] hover:text-darkblue"
-            >
-              Proceed
-            </button>
-            <button
               onClick={retake}
               className="font-lato text-lg font-light bg-[#ff4d4d] text-white py-3 px-12 rounded-full transition-all duration-300 hover:bg-[#ff8080] hover:text-darkblue"
             >
               Retake
+            </button>
+            <button
+              onClick={proceed}
+              className="font-lato text-lg font-light bg-[#003366] text-white py-3 px-12 rounded-full transition-all duration-300 hover:bg-[#ADD8E6] hover:text-darkblue"
+            >
+              Proceed
             </button>
           </div>
         </div>

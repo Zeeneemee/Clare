@@ -8,6 +8,8 @@ import LoadingScreen from "./components/LoadingScreen";
 import CameraCapture from "./components/CameraCapture";
 import SkinAnalysisResult from "./components/SkinAnalysisResult";
 import ProductPage from "./components/ProductPage";
+import Routine from "./components/SkincareroutinePage";
+import Signup from "./components/SignupPage";
 
 // Importing individual product pages
 import MoisturiserMen from "./components/productpages/MoisturiserMen";
@@ -48,6 +50,8 @@ export default function App() {
           <Route path="/camera" element={<CameraCapture />} />
           <Route path="/result" element={<SkinAnalysisResult />} />
           <Route path="/products" element={<ProductPage />} />
+          <Route path="/skincareroutine" element={<Routine />} />
+          <Route path="/signup" element={<Signup />} />
 
           {/* Individual product pages */}
           <Route

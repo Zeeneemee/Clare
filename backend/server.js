@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const upload = require("./controller/fileUpload")
+const upload = require("./controller/fileUpload");
 const app = express();
 const PORT = 5000;
 app.use(cors());
@@ -14,12 +14,11 @@ app.post("/upload", upload.single("image"), (req, res) => {
   }
   res.json({
     message: "Image uploaded successfully!",
-    file: req.file.filename,
+    file: "latest-image.png",
   });
 });
-app.get('/', (req, res) => {
-  res.send("hello world")
-})
-
+app.get("/", (req, res) => {
+  res.send("hello world");
+});
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
