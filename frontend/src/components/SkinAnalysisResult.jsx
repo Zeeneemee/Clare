@@ -1,36 +1,20 @@
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "./LoadingScreen";
-// import logo from "../components/logo192.png";
-// import img from "../components/img.png";
+import logo from "../components/logo192.png";
+import img from "../components/img.png";
 
 export default function SkinAnalysisResult() {
+
   const navigate = useNavigate();
   const capturedImage = localStorage.getItem("image");
 
   return (
     
     <div className="min-h-screen flex flex-col items-center justify-center">
-    {capturedImage ? (
-      <>
-        <h1 className="text-2xl font-lato">Your Skin Analysis Result</h1>
-        {capturedImage ? (
-          <img src={capturedImage} alt="Captured Skin" className="w-64 h-64 mt-4 rounded-lg shadow-lg" />
-        ) : (
-          <p>No image captured.</p>
-        )}
-        <button
-          onClick={() => navigate("/")}
-          className="mt-4 px-6 py-3 bg-blue-600 text-white rounded-lg"
-        >
-          Go Back
-        </button>
-      </>
-    ) : (
-      <LoadingScreen />
-    )}
-
-      
-      <h1 className="font-fanwood font-normal text-[48px] leading-[62.93px] tracking-[0%] text-center mb-[10px] mt-[150px]">
+    {capturedImage? 
+    <>
+    <h1 className="font-fanwood font-normal text-[48px] leading-[62.93px] tracking-[0%] text-center mb-[10px] mt-[150px]">
         Your Skin Report
       </h1>
       <p className="font-lato font-medium italic text-[26px] leading-[31.2px] tracking-[0%] text-center text-[#A8A8A8] mb-[100px]">
@@ -145,6 +129,11 @@ export default function SkinAnalysisResult() {
         <div className="w-24 h-1 mt-5 bg-gray-300 rounded-full"></div>
         <div className="w-24 h-1 mt-5 bg-gray-300 rounded-full"></div>
       </div>
+    </>
+      
+    
+    
+    : <LoadingScreen />}  
     </div>
   );
 }

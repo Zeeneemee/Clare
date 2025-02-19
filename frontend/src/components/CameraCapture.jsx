@@ -48,6 +48,7 @@ export default function CameraCapture() {
     // Hide the video and show the canvas
     video.style.display = "none";
     canvas.style.display = "block";
+    setShowConfirmation(true);
   };
 
   // Proceed to the loading screen with fade-out effect
