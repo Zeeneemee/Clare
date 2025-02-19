@@ -6,9 +6,9 @@ const DayCream = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white text-black p-10">
-      <div className="flex max-w-6xl w-full space-x-10 mt-16"> {/* Adjusted mt-16 to move content down */}
+      <div className="flex max-w-6xl w-full space-x-10 mt-10"> {/* Standardized margin */}
         {/* Left: Product Image */}
-        <div className="w-1/2 p-5 transform -translate-x-5 mt-6"> {/* Keep image's margin as is */}
+        <div className="w-1/2 p-5 mt-6"> {/* Removed translate-x to maintain alignment */}
           <img
             src={process.env.PUBLIC_URL + "/assets/daycream.png"}
             alt="CUTISTEM™ Day Cream"
@@ -17,7 +17,7 @@ const DayCream = () => {
         </div>
 
         {/* Right: Product Details */}
-        <div className="w-1/2 p-5 mt-10"> {/* Increased mt-10 to move product section further down */}
+        <div className="w-1/2 p-5 mt-6"> {/* Matched mt-6 with the image for perfect alignment */}
           <h1 className="font-fanwood text-3xl text-darkblue mb-4 font-normal">
             CUTISTEM™ Day Cream
           </h1>
