@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function LoadingScreen() {
   const navigate = useNavigate();
@@ -10,7 +10,7 @@ export default function LoadingScreen() {
       setProgress((oldProgress) => {
         if (oldProgress >= 100) {
           clearInterval(interval);
-          navigate('/result'); // ✅ Auto-redirect to result page
+          navigate("/result"); // ✅ Auto-redirect to result page
           return 100;
         }
         return oldProgress + 5; // Increase progress smoothly
@@ -28,7 +28,7 @@ export default function LoadingScreen() {
           className="h-full bg-navy"
           style={{
             width: `${progress}%`,
-            transition: 'width 0.2s ease-in-out', // Smooth width transition
+            transition: "width 0.2s ease-in-out", // Smooth width transition
           }}
         ></div>
       </div>

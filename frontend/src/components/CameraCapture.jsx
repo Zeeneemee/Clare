@@ -37,12 +37,16 @@ export default function CameraCapture() {
     const video = videoRef.current;
     const context = canvas.getContext("2d");
 
-    const fixedWidth = 379;
-    const fixedHeight = 346;
-    canvas.width = fixedWidth;
-    canvas.height = fixedHeight;
+    // Get the video dimensions
+    const videoWidth = video.videoWidth;
+    const videoHeight = video.videoHeight;
 
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    // Set canvas size to match the video aspect ratio
+    canvas.width = videoWidth;
+    canvas.height = videoHeight;
+
+    // Draw the video frame on the canvas
+    context.drawImage(video, 0, 0, videoWidth, videoHeight);
 
     video.style.display = "none";
     canvas.style.display = "block";
@@ -101,13 +105,13 @@ export default function CameraCapture() {
         <video
           ref={videoRef}
           autoPlay
-          className={`w-full h-[350px] max-w-md rounded-3xl shadow-lg object-cover scale-x-[-1] ${
+          className={`w-full h-auto max-w-md rounded-3xl shadow-lg object-cover scale-x-[-1] ${
             captured ? "hidden" : "block"
           }`}
         />
         <canvas
           ref={canvasRef}
-          className="w-full h-[350px] max-w-md rounded-3xl shadow-lg object-cover scale-x-[-1]"
+          className="w-full h-auto max-w-md rounded-3xl shadow-lg object-cover scale-x-[-1]"
           style={{ display: "none" }}
         />
       </div>
