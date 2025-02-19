@@ -48,13 +48,35 @@ export default function CameraCapture() {
   };
 
   // Proceed to the loading screen with fade-out effect
-  const proceed = () => {
-    setFadeOut(true);
-    setTimeout(() => {
-      navigate("/loading");
-    }, 1000); // Delay the navigation to match the fade-out duration (1 second)
-  };
+  const proceed = async () => {
+    if (captured && !isRetaking) {
+      const canvas = canvasRef.current;
+      // Convert canvas to Blob
+      canvas.toBlob(async (blob) => {
+        // Create a FormData object and append the Blob as a file
+        const formData = new FormData();
+        formData.append("image", blob, "captured-image.jpg");
+        console.log(formData)
 
+        navigate("/loading")
+        const response = await fetch("http://localhost:5000/upload", {
+          method: "POST",
+          body: formData,
+        });
+  
+        const result = await response.json();
+        console.log({ result });
+  
+        if (result.dataURL) {
+          localStorage.setItem("image", result.dataURL);
+        }
+        
+        navigate("/result");
+      }, "image/jpeg");
+    }
+    setFadeOut(true);
+  };
+  
   // Retake the photo
   const retake = () => {
     setIsRetaking(true);

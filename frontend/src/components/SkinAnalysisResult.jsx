@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function SkinAnalysisResult() {
   const navigate = useNavigate();
-  const capturedImage = localStorage.getItem("capturedImage");
+  const capturedImage = localStorage.getItem("image");
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
