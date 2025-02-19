@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -24,7 +25,7 @@ export default function CameraCapture() {
   }, []);
 
   // Capture Image Function (Freeze frame)
-  const captureImage = () => {
+  const captureImage = async () => {
     // Indicate that the image has been captured and hide elements
     setCaptured(true); // This will hide the video and show the canvas
     const canvas = canvasRef.current;
@@ -50,6 +51,7 @@ export default function CameraCapture() {
   // Proceed to the loading screen with fade-out effect
   const proceed = () => {
     setFadeOut(true);
+    axios.post("localHost:5000/upload", {});
     setTimeout(() => {
       navigate("/loading");
     }, 1000); // Delay the navigation to match the fade-out duration (1 second)
@@ -89,7 +91,10 @@ export default function CameraCapture() {
 
       {/* Description */}
       <p className="font-lato font-light text-base text-darkblue text-center max-w-3xl mb-6 z-10 relative">
-        Our Clare Analysis Model utilizes cutting-edge AI technology to analyze your skin and generate a detailed report with personalized insights. A comprehensive, accurate, and customized experience that helps you unlock the full potential of your skin care regimen.
+        Our Clare Analysis Model utilizes cutting-edge AI technology to analyze
+        your skin and generate a detailed report with personalized insights. A
+        comprehensive, accurate, and customized experience that helps you unlock
+        the full potential of your skin care regimen.
       </p>
 
       {/* Camera Frame (Hidden initially) */}
@@ -97,11 +102,13 @@ export default function CameraCapture() {
         <video
           ref={videoRef}
           autoPlay
-          className={`w-full h-[350px] max-w-md rounded-3xl shadow-lg object-cover ${captured ? "hidden" : "block"}`}
+          className={`w-full h-[350px] max-w-md rounded-3xl shadow-lg object-cover scale-x-[-1] ${
+            captured ? "hidden" : "block"
+          }`}
         />
         <canvas
           ref={canvasRef}
-          className="w-full h-[350px] max-w-md rounded-3xl shadow-lg object-cover"
+          className="w-full h-[350px] max-w-md rounded-3xl shadow-lg object-cover scale-x-[-1] "
           style={{ display: "none" }} // Initially hidden
         />
       </div>

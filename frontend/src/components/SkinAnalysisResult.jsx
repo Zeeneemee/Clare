@@ -1,15 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function SkinAnalysisResult() {
+  const [capturedImage, setCapturedImage] = useState("");
+
   const navigate = useNavigate();
-  const capturedImage = localStorage.getItem("capturedImage");
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
       <h1 className="text-2xl font-lato">Your Skin Analysis Result</h1>
       {capturedImage ? (
-        <img src={capturedImage} alt="Captured Skin" className="w-64 h-64 mt-4 rounded-lg shadow-lg" />
+        <img
+          src={capturedImage}
+          alt="Captured Skin"
+          className="w-64 h-64 mt-4 rounded-lg shadow-lg"
+        />
       ) : (
         <p>No image captured.</p>
       )}
