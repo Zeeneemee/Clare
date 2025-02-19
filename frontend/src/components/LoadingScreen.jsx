@@ -21,12 +21,15 @@ export default function LoadingScreen() {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white text-navy">
-      <h1 className="text-4xl font-fanwood mb-8">Analyzing Your Skin...</h1>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white text-darkblue transition-opacity opacity-100">
+      <h1 className="text-3xl font-fanwood mb-8">Analyzing Your Skin...</h1>
       <div className="w-64 h-1 bg-gray-300 rounded-full overflow-hidden">
         <div
-          className="h-full bg-navy transition-all duration-200 ease-in-out"
-          style={{ width: `${progress}%` }}
+          className="h-full bg-navy"
+          style={{
+            width: `${progress}%`,
+            transition: 'width 0.2s ease-in-out', // Smooth width transition
+          }}
         ></div>
       </div>
     </div>

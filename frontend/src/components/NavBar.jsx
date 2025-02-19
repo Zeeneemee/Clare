@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function NavBar({ scrolled }) {
   return (
@@ -10,14 +11,16 @@ export default function NavBar({ scrolled }) {
       }`}>
         claré
       </div>
-      <ul className="flex gap-10"> {/* Adjust gap for consistent spacing */}
+      <ul className="flex gap-10">
         {['Home', 'Our Products', 'About Us', 'Skin Analysis'].map((item) => (
           <li key={item}>
-            <a href="#" className={`font-lato font-light text-lg transition-colors duration-300 ${
-              scrolled ? 'text-[#14213D]' : 'text-white'
-            } hover:opacity-80`}>
+            <Link 
+              to={item === 'Our Products' ? '/products' : item === 'Home' ? '/' : '#'} // Adjust Home link
+              className={`font-lato font-light text-lg transition-colors duration-300 ${
+                scrolled ? 'text-[#14213D]' : 'text-white'
+              } hover:opacity-80`}>
               {item}
-            </a>
+            </Link>
           </li>
         ))}
       </ul>

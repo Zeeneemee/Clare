@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 const OurProducts = () => {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef(null);
-  const [isButtonClicked, setIsButtonClicked] = useState(false);
+  const navigate = useNavigate(); // Use navigate for redirection
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -30,7 +31,7 @@ const OurProducts = () => {
   }, [isVisible]);
 
   const handleButtonClick = () => {
-    setIsButtonClicked(true);
+    navigate("/products"); // Navigate to the products page
   };
 
   return (
@@ -88,11 +89,7 @@ const OurProducts = () => {
 
       <button
         onClick={handleButtonClick}
-        className={`font-lato font-light bg-[#003366] text-white px-8 py-3 rounded-full mt-16 transition-colors duration-300 ${
-          isButtonClicked
-            ? "bg-lightblue text-darkblue"
-            : "hover:bg-[#ADD8E6] hover:text-[#003366]"
-        }`}
+        className="font-lato font-light bg-[#003366] text-white px-8 py-3 rounded-full mt-16 transition-colors duration-300 hover:bg-[#ADD8E6] hover:text-[#003366]"
       >
         See More
       </button>
@@ -101,4 +98,5 @@ const OurProducts = () => {
 };
 
 export default OurProducts;
+
 
