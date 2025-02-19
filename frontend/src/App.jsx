@@ -8,6 +8,7 @@ import LoadingScreen from "./components/LoadingScreen";
 import CameraCapture from "./components/CameraCapture";
 import SkinAnalysisResult from "./components/SkinAnalysisResult";
 import ProductPage from "./components/ProductPage";
+import SkinAnalysisLanding from "./components/SkinAnalysisLanding";
 
 // Importing individual product pages
 import MoisturiserMen from "./components/productpages/MoisturiserMen";
@@ -53,6 +54,7 @@ export default function App() {
           <Route path="/products/skincare-set" element={<SkincareSet />} />
           <Route path="/products/day-cream" element={<DayCream />} />
           <Route path="/products/night-serum" element={<NightSerum />} />
+          <Route path="/skin-analysis" element={<SkinAnalysisLanding />} />
         </Routes>
       </div>
     </Router>

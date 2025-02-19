@@ -15,10 +15,16 @@ export default function NavBar({ scrolled }) {
         {['Home', 'Our Products', 'About Us', 'Skin Analysis'].map((item) => (
           <li key={item}>
             <Link 
-              to={item === 'Our Products' ? '/products' : item === 'Home' ? '/' : '#'} // Adjust Home link
+              to={
+                item === 'Our Products' ? '/products' 
+                : item === 'Home' ? '/' 
+                : item === 'Skin Analysis' ? '/skin-analysis' 
+                : '#'
+              }
               className={`font-lato font-light text-lg transition-colors duration-300 ${
                 scrolled ? 'text-[#14213D]' : 'text-white'
-              } hover:opacity-80`}>
+              } hover:opacity-80`}
+            >
               {item}
             </Link>
           </li>
