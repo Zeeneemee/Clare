@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import NavBar from "./components/NavBar";
 import HeroSection from "./components/HeroSection";
 import AboutUs from "./components/AboutUs";
+import LandingInfo from "./components/LandingInfo";  // Added LandingInfo import
 import OurProducts from "./components/OurProducts";
 import LoadingScreen from "./components/LoadingScreen";
 import CameraCapture from "./components/CameraCapture";
@@ -41,6 +42,7 @@ export default function App() {
               <>
                 <HeroSection scrollY={scrollY} />
                 <AboutUs />
+                <LandingInfo />  {/* Moved LandingInfo after AboutUs */}
                 <OurProducts />
               </>
             }
