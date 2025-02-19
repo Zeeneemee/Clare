@@ -18,7 +18,7 @@ export default function SkinAnalysisResult() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
-      <h1 className="font-fanwood font-normal text-[48px] leading-[62.93px] tracking-[0%] text-center mb-[30px] mt-[150px]">
+      <h1 className="font-fanwood font-normal text-[48px] leading-[62.93px] tracking-[0%] text-center mb-[10px] mt-[150px]">
         Your Skin Report
       </h1>
       <p className="font-lato font-medium italic text-[26px] leading-[31.2px] tracking-[0%] text-center text-[#A8A8A8] mb-[100px]">
@@ -74,7 +74,7 @@ export default function SkinAnalysisResult() {
                 className="rounded-[16px] mt-30 w-[379px] h-[346px] object-cover"
               />
               {/* Small Box Positioned at Bottom */}
-              <div className="absolute bottom-[-10px] left-1/2 transform -translate-x-1/2 w-[180px] h-[40px] bg-white text-[#797979] text-xl text-center flex items-center justify-center rounded-lg shadow-lg">
+              <div className="absolute bottom-[-20px] left-1/2 transform -translate-x-1/2 w-[180px] h-[40px] bg-white text-[#797979] text-xl text-center flex items-center justify-center rounded-lg shadow-lg">
                 Skin Age: 30
               </div>
             </div>

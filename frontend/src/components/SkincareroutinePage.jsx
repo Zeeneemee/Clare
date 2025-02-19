@@ -124,14 +124,19 @@ export default function Routine() {
   );
 }
 
-// Reusable Component for Routine Steps
 const RoutineCard = ({ title, steps }) => {
   return (
     <div className="flex-1 bg-white shadow-md rounded-lg p-6 border border-[#CAC7C7]">
       <h2 className="text-xl font-semibold mb-4">{title}</h2>
       <div className="space-y-6">
-        {steps.map((step) => (
-          <RoutineStep key={step.step} stepData={step} />
+        {steps.map((step, index) => (
+          <RoutineStep
+            key={step.step}
+            stepData={step}
+            isLast={index === steps.length - 1}
+            totalSteps={steps.length}
+            index={index}
+          />
         ))}
       </div>
     </div>
@@ -139,15 +144,20 @@ const RoutineCard = ({ title, steps }) => {
 };
 
 // Step Component with Unique Details
-const RoutineStep = ({ stepData }) => {
+const RoutineStep = ({ stepData, isLast }) => {
   return (
-    <div className="flex items-start space-x-4 ">
-      {/* Step Indicator */}
-      <div className="flex flex-col items-center">
-        <span className="bg-[#F4EDE3] text-[#909090] px-2 py-1 text-xs font-semibold rounded-full">
+    <div className="relative flex items-start space-x-4">
+      {/* Step Indicator + Vertical Line */}
+      <div className="relative flex flex-col items-center">
+        {/* Vertical Line (Behind Step Indicator) */}
+        {!isLast && (
+          <div className="absolute top-5 bottom-[-105px] w-0.5 bg-gray-300"></div>
+        )}
+
+        {/* Step Indicator */}
+        <span className="relative z-10 bg-[#F4EDE3] text-[#909090] px-2 py-1 text-xs font-semibold rounded-full">
           Step {stepData.step}
         </span>
-        <div className="w-0.5 h-10 bg-gray-300"></div>
       </div>
 
       {/* Step Content */}

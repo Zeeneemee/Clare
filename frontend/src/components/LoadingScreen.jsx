@@ -28,7 +28,7 @@ export default function LoadingScreen() {
           className="h-full bg-navy"
           style={{
             width: `${progress}%`,
-            transition: "width 0.2s ease-in-out", // Smooth width transition
+            transition: "none", // Disable transition for smoother update
           }}
         ></div>
       </div>
