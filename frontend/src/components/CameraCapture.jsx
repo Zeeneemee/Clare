@@ -13,6 +13,7 @@ export default function CameraCapture() {
 
   // Start the camera when the component loads
   useEffect(() => {
+    localStorage.removeItem("image"); // Clear the previous image
     navigator.mediaDevices
       .getUserMedia({ video: true })
       .then((stream) => {
@@ -36,8 +37,10 @@ export default function CameraCapture() {
     canvas.height = video.videoHeight;
 
     // Draw the current video frame on the canvas (freezing the frame)
+    context.save();
+    context.translate(canvas.width, 0);
+    context.scale(-1, 1);
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
     // Hide the video and show the canvas
     video.style.display = "none";
     canvas.style.display = "block";
@@ -50,28 +53,25 @@ export default function CameraCapture() {
   // Proceed to the loading screen with fade-out effect
   const proceed = async () => {
     if (captured && !isRetaking) {
+      
       const canvas = canvasRef.current;
       // Convert canvas to Blob
       canvas.toBlob(async (blob) => {
-        // Create a FormData object and append the Blob as a file
         const formData = new FormData();
         formData.append("image", blob, "captured-image.jpg");
-        console.log(formData)
-
-        navigate("/loading")
+        
+        
         const response = await fetch("http://localhost:5000/upload", {
           method: "POST",
           body: formData,
         });
-  
+        navigate("/result");
         const result = await response.json();
         console.log({ result });
   
         if (result.dataURL) {
           localStorage.setItem("image", result.dataURL);
         }
-        
-        navigate("/result");
       }, "image/jpeg");
     }
     setFadeOut(true);
@@ -88,6 +88,7 @@ export default function CameraCapture() {
     video.style.display = "block"; // Show the video again
     const canvas = canvasRef.current;
     canvas.style.display = "none"; // Hide the canvas
+
   };
 
   return (
@@ -119,7 +120,7 @@ export default function CameraCapture() {
         <video
           ref={videoRef}
           autoPlay
-          className={`w-full h-[350px] max-w-md rounded-3xl shadow-lg object-cover ${captured ? "hidden" : "block"}`}
+          className={`transform scale-x-[-1] w-full h-[350px] max-w-md rounded-3xl shadow-lg object-cover ${captured ? "hidden" : "block"}`}
         />
         <canvas
           ref={canvasRef}
