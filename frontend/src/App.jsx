@@ -42,7 +42,6 @@ export default function App() {
           } />
 
           {/* Other routes */}
-          <Route path="/loading" element={<LoadingScreen />} />
           <Route path="/camera" element={<CameraCapture />} />
           <Route path="/result" element={<SkinAnalysisResult />} />
           <Route path="/products" element={<ProductPage />} />
