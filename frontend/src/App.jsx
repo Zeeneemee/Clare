@@ -9,6 +9,8 @@ import CameraCapture from "./components/CameraCapture";
 import SkinAnalysisResult from "./components/SkinAnalysisResult";
 import ProductPage from "./components/ProductPage";
 import SkinAnalysisLanding from "./components/SkinAnalysisLanding";
+import Routine from "./components/SkincareroutinePage";
+import Signup from "./components/SignupPage";
 
 // Importing individual product pages
 import MoisturiserMen from "./components/productpages/MoisturiserMen";
@@ -33,22 +35,33 @@ export default function App() {
         <NavBar scrolled={scrollY > 50} />
         <Routes>
           {/* Home page route */}
-          <Route path="/" element={
-            <>
-              <HeroSection scrollY={scrollY} />
-              <AboutUs />
-              <OurProducts />
-            </>
-          } />
+          <Route
+            path="/"
+            element={
+              <>
+                <HeroSection scrollY={scrollY} />
+                <AboutUs />
+                <OurProducts />
+              </>
+            }
+          />
 
           {/* Other routes */}
           <Route path="/camera" element={<CameraCapture />} />
           <Route path="/result" element={<SkinAnalysisResult />} />
           <Route path="/products" element={<ProductPage />} />
+          <Route path="/skincareroutine" element={<Routine />} />
+          <Route path="/signup" element={<Signup />} />
 
           {/* Individual product pages */}
-          <Route path="/products/moisturiser-men" element={<MoisturiserMen />} />
-          <Route path="/products/night-revitaliser-men" element={<NightRevitaliserMen />} />
+          <Route
+            path="/products/moisturiser-men"
+            element={<MoisturiserMen />}
+          />
+          <Route
+            path="/products/night-revitaliser-men"
+            element={<NightRevitaliserMen />}
+          />
           <Route path="/products/hand-cream" element={<HandCream />} />
           <Route path="/products/skincare-set" element={<SkincareSet />} />
           <Route path="/products/day-cream" element={<DayCream />} />
