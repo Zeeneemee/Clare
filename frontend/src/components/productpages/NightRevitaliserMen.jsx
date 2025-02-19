@@ -21,21 +21,24 @@ const NightRevitaliserMen = () => {
           <h1 className="font-fanwood text-3xl text-darkblue mb-4 font-normal">
             CUTISTEM™ Night Revitaliser for Men
           </h1>
-          <p className="font-lato text-2xl text-gray-700 mb-4">$35.50</p>
+          <p className="font-lato text-2xl text-gray-700 mb-4">$29.90</p> {/* Updated price to $0.00 */}
           <p className="font-lato font-light text-md text-gray-600 mb-6">
-            A powerful overnight treatment for men's skin, enriched with stem cells, oat extract, and ceramides to rejuvenate and restore skin while you sleep.
+          A skin care with stem cell extract to replenish the skin, rejuvenate and protect. With oat extract to balance skin microbiome. With co-enzyme Q10 for better skin repair, retinol, resveratrol for collagen stimulation and hyaluronic acid to fill-up wrinkles.
           </p>
           <h2 className="font-lato font-bold text-lg text-darkblue mb-3">Benefits:</h2>
           <ul className="list-disc list-inside font-lato font-light text-gray-600 mb-4">
-            <li>Boosts overnight skin regeneration</li>
-            <li>Strengthens the skin barrier</li>
-            <li>Deeply hydrates and reduces roughness</li>
+            <li>Stimulates collagen production</li>
+            <li>Rejuvenates and protects the skin</li>
+            <li>Reduces wrinkles and fine lines</li>
+            <li>Improves skin texture and hydration</li>
           </ul>
           <h2 className="font-lato font-bold text-lg text-darkblue mb-3">Key Ingredients:</h2>
           <ul className="list-disc list-inside font-lato font-light text-gray-600 mb-4">
-            <li>Stem Cells Extract</li>
             <li>Oat Extract</li>
-            <li>Ceramides</li>
+            <li>Co-enzyme Q10</li>
+            <li>Retinol</li>
+            <li>Resveratrol</li>
+            <li>Hyaluronic Acid</li>
           </ul>
 
           {/* Back Button under Key Ingredients */}
