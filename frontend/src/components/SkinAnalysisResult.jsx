@@ -10,10 +10,8 @@ export default function SkinAnalysisResult() {
 
   useEffect(() => {
     // Retrieve the image data from localStorage
-    const image = localStorage.getItem("image");
-    if (image) {
-      setCapturedImage(`http://localhost:5000/uploads/${image}`);
-    }
+
+    setCapturedImage(`http://localhost:5000/uploads/latest-image.png`);
   }, []);
 
   return (
@@ -70,7 +68,7 @@ export default function SkinAnalysisResult() {
           {capturedImage ? (
             <div className="relative">
               <img
-                src={img}
+                src={capturedImage}
                 className="rounded-[16px] mt-30 w-[379px] h-[346px] object-cover"
               />
               {/* Small Box Positioned at Bottom */}
