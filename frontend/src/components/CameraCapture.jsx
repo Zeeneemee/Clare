@@ -10,9 +10,13 @@ export default function CameraCapture() {
   const [fadeOut, setFadeOut] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isRetaking, setIsRetaking] = useState(false);
+  const [fadeIn, setFadeIn] = useState(false);  // State to trigger fade-in
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Trigger fade-in when component mounts
+    setFadeIn(true);
+
     localStorage.removeItem("image"); // Clear the previous image
     navigator.mediaDevices
       .getUserMedia({ video: true })
@@ -24,43 +28,34 @@ export default function CameraCapture() {
       .catch((err) => console.error("Camera access denied:", err));
   }, []);
 
-  // Capture Image Function (Freeze frame)
   const captureImage = () => {
-    // Indicate that the image has been captured and hide elements
-    setCaptured(true); // This will hide the video and show the canvas
+    setCaptured(true);
     const canvas = canvasRef.current;
     const video = videoRef.current;
     const context = canvas.getContext("2d");
 
-    // Get the video dimensions
     const videoWidth = video.videoWidth;
     const videoHeight = video.videoHeight;
 
-    // Set canvas size to match the video aspect ratio
     canvas.width = videoWidth;
     canvas.height = videoHeight;
 
-    // Draw the current video frame on the canvas (freezing the frame)
     context.save();
     context.translate(canvas.width, 0);
     context.scale(-1, 1);
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    // Hide the video and show the canvas
+
     video.style.display = "none";
     canvas.style.display = "block";
     setShowConfirmation(true);
   };
 
-  // Proceed to the loading screen with fade-out effect
   const proceed = async () => {
     if (captured && !isRetaking) {
-      
       const canvas = canvasRef.current;
-      // Convert canvas to Blob
       canvas.toBlob(async (blob) => {
         const formData = new FormData();
         formData.append("image", blob, "captured-image.jpg");
-        
         
         const response = await fetch("http://localhost:5000/upload", {
           method: "POST",
@@ -78,7 +73,6 @@ export default function CameraCapture() {
     setFadeOut(true);
   };
   
-  // Retake the photo
   const retake = () => {
     setCaptured(false);
     setShowConfirmation(false);
@@ -88,13 +82,15 @@ export default function CameraCapture() {
     video.style.display = "block"; // Show the video again
     const canvas = canvasRef.current;
     canvas.style.display = "none"; // Hide the canvas
-
   };
 
   return (
     <div
       className={`min-h-screen flex flex-col items-center justify-center relative px-5 py-16 mt-12`}
-      style={{ transition: "opacity 1s ease-in-out", opacity: fadeOut ? 0 : 1 }}
+      style={{
+        transition: "opacity 1s ease-in-out",
+        opacity: fadeIn ? 1 : 0,  // Fade-in trigger based on state
+      }}
     >
       <div
         className="absolute inset-0 bg-cover bg-center blur-lg"
