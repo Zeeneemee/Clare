@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom"; // Ensure links work
-import products from "../lib/product"
+import products from "../list/product"
 
 const ProductPage = () => {
   const [isVisible, setIsVisible] = useState(false);
