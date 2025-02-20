@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "./LoadingScreen";
-import logo from "../components/logo192.png";
-import img from "../components/img.png";
+
 
 export default function SkinAnalysisResult() {
 

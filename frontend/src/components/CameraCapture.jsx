@@ -115,7 +115,7 @@ export default function CameraCapture() {
         />
         <canvas
           ref={canvasRef}
-          className="w-full h-auto max-w-md rounded-3xl shadow-lg object-cover scale-x-[-1]"
+          className="w-full h-auto max-w-md rounded-3xl shadow-lg object-cover"
           style={{ display: "none" }}
         />
       </div>
