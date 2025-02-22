@@ -18,7 +18,7 @@ export default function AboutUs() {
           }
         });
       },
-      { threshold: 0.1 } // Trigger when 10% of the section is visible
+      { threshold: 0.3 } // Trigger when 10% of the section is visible
     );
 
     // Start observing the About Us section

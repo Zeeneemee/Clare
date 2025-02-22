@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import NavBar from "./components/NavBar";
 import HeroSection from "./components/HeroSection";
 import AboutUs from "./components/AboutUs";
+import SkinProfileInfo from "./components/SkinProfileInfo";  // Updated import
+import BehindTechInfo from "./components/BehindTechInfo";  // Updated import
 import OurProducts from "./components/OurProducts";
 import LoadingScreen from "./components/LoadingScreen";
 import CameraCapture from "./components/CameraCapture";
@@ -41,6 +43,8 @@ export default function App() {
               <>
                 <HeroSection scrollY={scrollY} />
                 <AboutUs />
+                <SkinProfileInfo />  {/* Updated to use the new component */}
+                <BehindTechInfo />  {/* Updated to use the new component */}
                 <OurProducts />
               </>
             }
@@ -48,6 +52,7 @@ export default function App() {
 
           {/* Other routes */}
           <Route path="/camera" element={<CameraCapture />} />
+          <Route path="/loading" element={<LoadingScreen />} />
           <Route path="/result" element={<SkinAnalysisResult />} />
           <Route path="/products" element={<ProductPage />} />
           <Route path="/skincareroutine" element={<Routine />} />

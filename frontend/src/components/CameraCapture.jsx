@@ -9,11 +9,12 @@ export default function CameraCapture() {
   const [isButtonVisible, setIsButtonVisible] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [isRetaking, setIsRetaking] = useState(false);
+  const [fadeIn, setFadeIn] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    localStorage.removeItem("image"); // Clear the previous image
+    setFadeIn(true);
+    localStorage.removeItem("image");
     navigator.mediaDevices
       .getUserMedia({ video: true })
       .then((stream) => {
@@ -24,77 +25,58 @@ export default function CameraCapture() {
       .catch((err) => console.error("Camera access denied:", err));
   }, []);
 
-  // Capture Image Function (Freeze frame)
   const captureImage = () => {
-    // Indicate that the image has been captured and hide elements
-    setCaptured(true); // This will hide the video and show the canvas
+    setCaptured(true);
     const canvas = canvasRef.current;
     const video = videoRef.current;
     const context = canvas.getContext("2d");
 
-    // Get the video dimensions
     const videoWidth = video.videoWidth;
     const videoHeight = video.videoHeight;
 
-    // Set canvas size to match the video aspect ratio
     canvas.width = videoWidth;
     canvas.height = videoHeight;
 
-    // Draw the current video frame on the canvas (freezing the frame)
     context.save();
     context.translate(canvas.width, 0);
     context.scale(-1, 1);
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    // Hide the video and show the canvas
+
     video.style.display = "none";
     canvas.style.display = "block";
     setShowConfirmation(true);
   };
 
-  // Proceed to the loading screen with fade-out effect
   const proceed = async () => {
-    if (captured && !isRetaking) {
-      
+    if (captured) {
+      // Convert canvas to data URL and save to localStorage
       const canvas = canvasRef.current;
-      // Convert canvas to Blob
-      canvas.toBlob(async (blob) => {
-        const formData = new FormData();
-        formData.append("image", blob, "captured-image.jpg");
-        
-        
-        const response = await fetch("http://localhost:5000/upload", {
-          method: "POST",
-          body: formData,
-        });
-        navigate("/result");
-        const result = await response.json();
-        console.log({ result });
-  
-        if (result.dataURL) {
-          localStorage.setItem("image", result.dataURL);
-        }
-      }, "image/jpeg");
+      const imageDataURL = canvas.toDataURL('image/png');
+      localStorage.setItem('image', imageDataURL);
+      
+      navigate("/loading");
     }
     setFadeOut(true);
   };
-  
-  // Retake the photo
+
   const retake = () => {
     setCaptured(false);
     setShowConfirmation(false);
     setIsButtonVisible(true);
 
     const video = videoRef.current;
-    video.style.display = "block"; // Show the video again
+    video.style.display = "block";
     const canvas = canvasRef.current;
-    canvas.style.display = "none"; // Hide the canvas
-
+    canvas.style.display = "none";
   };
 
   return (
     <div
       className={`min-h-screen flex flex-col items-center justify-center relative px-5 py-16 mt-12`}
-      style={{ transition: "opacity 1s ease-in-out", opacity: fadeOut ? 0 : 1 }}
+      style={{
+        transition: "opacity 1s ease-in-out",
+        opacity: fadeIn ? 1 : 0,
+      }}
     >
       <div
         className="absolute inset-0 bg-cover bg-center blur-lg"
@@ -103,7 +85,7 @@ export default function CameraCapture() {
       <h1 className="font-fanwood text-4xl text-darkblue mb-4 z-10 relative">
         Clare Analysis Model
       </h1>
-      <p className="font-lato font-light text-base text-darkblue text-center max-w-3xl mb-6 z-10 relative">
+      <p className="font-lato font-light italic text-base text-gray-500 text-center max-w-3xl mb-6 z-10 relative">
         Our Clare Analysis Model utilizes cutting-edge AI technology to analyze
         your skin and generate a detailed report with personalized insights.
       </p>
@@ -127,13 +109,13 @@ export default function CameraCapture() {
           <div className="flex gap-4">
             <button
               onClick={retake}
-              className="font-lato text-lg font-light bg-[#ff4d4d] text-white py-3 px-12 rounded-full transition-all duration-300 hover:bg-[#ff8080] hover:text-darkblue"
+              className="font-lato text-lg font-light bg-[#ff4d4d] text-white py-3 px-12 rounded-full transition-colors duration-300 hover:opacity-80"
             >
               Retake
             </button>
             <button
               onClick={proceed}
-              className="font-lato text-lg font-light bg-[#003366] text-white py-3 px-12 rounded-full transition-all duration-300 hover:bg-[#ADD8E6] hover:text-darkblue"
+              className="font-lato text-lg font-light bg-[#14213D] text-white py-3 px-12 rounded-full transition-colors duration-300 hover:opacity-80"
             >
               Proceed
             </button>
@@ -143,7 +125,7 @@ export default function CameraCapture() {
         isButtonVisible && (
           <button
             onClick={captureImage}
-            className="font-lato text-lg font-light bg-[#003366] text-white py-3 px-12 rounded-full transition-all duration-300 hover:bg-[#ADD8E6] hover:text-darkblue mt-8 z-10 relative"
+            className="font-lato text-lg font-light bg-[#14213D] text-white py-3 px-12 rounded-full transition-colors duration-300 hover:opacity-80 mt-8 z-10 relative"
           >
             Capture Image
           </button>

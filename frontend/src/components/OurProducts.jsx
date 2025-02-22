@@ -89,7 +89,7 @@ const OurProducts = () => {
 
       <button
         onClick={handleButtonClick}
-        className="font-lato font-light bg-[#003366] text-white px-8 py-3 rounded-full mt-16 transition-colors duration-300 hover:bg-[#ADD8E6] hover:text-[#003366]"
+        className="font-lato font-light bg-[#14213D] text-white px-8 py-3 rounded-full mt-16 transition-colors duration-300 hover:opacity-80"
       >
         See More
       </button>
@@ -98,5 +98,3 @@ const OurProducts = () => {
 };
 
 export default OurProducts;
-
-

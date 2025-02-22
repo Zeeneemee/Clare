@@ -1,11 +1,20 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const MoisturiserMen = () => {
   const navigate = useNavigate(); // Hook for navigation
+  const [fadeIn, setFadeIn] = useState(0);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setFadeIn(1), 100); // Apply fade-in effect after 100ms
+    return () => clearTimeout(timer);
+  }, []); // Ensures it only runs on mount
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-white text-black p-10">
+    <div
+      className="flex items-center justify-center min-h-screen bg-white text-black p-10"
+      style={{ opacity: fadeIn, transition: "opacity 1s ease-in-out" }} // Apply fade-in style
+    >
       <div className="flex max-w-6xl w-full space-x-10 mt-10"> {/* Standardized margin */}
         {/* Left: Product Image */}
         <div className="w-1/2 p-5 mt-6"> {/* Removed translate-x for consistency */}

@@ -1,6 +1,14 @@
 import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 
 export default function Routine() {
+  const [fadeIn, setFadeIn] = useState(0);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setFadeIn(1), 100); // Apply fade-in effect after 100ms
+    return () => clearTimeout(timer);
+  }, []); // Ensures it only runs on mount
+
   // Morning and Night Routine Data with Unique Steps
   const morningRoutine = [
     {
@@ -79,12 +87,15 @@ export default function Routine() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col items-center py-10">
+    <div
+      className="min-h-screen flex flex-col items-center py-10 transition-opacity duration-1000 ease-in-out"
+      style={{ opacity: fadeIn }}
+    >
       {/* Title */}
-      <h1 className="font-fanwood text-[48px] leading-[62.93px] text-center mb-3 mt-[150px]">
+      <h1 className="font-fanwood font-normal text-darkblue text-4xl leading-[62.93px] text-center mb-3 mt-[150px]">
         Personalized Skincare Routine
       </h1>
-      <p className="font-lato font-medium italic text-[20px] text-center text-[#A8A8A8] mb-8">
+      <p className="font-lato font-light italic text-lg text-center text-gray-500 mb-8">
         Our AI has analyzed your skin and generated a detailed report with
         personalized <br /> insights and recommendations.
       </p>
@@ -102,13 +113,13 @@ export default function Routine() {
       <div className="flex mt-10 space-x-6">
         <Link
           to="/result"
-          className="px-20 py-3 border border-black text-black rounded-full hover:bg-gray-100 transition"
+          className="font-lato font-light px-20 py-3 border border-black text-black rounded-full hover:bg-gray-100 transition"
         >
           Back
         </Link>
         <Link
           to="/signup"
-          className="px-20 py-3 bg-[#14213D] text-white rounded-full hover:opacity-80 transition"
+          className="font-lato font-light px-20 py-3 bg-[#14213D] text-white rounded-full hover:opacity-80 transition"
         >
           Next
         </Link>
@@ -127,7 +138,7 @@ export default function Routine() {
 const RoutineCard = ({ title, steps }) => {
   return (
     <div className="flex-1 bg-white shadow-md rounded-lg p-6 border border-[#CAC7C7]">
-      <h2 className="text-xl font-semibold mb-4">{title}</h2>
+      <h2 className="font-lato font-normal text-xl mb-4">{title}</h2>
       <div className="space-y-6">
         {steps.map((step, index) => (
           <RoutineStep
@@ -143,7 +154,6 @@ const RoutineCard = ({ title, steps }) => {
   );
 };
 
-// Step Component with Unique Details
 const RoutineStep = ({ stepData, isLast }) => {
   return (
     <div className="relative flex items-start space-x-4">
@@ -155,16 +165,16 @@ const RoutineStep = ({ stepData, isLast }) => {
         )}
 
         {/* Step Indicator */}
-        <span className="relative z-10 bg-[#F4EDE3] text-[#909090] px-2 py-1 text-xs font-semibold rounded-full">
+        <span className="relative z-10 bg-[#14213D] text-white px-2 py-1 text-xs font-semibold rounded-full">
           Step {stepData.step}
         </span>
       </div>
 
       {/* Step Content */}
       <div className="flex-1">
-        <h3 className="font-semibold text-[#909090]">{stepData.title}</h3>
-        <p className="text-[#909090] text-sm">{stepData.description}</p>
-        <p className="text-[#909090] text-sm font-medium">
+        <h3 className="font-lato font-normal text-[#14213D]">{stepData.title}</h3>
+        <p className="font-lato font-light text-[#909090] text-sm">{stepData.description}</p>
+        <p className="font-lato font-normal text-[#909090] text-sm font-medium">
           Product: {stepData.product}
         </p>
       </div>
