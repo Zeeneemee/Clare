@@ -1,15 +1,9 @@
-<<<<<<< HEAD
 import { useNavigate } from "react-router-dom";
 
 export default function Terms() {
   const navigate = useNavigate();
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 text-darkblue mt-[45px]">
-=======
-export default function Terms() {
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 text-darkblue px-6 py-12">
->>>>>>> origin/main
       <div className="max-w-3xl bg-white p-8 rounded-xl shadow-lg">
         <h1 className="text-4xl font-fanwood font-light mb-6 text-center">
           Terms of Service
@@ -50,7 +44,6 @@ export default function Terms() {
           terms. If you do not agree, please discontinue use.
         </p>
 
-<<<<<<< HEAD
         <p className="text-sm text-gray-500 italic mt-6 text-center">
           If you have any questions, please contact our support team.
         </p>
@@ -62,11 +55,6 @@ export default function Terms() {
             Back to Upload Your Photo
           </button>
         </div>
-=======
-        <p className="text-sm text-gray-700 mt-6 text-center">
-          If you have any questions, please contact our support team.
-        </p>
->>>>>>> origin/main
       </div>
     </div>
   );
