@@ -11,6 +11,8 @@ import ProductPage from "./components/ProductPage";
 import SkinAnalysisLanding from "./components/SkinAnalysisLanding";
 import Routine from "./components/SkincareroutinePage";
 import Signup from "./components/SignupPage";
+import Terms from "./components/TermsPage";
+import PrivacyPolicy from "./components/Privacy";
 
 // Importing individual product pages
 import MoisturiserMen from "./components/productpages/MoisturiserMen";
@@ -52,6 +54,8 @@ export default function App() {
           <Route path="/products" element={<ProductPage />} />
           <Route path="/skincareroutine" element={<Routine />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
 
           {/* Individual product pages */}
           <Route
