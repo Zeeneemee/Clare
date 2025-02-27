@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+<<<<<<< HEAD
 import logo from "../components/logo192.png";
 import img from "../components/img.png";
 
@@ -13,10 +14,26 @@ export default function SkinAnalysisResult() {
 
     setCapturedImage(`http://localhost:5000/uploads/latest-image.png`);
   }, []);
+=======
+import LoadingScreen from "./LoadingScreen";
+
+
+export default function SkinAnalysisResult() {
+
+  const navigate = useNavigate();
+  const capturedImage = localStorage.getItem("image");
+>>>>>>> main
 
   return (
+    
     <div className="min-h-screen flex flex-col items-center justify-center">
+<<<<<<< HEAD
       <h1 className="font-fanwood font-normal text-[48px] leading-[62.93px] tracking-[0%] text-center mb-[10px] mt-[150px]">
+=======
+    {capturedImage? 
+    <>
+    <h1 className="font-fanwood font-normal text-[48px] leading-[62.93px] tracking-[0%] text-center mb-[10px] mt-[150px]">
+>>>>>>> main
         Your Skin Report
       </h1>
       <p className="font-lato font-medium italic text-[26px] leading-[31.2px] tracking-[0%] text-center text-[#A8A8A8] mb-[100px]">
@@ -131,6 +148,14 @@ export default function SkinAnalysisResult() {
         <div className="w-24 h-1 mt-5 bg-gray-300 rounded-full"></div>
         <div className="w-24 h-1 mt-5 bg-gray-300 rounded-full"></div>
       </div>
+<<<<<<< HEAD
+=======
+    </>
+      
+    
+    
+    : <LoadingScreen />}  
+>>>>>>> main
     </div>
   );
 }

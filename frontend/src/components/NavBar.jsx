@@ -18,6 +18,7 @@ export default function NavBar({ scrolled }) {
       <ul className="flex gap-10">
         {["Home", "Our Products", "About Us", "Skin Analysis"].map((item) => (
           <li key={item}>
+<<<<<<< HEAD
             <Link
               to={
                 item === "Our Products"
@@ -30,6 +31,17 @@ export default function NavBar({ scrolled }) {
               } // Adjust Home link
               className={`font-lato font-light text-lg transition-colors duration-300 ${
                 scrolled ? "text-[#14213D]" : "text-white"
+=======
+            <Link 
+              to={
+                item === 'Our Products' ? '/products' 
+                : item === 'Home' ? '/' 
+                : item === 'Skin Analysis' ? '/skin-analysis' 
+                : '#'
+              }
+              className={`font-lato font-light text-lg transition-colors duration-300 ${
+                scrolled ? 'text-[#14213D]' : 'text-white'
+>>>>>>> main
               } hover:opacity-80`}
             >
               {item}

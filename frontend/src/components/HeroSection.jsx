@@ -28,8 +28,13 @@ export default function HeroSection({ scrollY }) {
           Understand Your Skin with AI-Powered Insights
         </p>
         <button
+<<<<<<< HEAD
           className="mt-16 px-16 py-6 border-2 border-white rounded-full font-lato text-xl font-light
                    hover:bg-white hover:bg-opacity-20 hover:text-navy transition-all duration-300"
+=======
+          className="mt-16 px-16 py-6 border-2 border-white rounded-full font-lato text-xl font-light 
+             hover:bg-white hover:bg-opacity-80  transition-all duration-300"
+>>>>>>> main
           onClick={() => navigate("/camera")} // ✅ Navigates to /loading
         >
           Analyze Your Skin Now

@@ -8,8 +8,16 @@ import LoadingScreen from "./components/LoadingScreen";
 import CameraCapture from "./components/CameraCapture";
 import SkinAnalysisResult from "./components/SkinAnalysisResult";
 import ProductPage from "./components/ProductPage";
+<<<<<<< HEAD
 import Routine from "./components/SkincareroutinePage";
 import Signup from "./components/SignupPage";
+=======
+import SkinAnalysisLanding from "./components/SkinAnalysisLanding";
+import Routine from "./components/SkincareroutinePage";
+import Signup from "./components/SignupPage";
+import Terms from "./components/TermsPage";
+import PrivacyPolicy from "./components/Privacy";
+>>>>>>> main
 
 // Importing individual product pages
 import MoisturiserMen from "./components/productpages/MoisturiserMen";
@@ -46,12 +54,16 @@ export default function App() {
           />
 
           {/* Other routes */}
-          <Route path="/loading" element={<LoadingScreen />} />
           <Route path="/camera" element={<CameraCapture />} />
           <Route path="/result" element={<SkinAnalysisResult />} />
           <Route path="/products" element={<ProductPage />} />
           <Route path="/skincareroutine" element={<Routine />} />
           <Route path="/signup" element={<Signup />} />
+<<<<<<< HEAD
+=======
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+>>>>>>> main
 
           {/* Individual product pages */}
           <Route
@@ -66,6 +78,7 @@ export default function App() {
           <Route path="/products/skincare-set" element={<SkincareSet />} />
           <Route path="/products/day-cream" element={<DayCream />} />
           <Route path="/products/night-serum" element={<NightSerum />} />
+          <Route path="/skin-analysis" element={<SkinAnalysisLanding />} />
         </Routes>
       </div>
     </Router>
