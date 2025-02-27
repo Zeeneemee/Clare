@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 import NavBar from "./components/NavBar";
 import HeroSection from "./components/HeroSection";
 import AboutUs from "./components/AboutUs";
-import SkinProfileInfo from "./components/SkinProfileInfo";  // Updated import
-import BehindTechInfo from "./components/BehindTechInfo";  // Updated import
+import SkinProfileInfo from "./components/SkinProfileInfo";
+import BehindTechInfo from "./components/BehindTechInfo";
 import OurProducts from "./components/OurProducts";
 import LoadingScreen from "./components/LoadingScreen";
 import CameraCapture from "./components/CameraCapture";
@@ -13,6 +13,7 @@ import ProductPage from "./components/ProductPage";
 import SkinAnalysisLanding from "./components/SkinAnalysisLanding";
 import Routine from "./components/SkincareroutinePage";
 import Signup from "./components/SignupPage";
+import ContactUs from "./components/ContactUs"; // Imported ContactUs component
 
 // Importing individual product pages
 import MoisturiserMen from "./components/productpages/MoisturiserMen";
@@ -43,8 +44,8 @@ export default function App() {
               <>
                 <HeroSection scrollY={scrollY} />
                 <AboutUs />
-                <SkinProfileInfo />  {/* Updated to use the new component */}
-                <BehindTechInfo />  {/* Updated to use the new component */}
+                <SkinProfileInfo />
+                <BehindTechInfo />
                 <OurProducts />
               </>
             }
@@ -57,21 +58,16 @@ export default function App() {
           <Route path="/products" element={<ProductPage />} />
           <Route path="/skincareroutine" element={<Routine />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/contactus" element={<ContactUs />} /> {/* New route for ContactUs */}
 
           {/* Individual product pages */}
-          <Route
-            path="/products/moisturiser-men"
-            element={<MoisturiserMen />}
-          />
-          <Route
-            path="/products/night-revitaliser-men"
-            element={<NightRevitaliserMen />}
-          />
+          <Route path="/products/moisturiser-men" element={<MoisturiserMen />} />
+          <Route path="/products/night-revitaliser-men" element={<NightRevitaliserMen />} />
           <Route path="/products/hand-cream" element={<HandCream />} />
           <Route path="/products/skincare-set" element={<SkincareSet />} />
           <Route path="/products/day-cream" element={<DayCream />} />
           <Route path="/products/night-serum" element={<NightSerum />} />
-          <Route path="/skin-analysis" element={<SkinAnalysisLanding />} />
+          <Route path="/skinanalysis" element={<SkinAnalysisLanding />} />
         </Routes>
       </div>
     </Router>

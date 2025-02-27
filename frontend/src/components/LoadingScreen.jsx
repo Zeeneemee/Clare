@@ -31,11 +31,13 @@ const LoadingScreen = () => {
       className="h-screen flex flex-col items-center justify-center mt-[-50px] transition-opacity duration-1000 ease-in-out"
       style={{ opacity: fadeIn }}
     >
-      <h1 className="text-3xl font-serif text-darkblue mb-8">Analyzing Your Skin</h1>
-      <div className="text-lg font-light text-gray-500 font-sans mb-4">
+      <h1 className="text-xl sm:text-3xl font-serif text-darkblue mb-6 sm:mb-8 text-center">
+        Analyzing Your Skin
+      </h1>
+      <div className="text-base sm:text-lg font-light text-gray-500 font-sans mb-4 text-center">
         Progress: <span>{Math.round(progress)}%</span>
       </div>
-      <div className="w-[280px] relative h-3 bg-gray-200 rounded-full overflow-hidden">
+      <div className="w-[150px] sm:w-[280px] h-3 bg-gray-200 rounded-full overflow-hidden relative">
         <div
           className="absolute top-0 left-0 h-full bg-darkblue transition-all duration-500"
           style={{ width: `${progress}%` }}

@@ -16,7 +16,7 @@ export default function SkinProfileInfo() {
           }
         });
       },
-      { threshold: 0.4 }
+      { threshold: 0.2 }
     );
 
     if (section) {
@@ -33,28 +33,27 @@ export default function SkinProfileInfo() {
   return (
     <section
       id="skin-profile-info-section"
-      className="min-h-screen flex items-center justify-center px-5 pt-32 mt-16 pb-32"
+      className="min-h-screen flex items-center justify-center px-5 pt-20 md:pt-32 mt-16 pb-20 md:pb-32"
       style={{
         backgroundColor: '#14213D',
         opacity,
-        transition: 'opacity 1.5s ease-in-out',
+        transition: 'opacity 0.4s ease-in-out',
       }}
     >
-      {/* Content Wrapper */}
-      <div className="max-w-[1200px] grid grid-cols-1 md:grid-cols-2 gap-20 items-center text-left">
+      <div className="max-w-[1200px] grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-center text-left mx-5">
         {/* Left Column - Title and Description */}
-        <div className="flex flex-col justify-center items-start space-y-8 mt-10">
-          <h2 className="font-fanwood text-5xl text-white">
+        <div className="flex flex-col justify-center items-start space-y-6 md:space-y-8 mt-5 md:mt-10">
+          <h2 className="font-fanwood text-3xl md:text-5xl text-white">
             A Complete Skin Profile
           </h2>
-          <p className="font-lato text-xl text-white font-light">
+          <p className="font-lato text-lg md:text-xl text-white font-light">
             Claré provides a detailed and complete skin profile, offering you an in-depth understanding of your skin's health and condition, empowering you to take the right steps towards healthier skin.
           </p>
         </div>
 
-        {/* Right Column - List (Left-Aligned on Right Side) */}
-        <div className="flex flex-col space-y-12 text-white font-lato font-light text-2xl items-start ml-20 mt-10">
-          {[
+        {/* Right Column - List */}
+        <div className="flex flex-col space-y-8 md:space-y-12 text-white font-lato font-light text-lg md:text-2xl items-start md:ml-20">
+          {[  
             'Under Eye',
             'Skin Age',
             'Acne Severity',
@@ -64,7 +63,7 @@ export default function SkinProfileInfo() {
             'Personalized Recommendation',
           ].map((item, index) => (
             <div key={index} className="flex items-center space-x-4">
-              <div className="w-9 h-9 flex items-center justify-center rounded-full border border-white/50 text-white font-light text-lg">
+              <div className="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-full border border-white/50 text-white font-light text-base md:text-lg">
                 {index + 1}
               </div>
               <span>{item}</span>

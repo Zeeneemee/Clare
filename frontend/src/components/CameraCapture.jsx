@@ -82,10 +82,10 @@ export default function CameraCapture() {
         className="absolute inset-0 bg-cover bg-center blur-lg"
         style={{ backgroundImage: "url('/assets/bg5.png')" }}
       ></div>
-      <h1 className="font-fanwood text-4xl text-darkblue mb-4 z-10 relative">
+      <h1 className="font-fanwood text-3xl sm:text-4xl text-darkblue mb-4 z-10 relative">
         Clare Analysis Model
       </h1>
-      <p className="font-lato font-light italic text-base text-gray-500 text-center max-w-3xl mb-6 z-10 relative">
+      <p className="font-lato font-light italic text-sm sm:text-base text-gray-500 text-center max-w-3xl mb-6 z-10 relative">
         Our Clare Analysis Model utilizes cutting-edge AI technology to analyze
         your skin and generate a detailed report with personalized insights.
       </p>
@@ -93,7 +93,7 @@ export default function CameraCapture() {
         <video
           ref={videoRef}
           autoPlay
-          className={`transform scale-x-[-1] w-full h-[350px] max-w-md rounded-3xl shadow-lg object-cover ${captured ? "hidden" : "block"}`}
+          className={`transform scale-x-[-1] w-full h-[350px] sm:h-[400px] max-w-md rounded-3xl shadow-lg object-cover ${captured ? "hidden" : "block"}`}
         />
         <canvas
           ref={canvasRef}
@@ -102,20 +102,20 @@ export default function CameraCapture() {
         />
       </div>
       {showConfirmation ? (
-        <div className="mt-8 z-10 relative">
-          <p className="font-lato font-light text-lg text-darkblue mb-4">
+        <div className="mt-8 z-10 relative text-center">
+          <p className="font-lato font-light text-base sm:text-lg text-darkblue mb-4">
             Do you want to proceed with this image?
           </p>
-          <div className="flex gap-4">
+          <div className="flex gap-4 justify-center">
             <button
               onClick={retake}
-              className="font-lato text-lg font-light bg-[#ff4d4d] text-white py-3 px-12 rounded-full transition-colors duration-300 hover:opacity-80"
+              className="font-lato text-sm sm:text-lg font-light bg-[#ff4d4d] text-white px-8 sm:px-12 py-3 rounded-full transition-colors duration-300 hover:opacity-80"
             >
               Retake
             </button>
             <button
               onClick={proceed}
-              className="font-lato text-lg font-light bg-[#14213D] text-white py-3 px-12 rounded-full transition-colors duration-300 hover:opacity-80"
+              className="font-lato text-sm sm:text-lg font-light bg-[#14213D] text-white px-8 sm:px-12 py-3 rounded-full transition-colors duration-300 hover:opacity-80"
             >
               Proceed
             </button>
@@ -125,7 +125,7 @@ export default function CameraCapture() {
         isButtonVisible && (
           <button
             onClick={captureImage}
-            className="font-lato text-lg font-light bg-[#14213D] text-white py-3 px-12 rounded-full transition-colors duration-300 hover:opacity-80 mt-8 z-10 relative"
+            className="font-lato text-sm sm:text-lg font-light bg-[#14213D] text-white py-3 px-12 rounded-full transition-colors duration-300 hover:opacity-80 mt-8 z-10 relative"
           >
             Capture Image
           </button>
