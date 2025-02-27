@@ -1,5 +1,5 @@
-// models.js
-import { Schema, model } from "mongoose";
+const mongoose = require("mongoose");
+const { Schema } = mongoose;
 
 const imageProcessingSchema = new Schema({
   imageId: { type: String, required: true },
@@ -13,27 +13,37 @@ const imageProcessingSchema = new Schema({
     processedImage: { type: String },
     analysis: {
       acne: {
-        positions: [{ x: Number, y: Number, width: Number, height: Number }],
-        score: Number
+        positions: { 
+          type: [{ x: Number, y: Number, width: Number, height: Number }],
+          default: [] 
+        },
+        score: { type: Number, default: 0 }
       },
       wrinkles: {
-        positions: [{ x: Number, y: Number, width: Number, height: Number }],
-        score: Number
+        positions: { 
+          type: [{ x: Number, y: Number, width: Number, height: Number }],
+          default: [] 
+        },
+        score: { type: Number, default: 0 }
       },
       scar: {
-        positions: [{ x: Number, y: Number, width: Number, height: Number }],
-        score: Number
+        positions: { 
+          type: [{ x: Number, y: Number, width: Number, height: Number }],
+          default: [] 
+        },
+        score: { type: Number, default: 0 }
       },
       undereye: {
-        positions: [{ x: Number, y: Number, width: Number, height: Number }],
-        score: Number
+        positions: { 
+          type: [{ x: Number, y: Number, width: Number, height: Number }],
+          default: [] 
+        },
+        score: { type: Number, default: 0 }
       },
-      age: Number,
-      gender: String
+      age: { type: Number, default: 0 },
+      gender: { type: String, default: "Not Detected" }
     }
   }
 }, { timestamps: true });
 
-const ImageProcessing = model("ImageProcessing", imageProcessingSchema);
-
-export default { ImageProcessing };
+module.exports = mongoose.model("ImageProcessing", imageProcessingSchema);

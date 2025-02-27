@@ -1,6 +1,6 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
 require('dotenv').config();
-const userName = process.env.DB_USER;
+const userName = process.env.DB_USERNAME;
 const password = process.env.DB_PASSWORD;
 const uri = `mongodb+srv://${userName}:${password}@clare.foyag.mongodb.net/?retryWrites=true&w=majority&appName=Clare`;
 
