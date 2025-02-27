@@ -14,6 +14,7 @@ export default function CameraCapture() {
 
   useEffect(() => {
     localStorage.removeItem("image"); // Clear previous image
+<<<<<<< HEAD
 
     // Check if the user has already accepted terms
     const termsAccepted = localStorage.getItem("termsAccepted") === "true";
@@ -21,6 +22,8 @@ export default function CameraCapture() {
       setShowConsent(false); // Hide consent if accepted before
     }
 
+=======
+>>>>>>> origin/main
     navigator.mediaDevices
       .getUserMedia({ video: true })
       .then((stream) => {
@@ -32,8 +35,12 @@ export default function CameraCapture() {
   }, []);
 
   const handleConsent = () => {
+<<<<<<< HEAD
     localStorage.setItem("termsAccepted", "true"); // Store acceptance
     setShowConsent(false); // Hide consent popup
+=======
+    setShowConsent(false);
+>>>>>>> origin/main
   };
 
   const captureImage = () => {

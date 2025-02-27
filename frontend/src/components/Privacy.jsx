@@ -239,10 +239,17 @@ export default function PrivacyPolicy() {
 
       <div className="text-center mt-8">
         <button
+<<<<<<< HEAD
           onClick={() => navigate("/camera")}
           className="px-6 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-200"
         >
           Back to Upload Your Photo
+=======
+          onClick={() => navigate("/")}
+          className="px-6 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-200"
+        >
+          Back to Home
+>>>>>>> origin/main
         </button>
       </div>
     </div>
