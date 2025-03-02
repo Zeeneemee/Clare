@@ -42,6 +42,7 @@ connectToDatabase().then(() => {
 
 app.get('/', (req, res) => {
   res.send("hello world");
+  console.log(PORT)
 });
 
 // Start server

@@ -31,25 +31,34 @@ export default function CameraCapture() {
     const canvas = canvasRef.current;
     const video = videoRef.current;
     const context = canvas.getContext("2d");
-
+  
     // Get the video dimensions
     const videoWidth = video.videoWidth;
     const videoHeight = video.videoHeight;
-
+  
     // Set canvas size to match the video aspect ratio
     canvas.width = videoWidth;
     canvas.height = videoHeight;
-
+  
     // Draw the current video frame on the canvas (freezing the frame)
     context.save();
     context.translate(canvas.width, 0);
     context.scale(-1, 1);
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  
+    // Stop all media tracks (turns off the camera)
+    if (video.srcObject) {
+      const tracks = video.srcObject.getTracks();
+      tracks.forEach((track) => track.stop());
+      video.srcObject = null;
+    }
+    
     // Hide the video and show the canvas
     video.style.display = "none";
     canvas.style.display = "block";
     setShowConfirmation(true);
   };
+  
 
   // Proceed to the loading screen with fade-out effect
   const proceed = async () => {
