@@ -1,4 +1,4 @@
-import axios from "axios";
+
 import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -69,7 +69,7 @@ export default function CameraCapture() {
       canvas.toBlob(async (blob) => {
         const formData = new FormData();
         formData.append("image", blob, "captured-image.jpg");
-        
+        console.log({ formData });
         
         const response = await fetch("http://localhost:5000/upload", {
           method: "POST",
