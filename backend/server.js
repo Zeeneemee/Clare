@@ -27,8 +27,9 @@ app.post("/upload", upload.single("image"), async (req, res) => {
         return res.status(400).json({ message: "No file uploaded." });
     }
 
-    const filePath = path.join(__dirname, "uploads", "latest-image.jpg");
+    const filePath = path.join(__dirname, "uploads", req.file.filename);
     const fileBase64 = encodeImage(filePath); // Convert uploaded image to Base64
+    const pythonScriptPath = path.join(process.cwd(), "ml", "master.py");
 
     try {
         // ✅ Save Initial Image Data in MongoDB (before processing)
@@ -36,7 +37,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
             imageId: req.file.filename.split(".")[0], // Unique ID from filename
             filePath,
             processed: false,
-            processedAt: new Date(), // ✅ Correct timestamp handling
+            processedAt: new Date(),
             resultData: {
                 processedImage: `data:image/jpeg;base64,${fileBase64}`, // Default uploaded image
                 analysis: {
@@ -54,7 +55,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
         const savedImage = await newImage.save();
 
         // ✅ Trigger Python Processing
-        exec(`python3 backend/ml/master.py ${filePath}`, async (error, stdout, stderr) => {
+        exec(`python3 ${pythonScriptPath} ${filePath}`, async (error, stdout, stderr) => {
             console.log("🚀 Running Python script...");
 
             if (error) {
@@ -89,9 +90,6 @@ app.post("/upload", upload.single("image"), async (req, res) => {
                 return res.status(500).json({ message: "Invalid JSON format from Python script." });
             }
 
-            // ✅ Extract Processed Image
-            const acneResultImageBase64 = pythonResponse.acne?.ResultImage || null;
-
             // ✅ Update MongoDB with Processed Data
             const updatedImage = await ImageProcessing.findByIdAndUpdate(
                 savedImage._id,
@@ -99,10 +97,10 @@ app.post("/upload", upload.single("image"), async (req, res) => {
                     processed: true,
                     processedAt: new Date(),
                     "resultData.originalFilename": req.file.filename,
-                    "resultData.processedImage": pythonResponse.processedImage, // Processed image
-                    "resultData.analysis.acne.ResultImage": acneResultImageBase64, // Acne result image
-                    "resultData.analysis.acne.positions": pythonResponse.acne.positions || [],
-                    "resultData.analysis.acne.score": pythonResponse.acne.score || 0,
+                    "resultData.processedImage": pythonResponse.processedImage,
+                    "resultData.analysis.acne.ResultImage": pythonResponse.acne?.ResultImage || null,
+                    "resultData.analysis.acne.positions": pythonResponse.acne?.positions || [],
+                    "resultData.analysis.acne.score": pythonResponse.acne?.score || 0,
                     "resultData.analysis.wrinkles": pythonResponse.wrinkles || { ResultImage: null, positions: [], score: 0 },
                     "resultData.analysis.scar": pythonResponse.scar || { ResultImage: null, positions: [], score: 0 },
                     "resultData.analysis.undereye": pythonResponse.undereye || { ResultImage: null, positions: [], score: 0 },
@@ -115,11 +113,39 @@ app.post("/upload", upload.single("image"), async (req, res) => {
 
             console.log("✅ MongoDB Updated:", updatedImage);
 
-            // ✅ Send Response
+            // ✅ Fetch the Updated Data
+            const response = await ImageProcessing.findById(updatedImage._id);
+
+            // ✅ Send Response in the Required Format
             res.json({
-                message: "Image uploaded & processed successfully!",
-                databaseId: updatedImage._id, // MongoDB Document ID
-                processedData: updatedImage.resultData
+                processedImage: response.resultData.processedImage,
+                acne: {
+                    acneImage: response.resultData.analysis.acne.ResultImage,
+                    acnePosition: response.resultData.analysis.acne.positions,
+                    acneScore: response.resultData.analysis.acne.score,
+                },
+                wrinkles: {
+                    wrinklesImage: response.resultData.analysis.wrinkles.ResultImage,
+                    wrinklesPosition: response.resultData.analysis.wrinkles.positions,
+                    wrinklesScore: response.resultData.analysis.wrinkles.score,
+                },
+                scar: {
+                    scarImage: response.resultData.analysis.scar.ResultImage,
+                    scarPosition: response.resultData.analysis.scar.positions,
+                    scarScore: response.resultData.analysis.scar.score,
+                },
+                undereye: {
+                    undereyeImage: response.resultData.analysis.undereye.ResultImage,
+                    undereyePosition: response.resultData.analysis.undereye.positions,
+                    undereyeScore: response.resultData.analysis.undereye.score,
+                },
+                darkspot: {
+                    darkspotImage: response.resultData.analysis.darkspot.ResultImage,
+                    darkspotPosition: response.resultData.analysis.darkspot.positions,
+                    darkspotScore: response.resultData.analysis.darkspot.score,
+                },
+                age: response.resultData.analysis.age,
+                gender: response.resultData.analysis.gender
             });
         });
 

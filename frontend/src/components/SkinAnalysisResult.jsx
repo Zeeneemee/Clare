@@ -6,7 +6,7 @@ import LoadingScreen from "./LoadingScreen";
 export default function SkinAnalysisResult() {
 
   const navigate = useNavigate();
-  const capturedImage = localStorage.getItem("image");
+  const capturedImage = localStorage.getItem("processedImage");
 
   return (
     

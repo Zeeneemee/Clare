@@ -10,6 +10,8 @@ export default function CameraCapture() {
   const [fadeOut, setFadeOut] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isRetaking, setIsRetaking] = useState(false);
+  const [bioMetrics,setBioMetrics] = useState([])
+ 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,6 +25,10 @@ export default function CameraCapture() {
       })
       .catch((err) => console.error("Camera access denied:", err));
   }, []);
+
+  useEffect(()=>{
+
+  })
 
   // Capture Image Function (Freeze frame)
   const captureImage = () => {
@@ -63,29 +69,49 @@ export default function CameraCapture() {
   // Proceed to the loading screen with fade-out effect
   const proceed = async () => {
     if (captured && !isRetaking) {
-      
       const canvas = canvasRef.current;
-      // Convert canvas to Blob
+      
+      // ✅ Convert Canvas to Blob
       canvas.toBlob(async (blob) => {
         const formData = new FormData();
         formData.append("image", blob, "captured-image.jpg");
-        console.log({ formData });
-        
-        const response = await fetch("http://localhost:5000/upload", {
-          method: "POST",
-          body: formData,
-        });
-        navigate("/result");
-        const result = await response.json();
-        console.log({ result });
   
-        if (result.dataURL) {
-          localStorage.setItem("image", result.dataURL);
+        try {
+          const response = await fetch("http://localhost:5000/upload", {
+            method: "POST",
+            body: formData,
+          });
+  
+          const result = await response.json();
+          console.log("✅ Processed Result:", result);
+  
+          // ✅ Store Data in localStorage
+          localStorage.setItem("processedImage", result.processedImage);
+          localStorage.setItem("acneImage", result.acne.acneImage);
+          localStorage.setItem("acneScore", result.acne.acneScore);
+          localStorage.setItem("wrinklesImage", result.wrinkles.wrinklesImage);
+          localStorage.setItem("wrinklesScore", result.wrinkles.wrinklesScore);
+          localStorage.setItem("scarImage", result.scar.scarImage);
+          localStorage.setItem("scarScore", result.scar.scarScore);
+          localStorage.setItem("undereyeImage", result.undereye.undereyeImage);
+          localStorage.setItem("undereyeScore", result.undereye.undereyeScore);
+          localStorage.setItem("darkspotImage", result.darkspot.darkspotImage);
+          localStorage.setItem("darkspotScore", result.darkspot.darkspotScore);
+          localStorage.setItem("age", result.age);
+          localStorage.setItem("gender", result.gender);
+  
+          // ✅ Update State & Navigate
+          setBioMetrics(result);
+          navigate("/result");
+  
+        } catch (error) {
+          console.error("❌ Error Uploading Image:", error);
         }
       }, "image/jpeg");
     }
     setFadeOut(true);
   };
+  
   
   // Retake the photo
   const retake = () => {

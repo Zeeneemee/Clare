@@ -1,7 +1,14 @@
 from ultralytics import YOLO
 import os
+import shutil  
+
 def acne_detection(image_path,save_dir):
     detection_data = {"positions": [], "confidence": []}
+    output_dir = os.path.join(save_dir, "acne_result")
+
+    # ✅ Remove existing output directory if it exists
+    if os.path.exists(output_dir):
+        shutil.rmtree(output_dir)  # Delete previous results
     model = YOLO("/Users/tt/Documents/Coding/Claire/backend/ml/acne/acne.pt")
     results = model.predict(image_path, save=True, project=save_dir,name="acne_result" , show=True)  # Process the image
     for result in results:
