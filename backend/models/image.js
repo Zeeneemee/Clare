@@ -4,12 +4,10 @@ const { Schema } = mongoose;
 
 const imageProcessingSchema = new Schema({
   imageId: { type: String, required: true }, // Unique identifier for image
-  fileName: { type: String, required: true }, // Original filename
   filePath: { type: String, required: true }, // Path to stored file
   processed: { type: Boolean, default: false }, // Processing status
   processedAt: { type: Date }, // Timestamp for processing completion
   resultData: {
-    originalFilename: { type: String },
     processedImage: { type: String }, // Can store Base64 or file path
     analysis: {
       acne: {

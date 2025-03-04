@@ -4,8 +4,6 @@ def acne_detection(image_path,save_dir):
     detection_data = {"positions": [], "confidence": []}
     model = YOLO("/Users/tt/Documents/Coding/Claire/backend/ml/acne/acne.pt")
     results = model.predict(image_path, save=True, project=save_dir,name="acne_result" , show=True)  # Process the image
-    
-
     for result in results:
         boxes = result.boxes  
         for box in boxes:
@@ -17,4 +15,5 @@ def acne_detection(image_path,save_dir):
 
 
 # if confidence > 0.1 == acne
-"""Accumulate all acne confidence that is > 0.1 and return the average confidence"""
+"""Return the Accumulation of all acne confidence that is > 0.1 """
+"""Change the scale out of 10"""

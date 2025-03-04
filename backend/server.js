@@ -4,12 +4,13 @@ const path = require("path");
 const fs = require("fs");
 const { exec } = require("child_process"); // Execute Python script
 const upload = require("./controller/fileUpload");
-const { connectToDatabase } = require("./db");
-const ImageProcessing = require("./models/image"); // Correct model path
-const User = require("./models/user"); // Import User model
-const app = express();
+const mongoose = require("./db"); // ✅ Import Mongoose connection
+const ImageProcessing = require("./models/image"); // ✅ Import Model
+const User = require("./models/user"); // ✅ Import User model
 
+const app = express();
 const PORT = 5000;
+
 app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -26,15 +27,16 @@ app.post("/upload", upload.single("image"), async (req, res) => {
         return res.status(400).json({ message: "No file uploaded." });
     }
 
-    const filePath = path.join(__dirname, "uploads", "latest-image.jpg"); // need to change to png
+    const filePath = path.join(__dirname, "uploads", "latest-image.jpg");
     const fileBase64 = encodeImage(filePath); // Convert uploaded image to Base64
 
     try {
-        // ✅ 1. Save Initial Image Data in MongoDB (before processing)
+        // ✅ Save Initial Image Data in MongoDB (before processing)
         const newImage = new ImageProcessing({
             imageId: req.file.filename.split(".")[0], // Unique ID from filename
             filePath,
             processed: false,
+            processedAt: new Date(), // ✅ Correct timestamp handling
             resultData: {
                 processedImage: `data:image/jpeg;base64,${fileBase64}`, // Default uploaded image
                 analysis: {
@@ -51,7 +53,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
 
         const savedImage = await newImage.save();
 
-        // ✅ 2. Trigger Python Processing
+        // ✅ Trigger Python Processing
         exec(`python3 backend/ml/master.py ${filePath}`, async (error, stdout, stderr) => {
             console.log("🚀 Running Python script...");
 
@@ -66,7 +68,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
 
             console.log("📝 Raw Python stdout:", stdout);
 
-            // ✅ 3. Extract JSON from Python Output
+            // ✅ Extract JSON from Python Output
             let jsonStart = stdout.indexOf("{");
             let jsonEnd = stdout.lastIndexOf("}");
 
@@ -77,7 +79,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
 
             let jsonString = stdout.substring(jsonStart, jsonEnd + 1).trim();
 
-            // ✅ 4. Parse JSON Response
+            // ✅ Parse JSON Response
             let pythonResponse;
             try {
                 pythonResponse = JSON.parse(jsonString);
@@ -87,10 +89,10 @@ app.post("/upload", upload.single("image"), async (req, res) => {
                 return res.status(500).json({ message: "Invalid JSON format from Python script." });
             }
 
-            // ✅ 5. Extract Processed Image
+            // ✅ Extract Processed Image
             const acneResultImageBase64 = pythonResponse.acne?.ResultImage || null;
 
-            // ✅ 6. Update MongoDB with Processed Data
+            // ✅ Update MongoDB with Processed Data
             const updatedImage = await ImageProcessing.findByIdAndUpdate(
                 savedImage._id,
                 {
@@ -113,7 +115,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
 
             console.log("✅ MongoDB Updated:", updatedImage);
 
-            // ✅ 7. Send Response
+            // ✅ Send Response
             res.json({
                 message: "Image uploaded & processed successfully!",
                 databaseId: updatedImage._id, // MongoDB Document ID
@@ -127,11 +129,14 @@ app.post("/upload", upload.single("image"), async (req, res) => {
     }
 });
 
-// ✅ Start Server
-connectToDatabase().then(() => {
-    try {
-        app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
-    } catch (err) {
-        console.error("❌ Error starting server:", err);
-    }
+// ✅ Start Server Only After MongoDB Connects
+mongoose.connection.once("open", () => {
+    console.log("🚀 MongoDB Connected. Starting server...");
+    app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+});
+
+// ✅ Handle MongoDB Connection Errors
+mongoose.connection.on("error", (err) => {
+    console.error("❌ MongoDB Connection Error:", err);
+    process.exit(1); // Exit server if database connection fails
 });
