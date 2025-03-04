@@ -14,7 +14,7 @@ export default function SignUp() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center py-10 pt-32 md:pt-60 px-5 sm:px-10">
+    <div className="min-h-screen flex flex-col items-center py-10 pt-32 md:pt-60 px-8 sm:px-10">
       {/* Title */}
       <h1 className="font-fanwood text-3xl sm:text-4xl md:text-4xl text-darkblue mb-4 z-10 relative">
         Sign Up
@@ -28,17 +28,17 @@ export default function SignUp() {
       </p>
 
       {/* Form Container */}
-      <div className="w-full max-w-md md:max-w-2xl mt-6 md:mt-10">
-        <form className="space-y-6">
+      <div className="w-full max-w-xs md:max-w-2xl mt-6 md:mt-10">
+        <form className="space-y-4 sm:space-y-6">
           {/* Name Fields */}
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 md:gap-6">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 md:gap-6">
             <div className="flex-1">
               <label className="font-lato font-light block text-gray-500 text-sm mb-1">
                 First Name
               </label>
               <input
                 type="text"
-                className="font-lato font-light w-full border-b border-gray-400 focus:outline-none py-2"
+                className="font-lato font-light w-full border-b border-gray-400 focus:outline-none py-2 text-sm"
                 placeholder="First Name"
               />
             </div>
@@ -48,7 +48,7 @@ export default function SignUp() {
               </label>
               <input
                 type="text"
-                className="font-lato font-light w-full border-b border-gray-400 focus:outline-none py-2"
+                className="font-lato font-light w-full border-b border-gray-400 focus:outline-none py-2 text-sm"
                 placeholder="Last Name"
               />
             </div>
@@ -59,7 +59,7 @@ export default function SignUp() {
             <label className="font-lato font-light block text-gray-500 text-sm mb-1">Email</label>
             <input
               type="email"
-              className={`font-lato font-light w-full border-b py-2 focus:outline-none ${
+              className={`font-lato font-light w-full border-b py-2 focus:outline-none text-sm ${
                 error ? "border-red-500" : "border-gray-400"
               }`}
               placeholder="Email"
@@ -82,16 +82,16 @@ export default function SignUp() {
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex justify-center mt-10 gap-4 sm:gap-6 md:gap-0 md:space-x-6">
+      <div className="flex justify-center mt-8 md:mt-10 gap-4 sm:gap-6 md:gap-0 md:space-x-6">
         <Link
           to="/skincareroutine"
-          className="font-lato font-light text-sm px-10 sm:px-14 md:px-10 py-3 border border-black text-black rounded-full hover:bg-gray-100 transition"
+          className="font-lato font-light text-sm px-8 sm:px-14 md:px-10 py-2 md:py-3 border border-black text-black rounded-full hover:bg-gray-100 transition"
         >
           Back
         </Link>
         <Link
           to="/"
-          className={`font-lato font-light text-sm px-10 sm:px-14 md:px-10 py-3 rounded-full transition ${
+          className={`font-lato font-light text-sm px-8 sm:px-14 md:px-10 py-2 md:py-3 rounded-full transition ${
             error
               ? "bg-gray-300 text-gray-600 cursor-not-allowed"
               : "bg-[#14213D] text-white hover:opacity-80"
