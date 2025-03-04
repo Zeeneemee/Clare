@@ -1,138 +1,190 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "./LoadingScreen";
-
+import MetricCard from "./ui/metric";
 
 export default function SkinAnalysisResult() {
-
   const navigate = useNavigate();
-  const capturedImage = localStorage.getItem("processedImage");
+  const [fadeIn, setFadeIn] = useState(0);
+  const [bioMetrics, setBioMetrics] = useState(null);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => setFadeIn(1), 100);
+    
+    // ✅ Retrieve Data from localStorage
+    const storedData = {
+      processedImage: localStorage.getItem("processedImage"),
+      acne: {
+        acneImage: localStorage.getItem("acneImage"),
+        acneScore: localStorage.getItem("acneScore"),
+      },
+      wrinkles: {
+        wrinklesImage: localStorage.getItem("wrinklesImage"),
+        wrinklesScore: localStorage.getItem("wrinklesScore"),
+      },
+      scar: {
+        scarImage: localStorage.getItem("scarImage"),
+        scarScore: localStorage.getItem("scarScore"),
+      },
+      undereye: {
+        undereyeImage: localStorage.getItem("undereyeImage"),
+        undereyeScore: localStorage.getItem("undereyeScore"),
+      },
+      darkspot: {
+        darkspotImage: localStorage.getItem("darkspotImage"),
+        darkspotScore: localStorage.getItem("darkspotScore"),
+      },
+      age: localStorage.getItem("age"),
+      gender: localStorage.getItem("gender"),
+    };
+
+    setBioMetrics(storedData);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!bioMetrics || !bioMetrics.processedImage) {
+    return <LoadingScreen />;
+  }
 
   return (
-    
-    <div className="min-h-screen flex flex-col items-center justify-center">
-    {capturedImage? 
-    <>
-    <h1 className="font-fanwood font-normal text-[48px] leading-[62.93px] tracking-[0%] text-center mb-[10px] mt-[150px]">
-        Your Skin Report
-      </h1>
-      <p className="font-lato font-medium italic text-[26px] leading-[31.2px] tracking-[0%] text-center text-[#A8A8A8] mb-[100px]">
-        Our Al has analyzed your skin and generated a detailed report with
-        personalized <br /> insights and recommendation
-      </p>
+    <div
+      className="min-h-screen flex flex-col items-center relative px-5 py-16 mt-12 transition-opacity duration-1000 ease-in-out"
+      style={{ opacity: fadeIn }}
+    >
+      <div
+        className="absolute inset-0 bg-cover bg-center blur-lg opacity-30"
+        style={{ backgroundImage: "url('/assets/bg5.png')" }}
+      ></div>
 
-      <div className="flex justify-between items-center h-full space-x-4  ">
-        {/* Left Column */}
-        <div className="flex flex-col space-y-4">
-          <div className="w-[500px] h-40   p-4 bg-white shadow-lg rounded-lg border">
-            <div className="flex items-center space-x-3">
-              <div className="w-6 h-6 bg-[#7F7DFF] rounded-full"></div>
-              <h2 className="text-lg font-semibold">Dark Circles</h2>
-            </div>
-            <div className="mt-2 text-2xl font-bold">35%</div>
-            <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
-              <div
-                className="bg-[#7F7DFF] h-2.5 rounded-full"
-                style={{ width: "35%" }}
-              ></div>
-            </div>
-            <p className="mt-2 text-gray-500 text-sm">
-              Mild dark circles detected, possibly due to lack of sleep or
-              dehydration.
+      {/* Header Section */}
+      <div className="z-10 w-full max-w-7xl text-center mb-12">
+        {bioMetrics.processedImage && (
+          <>
+            <h1 className="font-fanwood text-3xl md:text-4xl text-darkblue mb-4">
+              Your Skin Report
+            </h1>
+            <p className="font-lato italic font-light text-sm md:text-base text-gray-500 max-w-3xl mx-auto">
+              Our AI has analyzed your skin and generated a detailed report with
+              personalized insights and recommendations.
             </p>
-          </div>
-          <div className="w-[500px] h-40   p-4 bg-white shadow-lg rounded-lg border">
-            <div className="flex items-center space-x-3">
-              <div className="w-6 h-6 bg-[#FFEB40] rounded-full"></div>
-              <h2 className="text-lg font-semibold">Wrinkles</h2>
-            </div>
-            <div className="mt-2 text-2xl font-bold">15%</div>
-            <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
-              <div
-                className="bg-[#FFEB40] h-2.5 rounded-full"
-                style={{ width: "15%" }}
-              ></div>
-            </div>
-            <p className="mt-2 text-gray-500 text-sm">
-              Moderate acne detected with visible breakouts and mild
-              inflammation.
-            </p>
-          </div>
-        </div>
+          </>
+        )}
+      </div>
 
-        {/* Center Image */}
-        <div className="relative flex justify-center items-center">
-          {capturedImage ? (
-            <div className="relative">
-              <img
-                src={capturedImage}
-                className="rounded-[16px] mt-30 w-[379px] h-[346px] object-cover"
-              />
-              {/* Small Box Positioned at Bottom */}
-              <div className="absolute bottom-[-20px] left-1/2 transform -translate-x-1/2 w-[180px] h-[40px] bg-white text-[#797979] text-xl text-center flex items-center justify-center rounded-lg shadow-lg">
-                Skin Age: 30
+      {/* Content Section */}
+      {bioMetrics.processedImage ? (
+        <div className="w-full max-w-7xl z-10 mt-18">
+          {/* Mobile Layout */}
+          <div className="md:hidden flex flex-col items-center">
+            <div className="mx-8 mb-8 w-full max-w-[380px]">
+              <div className="relative">
+                <img
+                  src={bioMetrics.processedImage}
+                  alt="Skin analysis"
+                  className="rounded-2xl w-full h-[420px] object-cover shadow-xl"
+                />
+                <div className="font-lato font-light absolute -bottom-5 left-1/2 -translate-x-1/2 bg-white px-6 py-2 rounded-full shadow-md text-[#797979]">
+                  Skin Age: {bioMetrics.age || "Not Detected"}
+                </div>
               </div>
             </div>
-          ) : (
-            <p>No image captured.</p>
-          )}
-        </div>
 
-        {/* Right Column */}
-        <div className="flex flex-col space-y-4">
-          <div className="w-[500px] h-40   p-4 bg-white shadow-lg rounded-lg border">
-            <div className="flex items-center space-x-3">
-              <div className="w-6 h-6 bg-[#9CDA8A] rounded-full"></div>
-              <h2 className="text-lg font-semibold">Acne Severity</h2>
+            <div className="w-full max-w-7xl space-y-2">
+              <MetricCard
+                color="bg-[#7F7DFF]"
+                title="Dark Circles"
+                percentage={bioMetrics.undereye.undereyeScore || 0}
+                description="AI analysis detected under-eye circles. Recommended hydration and skincare routine."
+              />
+              <MetricCard
+                color="bg-[#FFEB40]"
+                title="Wrinkles"
+                percentage={bioMetrics.wrinkles.wrinklesScore || 0}
+                description="AI analysis detected wrinkles. Consider using anti-aging serums and hydration."
+              />
+              <MetricCard
+                color="bg-[#9CDA8A]"
+                title="Acne Severity"
+                percentage={bioMetrics.acne.acneScore || 0}
+                description="Moderate acne detected. Recommended cleansing routine and acne treatment."
+              />
+              <MetricCard
+                color="bg-[#FF8080]"
+                title="Scar"
+                percentage={bioMetrics.scar.scarScore || 0}
+                description="Some scarring detected. Consider scar-reducing treatments and moisturization."
+              />
             </div>
-            <div className="mt-2 text-2xl font-bold">65%</div>
-            <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
-              <div
-                className="bg-[#9CDA8A] h-2.5 rounded-full"
-                style={{ width: "65%" }}
-              ></div>
-            </div>
-            <p className="mt-2 text-gray-500 text-sm">
-              Mild dark circles detected, possibly due to lack of sleep or
-              dehydration.
-            </p>
           </div>
-          <div className="w-[500px] h-40   p-4 bg-white shadow-lg rounded-lg border">
-            <div className="flex items-center space-x-3">
-              <div className="w-6 h-6 bg-[#FF8080] rounded-full"></div>
-              <h2 className="text-lg font-semibold">Scar</h2>
+
+          {/* Desktop Layout */}
+          <div className="hidden md:flex justify-between items-start gap-8">
+            {/* Left Metrics Column */}
+            <div className="flex-1 space-y-8">
+              <MetricCard
+                color="bg-[#7F7DFF]"
+                title="Dark Circles"
+                percentage={bioMetrics.undereye.undereyeScore || 0}
+                description="AI analysis detected under-eye circles. Recommended hydration and skincare routine."
+              />
+              <MetricCard
+                color="bg-[#FFEB40]"
+                title="Wrinkles"
+                percentage={bioMetrics.wrinkles.wrinklesScore || 0}
+                description="AI analysis detected wrinkles. Consider using anti-aging serums and hydration."
+              />
             </div>
-            <div className="mt-2 text-2xl font-bold">100%</div>
-            <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
-              <div
-                className="bg-[#FF8080] h-2.5 rounded-full"
-                style={{ width: "100%" }}
-              ></div>
+
+            {/* Center Image Column */}
+            <div className="mx-8">
+              <div className="relative">
+                <img
+                  src={bioMetrics.processedImage}
+                  alt="Skin analysis"
+                  className="rounded-2xl w-[380px] h-[420px] object-cover shadow-xl"
+                />
+                <div className="font-lato font-light absolute -bottom-5 left-1/2 -translate-x-1/2 bg-white px-6 py-2 rounded-full shadow-md text-[#797979]">
+                  Skin Age: {bioMetrics.age || "Not Detected"}
+                </div>
+              </div>
             </div>
-            <p className="mt-2 text-gray-500 text-sm">
-              Mild dark circles detected, possibly due to lack of sleep or
-              dehydration.
-            </p>
+
+            {/* Right Metrics Column */}
+            <div className="flex-1 space-y-8">
+              <MetricCard
+                color="bg-[#9CDA8A]"
+                title="Acne Severity"
+                percentage={bioMetrics.acne.acneScore || 0}
+                description="Moderate acne detected. Recommended cleansing routine and acne treatment."
+              />
+              <MetricCard
+                color="bg-[#FF8080]"
+                title="Scar"
+                percentage={bioMetrics.scar.scarScore || 0}
+                description="Some scarring detected. Consider scar-reducing treatments and moisturization."
+              />
+            </div>
+          </div>
+
+          {/* Action Section */}
+          <div className="text-center mt-6 md:mt-16">
+            <button
+              onClick={() => navigate("/skincareroutine")}
+              className="font-lato font-light text-sm md:text-lg bg-[#14213D] text-white px-16 py-3 rounded-full 
+                        transition-colors duration-300 hover:opacity-80"
+            >
+              Suggest My Skincare Routine
+            </button>
+            <div className="flex justify-center gap-3 mt-6 md:mt-8">
+              <div className="w-20 md:w-24 h-1 bg-[#003366] rounded-full"></div>
+              <div className="w-20 md:w-24 h-1 bg-gray-300 rounded-full"></div>
+              <div className="w-20 md:w-24 h-1 bg-gray-300 rounded-full"></div>
+            </div>
           </div>
         </div>
-      </div>
-
-      <button
-        onClick={() => navigate("/skincareroutine")}
-        className="mt-20 px-[70px] py-5 bg-[#14213D] text-white text rounded-[50px]"
-      >
-        Suggest My Skincare Routine
-      </button>
-      <div className="flex gap-3">
-        <div className="w-24 h-1 mt-5 bg-[#14213D] rounded-full "></div>
-        <div className="w-24 h-1 mt-5 bg-gray-300 rounded-full"></div>
-        <div className="w-24 h-1 mt-5 bg-gray-300 rounded-full"></div>
-      </div>
-    </>
-      
-    
-    
-    : <LoadingScreen />}  
+      ) : (
+        <LoadingScreen />
+      )}
     </div>
   );
 }

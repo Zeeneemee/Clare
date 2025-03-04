@@ -6,16 +6,24 @@ export default function CameraCapture() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [captured, setCaptured] = useState(false);
-  const [isButtonVisible, setIsButtonVisible] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isRetaking, setIsRetaking] = useState(false);
+  const [showConsent, setShowConsent] = useState(true); // Show consent first
+  const [consentGiven, setConsentGiven] = useState(false);
   const [bioMetrics,setBioMetrics] = useState([])
  
   const navigate = useNavigate();
 
   useEffect(() => {
-    localStorage.removeItem("image"); // Clear the previous image
+    localStorage.removeItem("image"); // Clear previous image
+
+    // Check if the user has already accepted terms
+    const termsAccepted = localStorage.getItem("termsAccepted") === "true";
+    if (termsAccepted) {
+      setShowConsent(false); // Hide consent if accepted before
+    }
+
     navigator.mediaDevices
       .getUserMedia({ video: true })
       .then((stream) => {
@@ -26,14 +34,13 @@ export default function CameraCapture() {
       .catch((err) => console.error("Camera access denied:", err));
   }, []);
 
-  useEffect(()=>{
+  const handleConsent = () => {
+    localStorage.setItem("termsAccepted", "true"); // Store acceptance
+    setShowConsent(false); // Hide consent popup
+  };
 
-  })
-
-  // Capture Image Function (Freeze frame)
   const captureImage = () => {
-    // Indicate that the image has been captured and hide elements
-    setCaptured(true); // This will hide the video and show the canvas
+    setCaptured(true);
     const canvas = canvasRef.current;
     const video = videoRef.current;
     const context = canvas.getContext("2d");
@@ -117,13 +124,13 @@ export default function CameraCapture() {
   const retake = () => {
     setCaptured(false);
     setShowConfirmation(false);
-    setIsButtonVisible(true);
 
     const video = videoRef.current;
-    video.style.display = "block"; // Show the video again
+    video.style.display = "block";
+    video.style.display = "block";
     const canvas = canvasRef.current;
-    canvas.style.display = "none"; // Hide the canvas
-
+    canvas.style.display = "none";
+    canvas.style.display = "none";
   };
 
   return (
@@ -135,55 +142,109 @@ export default function CameraCapture() {
         className="absolute inset-0 bg-cover bg-center blur-lg"
         style={{ backgroundImage: "url('/assets/bg5.png')" }}
       ></div>
-      <h1 className="font-fanwood text-4xl text-darkblue mb-4 z-10 relative">
+      <h1 className="font-fanwood text-3xl sm:text-4xl text-darkblue mb-4 z-10 relative">
         Clare Analysis Model
       </h1>
-      <p className="font-lato font-light text-base text-darkblue text-center max-w-3xl mb-6 z-10 relative">
+      <p className="font-lato font-light italic text-sm sm:text-base text-gray-500 text-center max-w-3xl mb-6 z-10 relative">
         Our Clare Analysis Model utilizes cutting-edge AI technology to analyze
         your skin and generate a detailed report with personalized insights.
       </p>
+
       <div className="relative w-full max-w-md mt-8 z-10">
+        {/* Camera Feed */}
         <video
           ref={videoRef}
           autoPlay
-          className={`transform scale-x-[-1] w-full h-[350px] max-w-md rounded-3xl shadow-lg object-cover ${captured ? "hidden" : "block"}`}
+          className={`transform scale-x-[-1] w-full h-[350px] sm:h-[400px] max-w-md rounded-3xl shadow-lg object-cover ${captured ? "hidden" : "block"}`}
+      
         />
         <canvas
           ref={canvasRef}
           className="w-full h-auto max-w-md rounded-3xl shadow-lg object-cover"
           style={{ display: "none" }}
         />
-      </div>
-      {showConfirmation ? (
-        <div className="mt-8 z-10 relative">
-          <p className="font-lato font-light text-lg text-darkblue mb-4">
-            Do you want to proceed with this image?
-          </p>
-          <div className="flex gap-4">
-            <button
-              onClick={retake}
-              className="font-lato text-lg font-light bg-[#ff4d4d] text-white py-3 px-12 rounded-full transition-all duration-300 hover:bg-[#ff8080] hover:text-darkblue"
-            >
-              Retake
-            </button>
-            <button
-              onClick={proceed}
-              className="font-lato text-lg font-light bg-[#003366] text-white py-3 px-12 rounded-full transition-all duration-300 hover:bg-[#ADD8E6] hover:text-darkblue"
-            >
-              Proceed
-            </button>
+
+        {/* Consent Popup Over Camera */}
+        {showConsent && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-3xl">
+            <div className="bg-white p-6 rounded-xl shadow-lg text-center max-w-sm">
+              <h2 className="text-xl font-semibold">Notice and Consent</h2>
+              <p className="text-sm text-gray-600 mt-2">
+                This AI simulation service may process, analyze, and collect
+                your facial data. By checking the box, you consent to this
+                processing.
+              </p>
+              <div className="mt-4 flex items-center justify-center">
+                <input
+                  type="checkbox"
+                  id="consent"
+                  onChange={(e) => setConsentGiven(e.target.checked)}
+                  className="mr-2"
+                />
+                <label htmlFor="consent" className="text-sm text-gray-600">
+                  I agree to the{" "}
+                  <button
+                    className="text-blue-500 underline"
+                    onClick={() => navigate("/privacy")}
+                  >
+                    Privacy Policy
+                  </button>{" "}
+                  and{" "}
+                  <button
+                    className="text-blue-500 underline"
+                    onClick={() => navigate("/terms")}
+                  >
+                    Terms of Service
+                  </button>
+                  .
+                </label>
+              </div>
+              <button
+                onClick={handleConsent}
+                disabled={!consentGiven}
+                className={`mt-4 py-2 px-6 rounded-full text-white ${
+                  consentGiven
+                    ? "bg-blue-600 hover:bg-blue-700"
+                    : "bg-gray-400 cursor-not-allowed"
+                }`}
+              >
+                Submit
+              </button>
+            </div>
           </div>
-        </div>
-      ) : (
-        isButtonVisible && (
+        )}
+      </div>
+
+      {/* Capture & Confirmation Buttons */}
+      {!showConsent &&
+        (showConfirmation ? (
+          <div className="mt-8 z-10 relative">
+            <p className="font-lato font-light text-lg text-darkblue mb-4">
+              Do you want to proceed with this image?
+            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={retake}
+                className="font-lato text-lg font-light bg-[#ff4d4d] text-white py-3 px-12 rounded-full transition-all duration-300 hover:bg-[#ff8080] hover:text-darkblue"
+              >
+                Retake
+              </button>
+              <button
+                onClick={proceed}
+                className="font-lato text-lg font-light bg-[#003366] text-white py-3 px-12 rounded-full transition-all duration-300 hover:bg-[#ADD8E6] hover:text-darkblue"
+              >
+                Proceed
+              </button>
+            </div>
+          </div>
+        ) : (
           <button
             onClick={captureImage}
-            className="font-lato text-lg font-light bg-[#003366] text-white py-3 px-12 rounded-full transition-all duration-300 hover:bg-[#ADD8E6] hover:text-darkblue mt-8 z-10 relative"
+            className="font-lato text-sm sm:text-lg font-light bg-[#14213D] text-white py-3 px-12 rounded-full transition-colors duration-300 hover:opacity-80 mt-8 z-10 relative"
           >
             Capture Image
           </button>
-        )
-      )}
+        ))}
     </div>
   );
 }
