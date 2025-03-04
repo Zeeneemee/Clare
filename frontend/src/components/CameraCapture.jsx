@@ -16,7 +16,7 @@ export default function CameraCapture() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    localStorage.removeItem("image"); // Clear previous image
+    localStorage.removeItem("processedImage"); // Clear previous image
 
     // Check if the user has already accepted terms
     const termsAccepted = localStorage.getItem("termsAccepted") === "true";
