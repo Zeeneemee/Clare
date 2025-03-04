@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import LoadingScreen from "./LoadingScreen";
-import MetricCard from "./ui/metric";
+import LoadingScreen from "../components/ui/LoadingScreen";
+import MetricCard from "../components/ui/metric";
 
 export default function SkinAnalysisResult() {
   const navigate = useNavigate();
