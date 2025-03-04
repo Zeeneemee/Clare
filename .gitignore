@@ -170,3 +170,4 @@ cython_debug/
 .pypirc
 /backend/.env
 /backend/node_modules
+/backend/uploads

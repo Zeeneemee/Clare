@@ -32,7 +32,7 @@ export default function CameraCapture() {
         }
       })
       .catch((err) => console.error("Camera access denied:", err));
-  }, []);
+  }, [captured]);
 
   const handleConsent = () => {
     localStorage.setItem("termsAccepted", "true"); // Store acceptance
@@ -124,7 +124,6 @@ export default function CameraCapture() {
   const retake = () => {
     setCaptured(false);
     setShowConfirmation(false);
-
     const video = videoRef.current;
     video.style.display = "block";
     video.style.display = "block";
@@ -135,7 +134,7 @@ export default function CameraCapture() {
 
   return (
     <div
-      className={`min-h-screen flex flex-col items-center justify-center relative px-5 py-16 mt-12`}
+      className={`min-h-screen flex flex-col items-center justify-center relative px-5 py-16 mt-5`}
       style={{ transition: "opacity 1s ease-in-out", opacity: fadeOut ? 0 : 1 }}
     >
       <div
