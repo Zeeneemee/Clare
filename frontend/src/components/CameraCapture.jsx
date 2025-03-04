@@ -49,7 +49,6 @@ export default function CameraCapture() {
     context.translate(canvas.width, 0);
     context.scale(-1, 1);
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
     video.style.display = "none";
     canvas.style.display = "block";
     setShowConfirmation(true);
@@ -77,30 +76,32 @@ export default function CameraCapture() {
     setFadeOut(true);
   };
 
+
   const retake = () => {
     setCaptured(false);
     setShowConfirmation(false);
 
     const video = videoRef.current;
     video.style.display = "block";
+    video.style.display = "block";
     const canvas = canvasRef.current;
+    canvas.style.display = "none";
     canvas.style.display = "none";
   };
 
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-center relative px-5 py-16 mt-12"
+      className={`min-h-screen flex flex-col items-center justify-center relative px-5 py-16 mt-12`}
       style={{ transition: "opacity 1s ease-in-out", opacity: fadeOut ? 0 : 1 }}
     >
       <div
         className="absolute inset-0 bg-cover bg-center blur-lg"
         style={{ backgroundImage: "url('/assets/bg5.png')" }}
       ></div>
-
-      <h1 className="font-fanwood text-4xl text-darkblue mb-4 z-10 relative">
+      <h1 className="font-fanwood text-3xl sm:text-4xl text-darkblue mb-4 z-10 relative">
         Clare Analysis Model
       </h1>
-      <p className="font-lato font-light text-base text-darkblue text-center max-w-3xl mb-6 z-10 relative">
+      <p className="font-lato font-light italic text-sm sm:text-base text-gray-500 text-center max-w-3xl mb-6 z-10 relative">
         Our Clare Analysis Model utilizes cutting-edge AI technology to analyze
         your skin and generate a detailed report with personalized insights.
       </p>
@@ -110,7 +111,8 @@ export default function CameraCapture() {
         <video
           ref={videoRef}
           autoPlay
-          className={`transform scale-x-[-1] w-full h-[350px] max-w-md rounded-3xl shadow-lg object-cover`}
+          className={`transform scale-x-[-1] w-full h-[350px] sm:h-[400px] max-w-md rounded-3xl shadow-lg object-cover ${captured ? "hidden" : "block"}`}
+      
         />
         <canvas
           ref={canvasRef}
@@ -194,7 +196,7 @@ export default function CameraCapture() {
         ) : (
           <button
             onClick={captureImage}
-            className="font-lato text-lg font-light bg-[#003366] text-white py-3 px-12 rounded-full transition-all duration-300 hover:bg-[#ADD8E6] hover:text-darkblue mt-8 z-10 relative"
+            className="font-lato text-sm sm:text-lg font-light bg-[#14213D] text-white py-3 px-12 rounded-full transition-colors duration-300 hover:opacity-80 mt-8 z-10 relative"
           >
             Capture Image
           </button>
