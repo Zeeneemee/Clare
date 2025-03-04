@@ -3,27 +3,27 @@ import { useState, useEffect } from "react";
 import NavBar from "./components/NavBar";
 import HeroSection from "./components/HeroSection";
 import AboutUs from "./components/AboutUs";
-import SkinProfileInfo from "./components/SkinProfileInfo";
+import SkinProfileInfo from "./page/SkinProfileInfo";
 import BehindTechInfo from "./components/BehindTechInfo";
 import OurProducts from "./components/OurProducts";
-import LoadingScreen from "./components/LoadingScreen";
-import CameraCapture from "./components/CameraCapture";
-import SkinAnalysisResult from "./components/SkinAnalysisResult";
-import ProductPage from "./components/ProductPage";
-import SkinAnalysisLanding from "./components/SkinAnalysisLanding";
-import Routine from "./components/SkincareroutinePage";
-import Signup from "./components/SignupPage";
-import Terms from "./components/TermsPage";
-import PrivacyPolicy from "./components/Privacy";
-import ContactUs from "./components/ContactUs"; // Imported ContactUs component
+import LoadingScreen from "./components/ui/LoadingScreen";
+import CameraCapture from "./page/CameraCapture";
+import SkinAnalysisResult from "./page/SkinAnalysisResult";
+import ProductPage from "./page/ProductPage";
+import SkinAnalysisLanding from "./page/SkinAnalysisLanding";
+import Routine from "./page/SkincareroutinePage";
+import Signup from "./page/SignupPage";
+import Terms from "./page/TermsPage";
+import PrivacyPolicy from "./page/Privacy";
+import ContactUs from "./page/ContactUs"; // Imported ContactUs component
 
 // Importing individual product pages
-import MoisturiserMen from "./components/productpages/MoisturiserMen";
-import NightRevitaliserMen from "./components/productpages/NightRevitaliserMen";
-import HandCream from "./components/productpages/HandCream";
-import SkincareSet from "./components/productpages/SkincareSet";
-import DayCream from "./components/productpages/DayCream";
-import NightSerum from "./components/productpages/NightSerum";
+import MoisturiserMen from "./page/productpages/MoisturiserMen";
+import NightRevitaliserMen from "./page/productpages/NightRevitaliserMen";
+import HandCream from "./page/productpages/HandCream";
+import SkincareSet from "./page/productpages/SkincareSet";
+import DayCream from "./page/productpages/DayCream";
+import NightSerum from "./page/productpages/NightSerum";
 
 export default function App() {
   const [scrollY, setScrollY] = useState(0);
