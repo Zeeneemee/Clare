@@ -2,7 +2,20 @@ import base64
 import sys
 import json
 import os
-from acne.acne import acne_detection  
+import io
+from PIL import Image
+from acne.acne import acne_detection  # Import ML model
+
+# ✅ Define the upload directory & results folder
+BASE_UPLOAD_DIR = "/Users/tt/Documents/Coding/Claire/backend/uploads/"
+ACNE_RESULT_DIR = os.path.join(BASE_UPLOAD_DIR, "acne_result")
+
+def decode_base64_image(base64_string, output_path):
+    """Decodes a Base64-encoded image and saves it as a temporary file."""
+    image_data = base64.b64decode(base64_string)
+    image = Image.open(io.BytesIO(image_data))
+    image.save(output_path, format="JPEG")  # ✅ Ensure JPEG format
+    return output_path
 
 def encode_image(file_path):
     """Convert an image to Base64 for frontend display."""
@@ -18,31 +31,29 @@ def compute_score(confidences):
 
 if __name__ == "__main__":
     try:
-        # ✅ Ensure valid file path argument
+        # ✅ Ensure valid input argument
         if len(sys.argv) < 2:
-            print(json.dumps({"error": "No file path provided"}))
+            print(json.dumps({"error": "No image data provided"}))
             sys.exit(1)
 
-        file_path = sys.argv[1]
-        base_upload_dir = "/Users/tt/Documents/Coding/Claire/backend/uploads/"
-        acne_result_dir = os.path.join(base_upload_dir, "acne_result")  # ✅ Always use this fixed folder
+        base64_image = sys.argv[1]
+        temp_image_path = os.path.join(BASE_UPLOAD_DIR, "temp_image.jpg")  # ✅ Temporary image file
 
-        # ✅ Validate file existence
-        if not os.path.exists(file_path):
-            print(json.dumps({"error": f"File not found: {file_path}"}))
-            sys.exit(1)
+        # ✅ Decode and save Base64 image
+        decode_base64_image(base64_image, temp_image_path)
 
         # ✅ Run acne detection
-        results_acne = acne_detection(file_path, base_upload_dir)
+        results_acne = acne_detection(temp_image_path, BASE_UPLOAD_DIR)
 
         # ✅ Find processed acne result image
         processed_image_path = None
-        if os.path.exists(acne_result_dir):  # ✅ Only check `acne_result`
-            for file in os.listdir(acne_result_dir):
-                if file.endswith(".jpg") or file.endswith(".png"):  # Look for an image
-                    processed_image_path = os.path.join(acne_result_dir, file)
+        if os.path.exists(ACNE_RESULT_DIR):
+            for file in os.listdir(ACNE_RESULT_DIR):
+                if file.endswith(".jpg") or file.endswith(".png"):  # ✅ Get first image
+                    processed_image_path = os.path.join(ACNE_RESULT_DIR, file)
                     break
 
+        # ✅ Convert processed image to Base64 (if found)
         encoded_image = encode_image(processed_image_path) if processed_image_path else None
 
         # ✅ Default Values for Other Features
@@ -69,7 +80,11 @@ if __name__ == "__main__":
             "gender": "Not Detected"
         }
 
-        # ✅ Ensure only JSON is printed
+        # ✅ Cleanup temporary image file
+        if os.path.exists(temp_image_path):
+            os.remove(temp_image_path)
+
+        # ✅ Print JSON output (ensuring it's the only output)
         sys.stdout.flush()
         print(json.dumps(combined_result))
 

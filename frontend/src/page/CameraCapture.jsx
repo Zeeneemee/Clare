@@ -11,7 +11,6 @@ export default function CameraCapture() {
   const [isRetaking, setIsRetaking] = useState(false);
   const [showConsent, setShowConsent] = useState(true); // Show consent first
   const [consentGiven, setConsentGiven] = useState(false);
-  const [bioMetrics,setBioMetrics] = useState([])
  
   const navigate = useNavigate();
 
@@ -24,15 +23,25 @@ export default function CameraCapture() {
       setShowConsent(false); // Hide consent if accepted before
     }
 
-    navigator.mediaDevices
-      .getUserMedia({ video: true })
-      .then((stream) => {
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
-      })
-      .catch((err) => console.error("Camera access denied:", err));
-  }, [captured]);
+   let streamRef = null;
+   
+  if (!showConsent){navigator.mediaDevices
+    .getUserMedia({ video: true })
+    .then((stream) => {
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+      streamRef = stream; // Store stream reference
+    })
+    .catch((err) => console.error("Camera access denied:", err));
+
+  // ✅ Cleanup: Stop camera when component unmounts
+  return () => {
+    if (streamRef) {
+      streamRef.getTracks().forEach((track) => track.stop()); // Stop all tracks
+    }
+  }};
+  }, [showConsent]);
 
   const handleConsent = () => {
     localStorage.setItem("termsAccepted", "true"); // Store acceptance
@@ -106,9 +115,6 @@ export default function CameraCapture() {
           localStorage.setItem("darkspotScore", result.darkspot.darkspotScore);
           localStorage.setItem("age", result.age);
           localStorage.setItem("gender", result.gender);
-  
-          // ✅ Update State & Navigate
-          setBioMetrics(result);
           navigate("/result");
   
         } catch (error) {

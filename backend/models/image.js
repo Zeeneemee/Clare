@@ -4,7 +4,6 @@ const { Schema } = mongoose;
 
 const imageProcessingSchema = new Schema({
   imageId: { type: String, required: true }, // Unique identifier for image
-  filePath: { type: String, required: true }, // Path to stored file
   processed: { type: Boolean, default: false }, // Processing status
   processedAt: { type: Date }, // Timestamp for processing completion
   resultData: {

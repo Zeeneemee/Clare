@@ -1,41 +1,37 @@
 const { exec } = require("child_process");
-
+const path = require("path");
 // ✅ Define image path
-const filePath = "/Users/tt/Documents/Coding/Claire/backend/uploads/latest-image.jpg";
+const filePath = path.join(__dirname,'uploads','pun.jpg');
 
 // ✅ Execute Python script
-exec(`python3 /Users/tt/Documents/Coding/Claire/backend/ml/master.py ${filePath}`, (error, stdout, stderr) => {
-    console.log("🚀 Running Python script...");
+const { spawn } = require("child_process");
 
-    // ✅ Capture execution errors
-    if (error) {
-        console.error("❌ Error executing Python script:", error);
-        return;
-    }
+const pythonProcess = spawn("python3", ["/Users/tt/Documents/Coding/Claire/backend/ml/master.py", filePath]);
 
-    // ✅ Capture Python errors
-    if (stderr) {
-        console.error("🐍 Python stderr:", stderr);
-    }
+let stdoutData = "";
+pythonProcess.stdout.on("data", (data) => {
+    stdoutData += data.toString();
+});
 
-    // ✅ Log full output from Python
-    console.log("📝 Raw Python stdout:", stdout);
+pythonProcess.stderr.on("data", (data) => {
+    console.error("🐍 Python stderr:", data.toString());
+});
 
-    // ✅ Extract JSON from output
-    let jsonStart = stdout.indexOf("{");
-    let jsonEnd = stdout.lastIndexOf("}");
+pythonProcess.on("close", (code) => {
+    console.log("✅ Python process exited with code:", code);
+
+    let jsonStart = stdoutData.indexOf("{");
+    let jsonEnd = stdoutData.lastIndexOf("}");
 
     if (jsonStart === -1 || jsonEnd === -1) {
         console.error("❌ No valid JSON found in Python response");
         return;
     }
 
-    let jsonString = stdout.substring(jsonStart, jsonEnd + 1).trim();
+    let jsonString = stdoutData.substring(jsonStart, jsonEnd + 1).trim();
 
-    // ✅ Parse JSON safely
-    let pythonResponse;
     try {
-        pythonResponse = JSON.parse(jsonString);
+        let pythonResponse = JSON.parse(jsonString);
         console.log("✅ Parsed Python Response:", JSON.stringify(pythonResponse, null, 2));
     } catch (parseError) {
         console.error("❌ Error parsing Python response:", parseError);
