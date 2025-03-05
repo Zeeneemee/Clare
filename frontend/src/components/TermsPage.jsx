@@ -1,8 +1,14 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function PrivacyPolicy() {
+export default function TermsPage({ scrollY = 0 }) {
   const navigate = useNavigate();
+  const [fadeIn, setFadeIn] = useState(0);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setFadeIn(1), 100); // Apply fade-in effect after 100ms
+    return () => clearTimeout(timer);
+  }, []); // Ensures it only runs on mount
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 mt-[150px]">
