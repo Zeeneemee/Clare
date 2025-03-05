@@ -5,13 +5,17 @@ import os
 import io
 from PIL import Image
 from acne.acne import acne_detection  # Import ML model
+from gender.gender import Gender  # Import Gender model
+from undereye.underEye import Predict_underEye  # Import Under-eye model
 
-# ✅ Define the upload directory & results folder
+# ✅ Define directories
 BASE_UPLOAD_DIR = "/Users/tt/Documents/Coding/Claire/backend/uploads/"
 ACNE_RESULT_DIR = os.path.join(BASE_UPLOAD_DIR, "acne_result")
+GENDER_RESULT_DIR = os.path.join(BASE_UPLOAD_DIR, "gender_result")
+UNDEREYE_RESULT_DIR = os.path.join(BASE_UPLOAD_DIR, "undereye_result")
 
 def decode_base64_image(base64_string, output_path):
-    """Decodes a Base64-encoded image and saves it as a temporary file."""
+    """Decodes a Base64-encoded image and saves it as a file."""
     image_data = base64.b64decode(base64_string)
     image = Image.open(io.BytesIO(image_data))
     image.save(output_path, format="JPEG")  # ✅ Ensure JPEG format
@@ -27,7 +31,7 @@ def encode_image(file_path):
 def compute_score(confidences):
     """Compute the average confidence score safely."""
     valid_confidences = [c for c in confidences if c > 0.1]
-    return sum(valid_confidences) / len(valid_confidences) if valid_confidences else 0.0
+    return (sum(valid_confidences) / len(valid_confidences)) * 100 if valid_confidences else 0.0
 
 if __name__ == "__main__":
     try:
@@ -36,25 +40,46 @@ if __name__ == "__main__":
             print(json.dumps({"error": "No image data provided"}))
             sys.exit(1)
 
-        base64_image = sys.argv[1]
-        temp_image_path = os.path.join(BASE_UPLOAD_DIR, "temp_image.jpg")  # ✅ Temporary image file
+        input_data = sys.argv[1]  # Could be a file path or a Base64 string
 
-        # ✅ Decode and save Base64 image
-        decode_base64_image(base64_image, temp_image_path)
+        # ✅ Check if input is a file path or Base64 string
+        if os.path.exists(input_data):  
+            temp_image_path = input_data  # Use file path directly
+        else:
+            # ✅ Decode Base64 to temporary image file
+            temp_image_path = os.path.join(BASE_UPLOAD_DIR, "temp_image.jpg")
+            decode_base64_image(input_data, temp_image_path)
 
         # ✅ Run acne detection
         results_acne = acne_detection(temp_image_path, BASE_UPLOAD_DIR)
+        
+        # ✅ Run gender detection
+        result_gender = Gender(temp_image_path, BASE_UPLOAD_DIR)
+        detected_gender = result_gender
 
-        # ✅ Find processed acne result image
-        processed_image_path = None
-        if os.path.exists(ACNE_RESULT_DIR):
-            for file in os.listdir(ACNE_RESULT_DIR):
-                if file.endswith(".jpg") or file.endswith(".png"):  # ✅ Get first image
-                    processed_image_path = os.path.join(ACNE_RESULT_DIR, file)
-                    break
+        # ✅ Run under-eye detection
+        undereye_results = Predict_underEye(temp_image_path, UNDEREYE_RESULT_DIR)
 
-        # ✅ Convert processed image to Base64 (if found)
-        encoded_image = encode_image(processed_image_path) if processed_image_path else None
+        # Extract under-eye score and result image
+        dark_circle_score = undereye_results[0]["dark_circle_score"] if undereye_results else 0.0
+        dark_circle_label = undereye_results[0]["label"] if undereye_results else "Not Detected"
+
+        # ✅ Find processed images
+        def find_processed_image(directory):
+            if os.path.exists(directory):
+                for file in os.listdir(directory):
+                    if file.endswith(".jpg") or file.endswith(".png"):
+                        return os.path.join(directory, file)
+            return None
+
+        processed_acne_image_path = find_processed_image(ACNE_RESULT_DIR)
+        processed_gender_image_path = find_processed_image(GENDER_RESULT_DIR)
+        processed_undereye_image_path = find_processed_image(UNDEREYE_RESULT_DIR)
+
+        # ✅ Convert processed images to Base64
+        encoded_acne_image = encode_image(processed_acne_image_path) if processed_acne_image_path else None
+        encoded_gender_image = encode_image(processed_gender_image_path) if processed_gender_image_path else None
+        encoded_undereye_image = encode_image(processed_undereye_image_path) if processed_undereye_image_path else None
 
         # ✅ Default Values for Other Features
         default_detection = {
@@ -67,24 +92,31 @@ if __name__ == "__main__":
         # ✅ Construct JSON output
         combined_result = {
             "acne": {
-                "ResultImage": f"data:image/jpeg;base64,{encoded_image}" if encoded_image else None,
+                "ResultImage": f"data:image/jpeg;base64,{encoded_acne_image}" if encoded_acne_image else None,
                 "positions": results_acne.get("positions", []),
                 "confidence": results_acne.get("confidence", []),
                 "score": compute_score(results_acne.get("confidence", []))
             },
             "wrinkles": default_detection,
             "scar": default_detection,
-            "undereye": default_detection,
+            "undereye": {
+                "ResultImage": f"data:image/jpeg;base64,{encoded_undereye_image}" if encoded_undereye_image else None,
+                "score": dark_circle_score,
+                "label": dark_circle_label
+            },
             "darkspot": default_detection,
             "age": "Not Detected",
-            "gender": "Not Detected"
+            "gender": {
+                "label": detected_gender,
+                "ResultImage": f"data:image/jpeg;base64,{encoded_gender_image}" if encoded_gender_image else None
+            }
         }
 
-        # ✅ Cleanup temporary image file
-        if os.path.exists(temp_image_path):
+        # ✅ Cleanup only if we created a temp file
+        if not os.path.exists(input_data) and os.path.exists(temp_image_path):
             os.remove(temp_image_path)
 
-        # ✅ Print JSON output (ensuring it's the only output)
+        # ✅ Print JSON output
         sys.stdout.flush()
         print(json.dumps(combined_result))
 

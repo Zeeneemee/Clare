@@ -29,9 +29,8 @@ const imageProcessingSchema = new Schema({
       },
       undereye: {
         ResultImage: { type: String },
-        positions: [{ x: Number, y: Number, width: Number, height: Number }],
         score: { type: Number, default: 0 },
-        confidence: [{ type: Number, default: 0 }]
+        label: {type: String}
       },
       darkspot: {
         ResultImage: { type: String },

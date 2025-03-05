@@ -86,10 +86,13 @@ app.post("/upload", upload.single("image"), async (req, res) => {
                         "resultData.analysis.acne.score": pythonResponse.acne?.score || 0,
                         "resultData.analysis.wrinkles": pythonResponse.wrinkles || { ResultImage: null, positions: [], score: 0 },
                         "resultData.analysis.scar": pythonResponse.scar || { ResultImage: null, positions: [], score: 0 },
-                        "resultData.analysis.undereye": pythonResponse.undereye || { ResultImage: null, positions: [], score: 0 },
+                        "resultData.analysis.undereye.score": pythonResponse.undereye.score || { ResultImage: null, positions: [], score: 0 },
+                        "resultData.analysis.undereye.ResultImage": pythonResponse.undereye.ResultImage || { ResultImage: null, positions: [], score: 0 },
+                        "resultData.analysis.undereye.label": pythonResponse.undereye.label || { ResultImage: null, positions: [], score: 0 },
+
                         "resultData.analysis.darkspot": pythonResponse.darkspot || { ResultImage: null, positions: [], score: 0 },
                         "resultData.analysis.age": pythonResponse.age || "Not Detected",
-                        "resultData.analysis.gender": pythonResponse.gender || "Not Detected"
+                        "resultData.analysis.gender": pythonResponse.gender?.label || "Not Detected"
                     },
                     { new: true }
                 );
@@ -116,7 +119,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
                     },
                     undereye: {
                         undereyeImage: updatedImage.resultData.analysis.undereye.ResultImage,
-                        undereyePosition: updatedImage.resultData.analysis.undereye.positions,
+                        undereyeLabel: updatedImage.resultData.analysis.undereye.label,
                         undereyeScore: updatedImage.resultData.analysis.undereye.score,
                     },
                     darkspot: {

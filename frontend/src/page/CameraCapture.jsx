@@ -111,6 +111,8 @@ export default function CameraCapture() {
           localStorage.setItem("scarScore", result.scar.scarScore);
           localStorage.setItem("undereyeImage", result.undereye.undereyeImage);
           localStorage.setItem("undereyeScore", result.undereye.undereyeScore);
+          localStorage.setItem("undereyeLabel", result.undereye.undereyeLabel);
+
           localStorage.setItem("darkspotImage", result.darkspot.darkspotImage);
           localStorage.setItem("darkspotScore", result.darkspot.darkspotScore);
           localStorage.setItem("age", result.age);

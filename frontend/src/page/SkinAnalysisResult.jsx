@@ -137,7 +137,7 @@ export default function SkinAnalysisResult() {
 
             {/* Center Image Column */}
             <div className="mx-8">
-              <div className="relative">
+              <div className="relative flex">
                 <img
                   src={bioMetrics.processedImage}
                   alt="Skin analysis"
@@ -147,6 +147,7 @@ export default function SkinAnalysisResult() {
                   Skin Age: {bioMetrics.age || "Not Detected"}
                 </div>
               </div>
+              
             </div>
 
             {/* Right Metrics Column */}

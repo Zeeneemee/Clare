@@ -15,11 +15,31 @@ def calculate_brightness(region, image_rgb):
     gray_region = cv2.cvtColor(region_img, cv2.COLOR_RGB2GRAY)  # Convert to grayscale
     return np.mean(gray_region)  # Return the average brightness
 
+# Function to calculate the dark circle score based on brightness difference
+def calculate_dark_circle_score(brightness_diff):
+    # Map brightness difference to a score between 1 and 10
+    score = np.clip((brightness_diff - 10) / 10 + 5, 1, 10)
+
+    # Define score labels based on the score
+    if score <= 2:
+        label = "Minimal"
+    elif score <= 5:
+        label = "Moderate"
+    elif score <= 8:
+        label = "Significant"
+    else:
+        label = "Severe"
+
+    return score, label
+
 # Function to process the image and calculate dark circle score
-def process_image(image_path):
+def Predict_underEye(image_path, output_dir="undereye_result"):
     # Validate image path
     if not os.path.exists(image_path):
         raise FileNotFoundError(f"Image not found at {image_path}")
+
+    # Create output directory if it does not exist
+    os.makedirs(output_dir, exist_ok=True)
 
     # Load the image
     image = cv2.imread(image_path)
@@ -27,13 +47,15 @@ def process_image(image_path):
 
     # Initialize dlib's face detector and shape predictor
     face_detector = dlib.get_frontal_face_detector()
-    shape_predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+    shape_predictor = dlib.shape_predictor("/Users/tt/Documents/Coding/Claire/backend/ml/undereye/shape_predictor_68_face_landmarks.dat")
 
     # Detect faces in the image
     detected_faces = face_detector(image_rgb, 1)
 
     if len(detected_faces) == 0:
         raise ValueError("No faces detected in the image.")
+
+    results = []
 
     # Loop through all detected faces and process each one
     for i, face in enumerate(detected_faces):
@@ -72,12 +94,12 @@ def process_image(image_path):
         # Calculate the dark circle score
         score, score_label = calculate_dark_circle_score(brightness_diff)
 
-        # Print brightness values and score
-        print(f"Face {i+1}:")
-        print(f"  Average Face Brightness: {avg_face_brightness}")
-        print(f"  Average Under-eye Brightness: {avg_under_eye_brightness}")
-        print(f"  Brightness Difference: {brightness_diff}")
-        print(f"  Dark Circle Score: {score:.2f} ({score_label})")
+        # Store the result
+        results.append({
+            "face_index": i+1,
+            "dark_circle_score": round(score, 2),
+            "label": score_label
+        })
 
         # Visualization with rectangles
         fig, ax = plt.subplots(figsize=(10, 10))
@@ -95,30 +117,24 @@ def process_image(image_path):
             rect = plt.Rectangle((x, y), w, h, linewidth=2, edgecolor='green', facecolor='none')
             ax.add_patch(rect)
 
-        # Add title and show the plot
+        # Add title
         plt.title(f"Face {i+1} Dark Circle Score: {score:.2f} ({score_label})")
         plt.axis("off")
-        plt.show()
 
+        # Save the annotated image
+        output_path = os.path.join(output_dir, f"darkcircle_result_face_{i+1}.png")
+        plt.savefig(output_path, bbox_inches="tight", pad_inches=0.1)
+        plt.close()
 
-# Function to calculate the dark circle score based on brightness difference
-def calculate_dark_circle_score(brightness_diff):
-    # Map the brightness difference to a score between 1 and 10
-    score = np.clip((brightness_diff - 10) / 10 + 5, 1, 10)
+        print(f"Saved result image for Face {i+1} at {output_path}")
 
-    # Define score labels based on the score
-    if score <= 2:
-        label = "Minimal"
-    elif score <= 5:
-        label = "Moderate"
-    elif score <= 8:
-        label = "Significant"
-    else:
-        label = "Severe"
-
-    return score, label
+    return results
 
 
 # Example usage
-image_path = "sample_imageex.jpg"  # Replace with your image path
-process_image(image_path)
+image_path = "/Users/tt/Documents/Coding/Claire/backend/uploads/65b8af6fd81c2eb031fb59e3_IMG_1938 (1)-p-500.jpg"  # Replace with your image path
+results = Predict_underEye(image_path)
+
+# Print the results
+for result in results:
+    print(f"Face {result['face_index']}: Dark Circle Score = {result['dark_circle_score']} ({result['label']})")
