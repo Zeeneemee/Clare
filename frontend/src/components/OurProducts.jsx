@@ -45,11 +45,11 @@ const OurProducts = () => {
 
   return (
     <section
-      className={`bg-white text-black px-5 pb-5 text-center ${
+      className={`bg-white text-black py-[50px] px-5 text-center ${
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-[30px]"
       } transition-all duration-[0.4s] ease-in-out relative md:top-0`}
       ref={sectionRef}
-     
+      style={{ top: "-40px" }}
     >
       <h2
         className={`font-fanwood text-3xl md:text-4xl text-darkblue mb-10 mt-[-40px] md:mt-[-10px] ${

@@ -62,7 +62,7 @@ const HandCream = () => {
             <h1 className="font-fanwood text-2xl md:text-3xl text-darkblue mb-2 md:mb-4 font-normal">
               CUTISTEM™ Hand Cream
             </h1>
-            <p className="font-lato text-xl md:text-2xl text-gray-700">$15.90</p>
+            <p className="font-lato font-light text-lg md:text-xl text-gray-500">$15.90</p>
           </div>
 
           <div className="space-y-5 md:space-y-6">

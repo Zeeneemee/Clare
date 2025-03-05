@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import LoadingScreen from "./LoadingScreen";
-
 
 export default function SkinAnalysisResult() {
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom"; // Ensure links work
-import products from "../list/product"
+import { Link } from "react-router-dom";
+import products from "../lib/product";
 
 const ProductPage = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -82,7 +82,7 @@ const ProductPage = () => {
                   <p className="hidden md:block font-lato font-light text-darkblue text-sm leading-6 mb-2.5">
                     {product.description}
                   </p>
-                  <p className="font-lato font-medium text-gray-500 text-sm">
+                  <p className="font-lato font-light text-gray-500 text-sm">
                     {product.price}
                   </p>
                 </div>
