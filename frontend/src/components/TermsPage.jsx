@@ -12,39 +12,114 @@ export default function TermsPage({ scrollY = 0 }) {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 mt-[150px]">
-      <h1 className="text-4xl font-fanwood text-center text-darkblue mb-6">
+      <h1
+        className="text-4xl font-fanwood text-center text-darkblue mb-6"
+        style={{ opacity: fadeIn, transition: "opacity 1s ease-in-out" }}
+      >
         Terms of Service
       </h1>
-      <p className="text-center font-lato font-light text-gray-600 mb-8">
+      <p
+        className="text-center font-lato font-light text-gray-600 mb-8"
+        style={{ opacity: fadeIn, transition: "opacity 1s ease-in-out" }}
+      >
         Effective Date: 5 May 2025
       </p>
 
       <div className="space-y-12">
         {/* 1. Introduction & Acceptance */}
         <section>
-          <h2 className="font-lato text-xl md:text-xl text-left text-darkblue mb-4 font-normal mt-20">1. Introduction & Acceptance</h2>
-          <p className="font-lato font-light text-gray-600 leading-relaxed">
-          This agreement outlines the terms and conditions for using the services provided by Clare, a company specializing in AI-powered skin analysis and personalized skincare recommendations. By accessing or using Clare’s Platform, you are entering into a legally binding agreement with Clare. This agreement governs your use of Clare’s Platform, the AI-powered skin analysis services, and any related features provided through the Platform. It is important that you carefully read and understand these Terms before using Clare’s services, as they affect your legal rights and obligations. Clare reserves the right to modify or update these Terms from time to time, and it is your responsibility to check for any changes. If you do not agree with any part of these Terms, you should immediately stop using Clare’s services.
+          <h2
+            className="font-lato text-xl md:text-xl text-left text-darkblue mb-4 font-normal mt-20"
+            style={{ opacity: fadeIn, transition: "opacity 1s ease-in-out" }}
+          >
+            1. Introduction & Acceptance
+          </h2>
+          <p
+            className="font-lato font-light text-gray-600 leading-relaxed"
+            style={{ opacity: fadeIn, transition: "opacity 1s ease-in-out" }}
+          >
+            This agreement outlines the terms and conditions for using the services
+            provided by Clare, a company specializing in AI-powered skin analysis
+            and personalized skincare recommendations. By accessing or using Clare’s
+            Platform, you are entering into a legally binding agreement with Clare.
+            This agreement governs your use of Clare’s Platform, the AI-powered skin
+            analysis services, and any related features provided through the Platform.
+            It is important that you carefully read and understand these Terms before
+            using Clare’s services, as they affect your legal rights and obligations.
+            Clare reserves the right to modify or update these Terms from time to
+            time, and it is your responsibility to check for any changes. If you do
+            not agree with any part of these Terms, you should immediately stop using
+            Clare’s services.
           </p>
 
           <div className="mt-6">
-            <h3 className="font-lato text-xl text-darkblue font-medium mb-3">1.1 Effective Date</h3>
-            <p className="font-lato font-light text-gray-600 leading-relaxed">
-            The effective date of these Terms is March 2025. By accessing or using Clare's platform and services, you agree to be bound by the terms outlined in this agreement, starting from this date. These Terms supersede and replace any prior agreements or versions of terms that may have applied to your use of the Services. Clare reserves the right to update, modify, or amend these Terms at any time, and any changes will be posted on the Platform. The updated Terms will be effective once they are made available on the Platform, and continued use of the Services constitutes acceptance of the revised Terms. If you do not agree with the updated Terms, you are required to cease using Clare’s Platform and Services immediately.
+            <h3
+              className="font-lato text-xl text-darkblue font-medium mb-3"
+              style={{ opacity: fadeIn, transition: "opacity 1s ease-in-out" }}
+            >
+              1.1 Effective Date
+            </h3>
+            <p
+              className="font-lato font-light text-gray-600 leading-relaxed"
+              style={{ opacity: fadeIn, transition: "opacity 1s ease-in-out" }}
+            >
+              The effective date of these Terms is March 2025. By accessing or using
+              Clare's platform and services, you agree to be bound by the terms outlined
+              in this agreement, starting from this date. These Terms supersede and
+              replace any prior agreements or versions of terms that may have applied
+              to your use of the Services. Clare reserves the right to update, modify,
+              or amend these Terms at any time, and any changes will be posted on the
+              Platform. The updated Terms will be effective once they are made available
+              on the Platform, and continued use of the Services constitutes acceptance
+              of the revised Terms. If you do not agree with the updated Terms, you are
+              required to cease using Clare’s Platform and Services immediately.
             </p>
           </div>
 
           <div className="mt-6">
-            <h3 className="font-lato text-xl text-darkblue font-medium mb-3">1.2 Parties</h3>
-            <p className="font-lato font-light text-gray-600 leading-relaxed">
-            This agreement is made between Clare, a company providing AI-powered skin analysis and skincare services, and you, the User. By using Clare’s platform, you acknowledge and agree that these Terms form a binding legal agreement between you and Clare. If you are accessing the Platform on behalf of an organization, you confirm that you have the legal authority to enter into these Terms on behalf of that organization. In such instances, the term "you" refers to the organization, and you, personally, guarantee that the organization will adhere to and comply with these Terms. Should the organization fail to comply with these Terms, you, as the individual representative, will be held accountable for the breach.
+            <h3
+              className="font-lato text-xl text-darkblue font-medium mb-3"
+              style={{ opacity: fadeIn, transition: "opacity 1s ease-in-out" }}
+            >
+              1.2 Parties
+            </h3>
+            <p
+              className="font-lato font-light text-gray-600 leading-relaxed"
+              style={{ opacity: fadeIn, transition: "opacity 1s ease-in-out" }}
+            >
+              This agreement is made between Clare, a company providing AI-powered
+              skin analysis and skincare services, and you, the User. By using Clare’s
+              platform, you acknowledge and agree that these Terms form a binding legal
+              agreement between you and Clare. If you are accessing the Platform on
+              behalf of an organization, you confirm that you have the legal authority
+              to enter into these Terms on behalf of that organization. In such instances,
+              the term "you" refers to the organization, and you, personally, guarantee
+              that the organization will adhere to and comply with these Terms. Should
+              the organization fail to comply with these Terms, you, as the individual
+              representative, will be held accountable for the breach.
             </p>
           </div>
 
           <div className="mt-6">
-            <h3 className="font-lato text-xl text-darkblue font-medium mb-3">1.3 Binding Agreement</h3>
-            <p className="font-lato font-light text-gray-600 leading-relaxed">
-            By clicking "Start," "Agree," or taking any similar action to use Clare’s Platform, or by accessing any of the Services offered, you indicate your acceptance of these Terms. This action constitutes a legal agreement between you and Clare. If you do not agree to any part of these Terms, you must discontinue use of the Platform immediately. Clare reserves the right to amend these Terms at any time, and by continuing to use the Services, you consent to be bound by the updated Terms. You acknowledge that it is your responsibility to review these Terms periodically to stay informed of any changes that may occur.
+            <h3
+              className="font-lato text-xl text-darkblue font-medium mb-3"
+              style={{ opacity: fadeIn, transition: "opacity 1s ease-in-out" }}
+            >
+              1.3 Binding Agreement
+            </h3>
+            <p
+              className="font-lato font-light text-gray-600 leading-relaxed"
+              style={{ opacity: fadeIn, transition: "opacity 1s ease-in-out" }}
+            >
+              By clicking "Start," "Agree," or taking any similar action to use
+              Clare’s Platform, or by accessing any of the Services offered, you indicate
+              your acceptance of these Terms. This action constitutes a legal agreement
+              between you and Clare. If you do not agree to any part of these Terms, you
+              must discontinue use of the Platform immediately. Clare reserves the right
+              to amend these Terms at any time, and by continuing to use the Services,
+              you consent to be bound by the updated Terms. You acknowledge that it is
+              your responsibility to review these Terms periodically to stay informed of
+              any changes that may occur.
             </p>
           </div>
         </section>

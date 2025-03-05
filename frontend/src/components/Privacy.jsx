@@ -10,100 +10,179 @@ export default function PrivacyPolicy({ scrollY = 0 }) {
     return () => clearTimeout(timer);
   }, []); // Ensures it only runs on mount
 
-
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 mt-[150px]">
-      <h1 className="text-4xl font-fanwood text-center text-darkblue mb-6">
+      <h1
+        className="text-4xl font-fanwood text-center text-darkblue mb-6 transition-opacity duration-1000 ease-in-out"
+        style={{ opacity: fadeIn }}
+      >
         Privacy Policy
       </h1>
-      <p className="text-center font-lato font-light text-gray-600 mb-8">
+      <p
+        className="text-center font-lato font-light text-gray-600 mb-8 transition-opacity duration-1000 ease-in-out"
+        style={{ opacity: fadeIn }}
+      >
         Effective Date: 5 May 2025
       </p>
 
       <div className="space-y-12">
         {/* Title Section */}
         <section className="space-y-4">
-          <h1 className="font-lato text-xl md:text-xl text-left text-darkblue mb-4 font-normal mt-20">Privacy Policy</h1>
-          <p className="font-lato font-light text-gray-600 leading-relaxed">
-          At Clare, we prioritize the privacy of our users and are deeply committed to maintaining the safety and security of the personal information you share with us. This Privacy Policy explains the various types of personal data we collect, how we use it, and the measures we take to protect your privacy when you interact with our platform. By using Clare’s services, you are consenting to the collection, use, and disclosure of your information as described in this policy.
+          <h1
+            className="font-lato text-xl md:text-xl text-left text-darkblue mb-4 font-normal mt-20 transition-opacity duration-1000 ease-in-out"
+            style={{ opacity: fadeIn }}
+          >
+            Privacy Policy
+          </h1>
+          <p
+            className="font-lato font-light text-gray-600 leading-relaxed transition-opacity duration-1000 ease-in-out"
+            style={{ opacity: fadeIn }}
+          >
+            At Clare, we prioritize the privacy of our users and are deeply committed to maintaining the safety and security of the personal information you share with us. This Privacy Policy explains the various types of personal data we collect, how we use it, and the measures we take to protect your privacy when you interact with our platform. By using Clare’s services, you are consenting to the collection, use, and disclosure of your information as described in this policy.
           </p>
-          <p className="font-lato font-light text-gray-600 leading-relaxed">
-          This policy applies to all users who access or use Clare’s services, whether through our website, mobile application, or other digital interfaces. We encourage you to thoroughly read and understand this policy so you can be fully informed about how we handle your data and your rights related to your personal information.
+          <p
+            className="font-lato font-light text-gray-600 leading-relaxed transition-opacity duration-1000 ease-in-out"
+            style={{ opacity: fadeIn }}
+          >
+            This policy applies to all users who access or use Clare’s services, whether through our website, mobile application, or other digital interfaces. We encourage you to thoroughly read and understand this policy so you can be fully informed about how we handle your data and your rights related to your personal information.
           </p>
         </section>
 
         {/* 1. Information We Collect */}
         <section>
-          <h2 className="font-lato text-xl mb-5 text-darkblue  font-normal">1. Information We Collect</h2>
-          <p className="font-lato font-light text-gray-600 leading-relaxed mb-6">
-          To provide and enhance our services, Clare collects a variety of personal data from our users. The information we gather helps us to deliver personalized experiences, improve our offerings, and ensure your safety when interacting with our platform. Below are the main categories of data we collect:
+          <h2
+            className="font-lato text-xl mb-5 text-darkblue  font-normal transition-opacity duration-1000 ease-in-out"
+            style={{ opacity: fadeIn }}
+          >
+            1. Information We Collect
+          </h2>
+          <p
+            className="font-lato font-light text-gray-600 leading-relaxed mb-6 transition-opacity duration-1000 ease-in-out"
+            style={{ opacity: fadeIn }}
+          >
+            To provide and enhance our services, Clare collects a variety of personal data from our users. The information we gather helps us to deliver personalized experiences, improve our offerings, and ensure your safety when interacting with our platform. Below are the main categories of data we collect:
           </p>
 
           {/* 1.1 Personal Information */}
           <div className="mb-8">
-            <h3 className="font-lato text-xl text-darkblue  font-medium mb-3">1.1 Personal Information</h3>
-            <p className="font-lato font-light text-gray-600 leading-relaxed">
+            <h3
+              className="font-lato text-xl text-darkblue  font-medium mb-3 transition-opacity duration-1000 ease-in-out"
+              style={{ opacity: fadeIn }}
+            >
+              1.1 Personal Information
+            </h3>
+            <p
+              className="font-lato font-light text-gray-600 leading-relaxed transition-opacity duration-1000 ease-in-out"
+              style={{ opacity: fadeIn }}
+            >
               When you create an account, sign up for our newsletter, or engage with our platform in any way, we collect basic personal information. This may include:
             </p>
-            <div className="font-lato font-light text-gray-600 space-y-2 pl-4">
+            <div
+              className="font-lato font-light text-gray-600 space-y-2 pl-4 transition-opacity duration-1000 ease-in-out"
+              style={{ opacity: fadeIn }}
+            >
               <p>• <strong>Name:</strong> Used to personalize your account and for communication purposes.</p>
               <p>• <strong>Email address:</strong> Needed to communicate important updates, newsletters, and transactional information.</p>
               <p>• <strong>Phone number:</strong> May be used for customer support, security verification, or personalized communication.</p>
               <p>• <strong>Mailing address:</strong> Used for any physical correspondence or, if applicable, product delivery services.</p>
               <p>• <strong>Demographic information:</strong> This could include age, gender, and other traits that help us provide more personalized services or promotional offers.</p>
             </div>
-            <p className="font-lato font-light text-gray-600 leading-relaxed mt-4">
+            <p
+              className="font-lato font-light text-gray-600 leading-relaxed mt-4 transition-opacity duration-1000 ease-in-out"
+              style={{ opacity: fadeIn }}
+            >
               This data is essential for creating your account, providing services, and delivering relevant content. You are not required to provide all information immediately, but doing so enables us to tailor the platform to suit your needs better. By registering and using our services, you agree to the collection and use of this personal data.
             </p>
           </div>
 
           {/* 1.2 Biometric Data */}
           <div className="mb-8">
-            <h3 className="font-lato text-xl text-darkblue  font-medium mb-3">1.2 Biometric Data</h3>
-            <p className="font-lato font-light text-gray-600 leading-relaxed">
+            <h3
+              className="font-lato text-xl text-darkblue  font-medium mb-3 transition-opacity duration-1000 ease-in-out"
+              style={{ opacity: fadeIn }}
+            >
+              1.2 Biometric Data
+            </h3>
+            <p
+              className="font-lato font-light text-gray-600 leading-relaxed transition-opacity duration-1000 ease-in-out"
+              style={{ opacity: fadeIn }}
+            >
               In the course of offering our skin analysis and other health-related services, we may collect biometric data. This data is crucial for providing more precise, customized insights into your skin's health. Biometric data may include:
             </p>
-            <div className="font-lato font-light text-gray-600 space-y-2 pl-4">
+            <div
+              className="font-lato font-light text-gray-600 space-y-2 pl-4 transition-opacity duration-1000 ease-in-out"
+              style={{ opacity: fadeIn }}
+            >
               <p>• <strong>Facial recognition data:</strong> Captured via photos or video feeds, this is used to analyze your skin condition and provide recommendations.</p>
               <p>• <strong>Body measurements:</strong> These could include weight, body fat percentage, and other relevant health indicators, helping to personalize wellness and skincare solutions.</p>
               <p>• <strong>Other relevant body metrics:</strong> Any other physiological data that helps us to offer an enhanced user experience in terms of wellness and skincare.</p>
             </div>
-            <p className="font-lato font-light text-gray-600 leading-relaxed mt-4">
+            <p
+              className="font-lato font-light text-gray-600 leading-relaxed mt-4 transition-opacity duration-1000 ease-in-out"
+              style={{ opacity: fadeIn }}
+            >
               We understand the sensitive nature of biometric data, so we take extra precautions in ensuring its protection. This data is used solely to enhance the accuracy of our services, including skincare product recommendations and personalized health routines. We adhere strictly to privacy standards to anonymize this data whenever possible and ensure that it is stored securely.
             </p>
           </div>
 
           {/* 1.3 Usage Data */}
           <div className="mb-8">
-            <h3 className="font-lato text-darkblue  text-xl font-medium mb-3">1.3 Usage Data</h3>
-            <p className="font-lato font-light text-gray-600 leading-relaxed">
+            <h3
+              className="font-lato text-xl text-darkblue  font-medium mb-3 transition-opacity duration-1000 ease-in-out"
+              style={{ opacity: fadeIn }}
+            >
+              1.3 Usage Data
+            </h3>
+            <p
+              className="font-lato font-light text-gray-600 leading-relaxed transition-opacity duration-1000 ease-in-out"
+              style={{ opacity: fadeIn }}
+            >
               To improve the functionality and performance of our platform, Clare collects information regarding how users interact with our services. This includes:
             </p>
-            <div className="font-lato font-light text-gray-600 space-y-2 pl-4">
+            <div
+              className="font-lato font-light text-gray-600 space-y-2 pl-4 transition-opacity duration-1000 ease-in-out"
+              style={{ opacity: fadeIn }}
+            >
               <p>• <strong>Browsing behavior:</strong> Information on pages you visit, time spent on the platform, and how you interact with the site's features.</p>
               <p>• <strong>Device information:</strong> Details such as your browser type, operating system, and device model are collected to optimize your experience across different devices.</p>
               <p>• <strong>IP addresses:</strong> We collect your IP address to identify the location of your device, protect against unauthorized access, and enhance security.</p>
               <p>• <strong>User activity logs:</strong> This includes information like clicks, navigation, search terms, and pages visited during your use of our platform.</p>
             </div>
-            <p className="font-lato font-light text-gray-600 leading-relaxed mt-4">
+            <p
+              className="font-lato font-light text-gray-600 leading-relaxed mt-4 transition-opacity duration-1000 ease-in-out"
+              style={{ opacity: fadeIn }}
+            >
               This data helps us understand usage patterns, monitor site performance, and optimize content delivery. By tracking these behaviors, we can refine our offerings and improve the overall user experience, making the platform more intuitive and user-friendly.
             </p>
           </div>
 
           {/* 1.4 Transactional Data */}
           <div className="mb-8">
-            <h3 className="font-lato text-darkblue  text-xl font-medium mb-3">1.4 Transactional Data</h3>
-            <p className="font-lato font-light text-gray-600 leading-relaxed">
+            <h3
+              className="font-lato text-xl text-darkblue  font-medium mb-3 transition-opacity duration-1000 ease-in-out"
+              style={{ opacity: fadeIn }}
+            >
+              1.4 Transactional Data
+            </h3>
+            <p
+              className="font-lato font-light text-gray-600 leading-relaxed transition-opacity duration-1000 ease-in-out"
+              style={{ opacity: fadeIn }}
+            >
               Whenever you make a purchase or transaction via Clare's platform, we collect details related to the transaction, which may include:
             </p>
-            <div className="font-lato font-light text-gray-600 space-y-2 pl-4">
+            <div
+              className="font-lato font-light text-gray-600 space-y-2 pl-4 transition-opacity duration-1000 ease-in-out"
+              style={{ opacity: fadeIn }}
+            >
               <p>• <strong>Payment method:</strong> Information about how you made the payment, whether by credit card, debit card, or other forms of payment.</p>
               <p>• <strong>Transaction history:</strong> A record of your past purchases, including items bought, dates of purchase, and amounts spent.</p>
-              <p>• <strong>Items purchased:</strong> Specific details about the products or services you buy on our platform.</p>
-              <p>• <strong>Billing details:</strong> This includes your billing address, shipping address (if different), and any other information required to process the transaction and deliver products or services.</p>
+              <p>• <strong>Billing information:</strong> Includes your billing address and any other information required to process your payment securely.</p>
             </div>
-            <p className="font-lato font-light text-gray-600 leading-relaxed mt-4">
-              We collect this data primarily to process payments, track your transaction history, and provide support in case of any issues with your purchases. All payment details are processed through secure channels, and we implement measures to protect your financial information. We may also use this data to tailor offers and promotions based on your purchasing history.
+            <p
+              className="font-lato font-light text-gray-600 leading-relaxed mt-4 transition-opacity duration-1000 ease-in-out"
+              style={{ opacity: fadeIn }}
+            >
+              We use this data to process your transactions, deliver products or services, resolve payment issues, and enhance the overall experience on the platform. Additionally, we may use this data for fraud detection and prevention purposes, ensuring your transactions are secure.
             </p>
           </div>
         </section>
