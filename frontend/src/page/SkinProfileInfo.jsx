@@ -33,7 +33,7 @@ export default function SkinProfileInfo() {
   return (
     <section
       id="skin-profile-info-section"
-      className="min-h-screen flex items-center justify-center px-5 pt-20 md:pt-32 mt-16 pb-20 md:pb-32"
+      className="min-h-screen flex items-center justify-center px-5 pt-20 md:pt-32 pb-20 md:pb-32"
       style={{
         backgroundColor: '#14213D',
         opacity,

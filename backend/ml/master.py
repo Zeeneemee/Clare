@@ -95,7 +95,7 @@ if __name__ == "__main__":
                 "ResultImage": f"data:image/jpeg;base64,{encoded_acne_image}" if encoded_acne_image else None,
                 "positions": results_acne.get("positions", []),
                 "confidence": results_acne.get("confidence", []),
-                "score": compute_score(results_acne.get("confidence", []))
+                "score": round(compute_score(results_acne.get("confidence", [])))
             },
             "wrinkles": default_detection,
             "scar": default_detection,

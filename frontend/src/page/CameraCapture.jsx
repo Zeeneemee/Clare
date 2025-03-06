@@ -1,46 +1,47 @@
 
 import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Webcam from "react-webcam";
 
 export default function CameraCapture() {
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
-  const [captured, setCaptured] = useState(false);
-  const [fadeOut, setFadeOut] = useState(false);
+ 
+  const webcamRef = useRef(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [isRetaking, setIsRetaking] = useState(false);
+  const [capturedImage, setCapturedImage] = useState(null);
+  const [fadeOut, setFadeOut] = useState(false);  const [isRetaking, setIsRetaking] = useState(false);
   const [showConsent, setShowConsent] = useState(true); // Show consent first
   const [consentGiven, setConsentGiven] = useState(false);
- 
+  const videoConstraints = {
+    width: 1600, // 4K resolution
+    height: 900,
+    facingMode: "user",
+  };
   const navigate = useNavigate();
 
   useEffect(() => {
-    localStorage.removeItem("processedImage"); // Clear previous image
+    localStorage.removeItem("processedImage");
 
-    // Check if the user has already accepted terms
     const termsAccepted = localStorage.getItem("termsAccepted") === "true";
     if (termsAccepted) {
-      setShowConsent(false); // Hide consent if accepted before
+      setShowConsent(false);
     }
 
-   let streamRef = null;
-   
-  if (!showConsent){navigator.mediaDevices
-    .getUserMedia({ video: true })
-    .then((stream) => {
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
+    let stream = null;
+    
+    if (!showConsent) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then((userStream) => {
+          stream = userStream;
+        })
+        .catch((err) => console.error("Camera access denied:", err));
+    }
+
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
       }
-      streamRef = stream; // Store stream reference
-    })
-    .catch((err) => console.error("Camera access denied:", err));
-
-  // ✅ Cleanup: Stop camera when component unmounts
-  return () => {
-    if (streamRef) {
-      streamRef.getTracks().forEach((track) => track.stop()); // Stop all tracks
-    }
-  }};
+    };
   }, [showConsent]);
 
   const handleConsent = () => {
@@ -49,51 +50,42 @@ export default function CameraCapture() {
   };
 
   const captureImage = () => {
-    setCaptured(true);
-    const canvas = canvasRef.current;
-    const video = videoRef.current;
-    const context = canvas.getContext("2d");
-  
-    // Get the video dimensions
-    const videoWidth = video.videoWidth;
-    const videoHeight = video.videoHeight;
-  
-    // Set canvas size to match the video aspect ratio
-    canvas.width = videoWidth;
-    canvas.height = videoHeight;
-  
-    // Draw the current video frame on the canvas (freezing the frame)
-    context.save();
-    context.translate(canvas.width, 0);
-    context.scale(-1, 1);
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-  
-    // Stop all media tracks (turns off the camera)
-    if (video.srcObject) {
-      const tracks = video.srcObject.getTracks();
-      tracks.forEach((track) => track.stop());
-      video.srcObject = null;
-    }
-    
-    // Hide the video and show the canvas
-    video.style.display = "none";
-    canvas.style.display = "block";
-    setShowConfirmation(true);
+    const imageSrc = webcamRef.current.getScreenshot(); // Base64 format
+    if (!imageSrc) return;
+
+    const img = new Image();
+    img.src = imageSrc;
+
+    img.onload = () => {
+      // Manually draw the image to a high-res canvas
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      // Set Canvas Size to match iPhone's high-resolution cameras (12 MP)
+      canvas.width = 4032; // iPhone 12+ Front Camera
+      canvas.height = 3024;
+
+      // Upscale the image and draw to canvas
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      // Convert to Base64 (or Blob for uploads)
+      const highResImage = canvas.toDataURL("image/jpeg", 1.0); // Max quality
+      setCapturedImage(highResImage);
+      setShowConfirmation(true);
+    };
   };
   
-
   // Proceed to the loading screen with fade-out effect
   const proceed = async () => {
-    if (captured && !isRetaking) {
-      const canvas = canvasRef.current;
-      
+    if ( !isRetaking) {
       // ✅ Convert Canvas to Blob
-      canvas.toBlob(async (blob) => {
-        const formData = new FormData();
-        formData.append("image", blob, "captured-image.jpg");
-  
+      const blob = await fetch(captureImage).then(res=>res.blob())
+      const formData = new FormData();
+      formData.append("image", blob, "captured-image.jpg");
+      console.log(formData)
+
         try {
-          const response = await fetch("https://dbc9-2001-44c8-40b1-b1b5-c415-1c2c-ddbe-6b10.ngrok-free.app/upload", {
+          const response = await fetch("http://localhost:5000/upload", {
             method: "POST",
             body: formData,
           });
@@ -122,23 +114,18 @@ export default function CameraCapture() {
         } catch (error) {
           console.error("❌ Error Uploading Image:", error);
         }
-      }, "image/jpeg");
-    }
-    setFadeOut(true);
-  };
-  
+          }
+      setFadeOut(true)
+  }
+      
+    
   
   // Retake the photo
   const retake = () => {
-    setCaptured(false);
+    setCapturedImage(null);
     setShowConfirmation(false);
-    const video = videoRef.current;
-    video.style.display = "block";
-    video.style.display = "block";
-    const canvas = canvasRef.current;
-    canvas.style.display = "none";
-    canvas.style.display = "none";
   };
+  
 
   return (
     <div
@@ -157,19 +144,22 @@ export default function CameraCapture() {
         your skin and generate a detailed report with personalized insights.
       </p>
 
-      <div className="relative w-full max-w-md mt-8 z-10">
-        {/* Camera Feed */}
-        <video
-          ref={videoRef}
-          autoPlay
-          className={`transform scale-x-[-1] w-full h-[350px] sm:h-[400px] max-w-md rounded-3xl shadow-lg object-cover ${captured ? "hidden" : "block"}`}
-      
+      <div className="relative w-full mt-8 z-10 flex flex-col justify-center items-center">
+      {!capturedImage ? (
+        <Webcam
+          ref={webcamRef}
+          audio={false}
+          screenshotFormat="image/jpeg"
+          videoConstraints={videoConstraints}
+          height={720}
+          className="rounded-[10px] "
+          mirrored={true}
+          screenshotQuality={1}
         />
-        <canvas
-          ref={canvasRef}
-          className="w-full h-auto max-w-md rounded-3xl shadow-lg object-cover"
-          style={{ display: "none" }}
-        />
+      ) : (
+        <img src={capturedImage} alt="Captured" className="rounded-lg shadow-lg" />
+      )}
+       
 
         {/* Consent Popup Over Camera */}
         {showConsent && (
@@ -254,4 +244,5 @@ export default function CameraCapture() {
         ))}
     </div>
   );
+
 }
