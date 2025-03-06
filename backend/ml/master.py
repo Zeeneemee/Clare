@@ -101,7 +101,7 @@ if __name__ == "__main__":
             "scar": default_detection,
             "undereye": {
                 "ResultImage": f"data:image/jpeg;base64,{encoded_undereye_image}" if encoded_undereye_image else None,
-                "score": dark_circle_score,
+                "score": round(dark_circle_score),
                 "label": dark_circle_label
             },
             "darkspot": default_detection,
