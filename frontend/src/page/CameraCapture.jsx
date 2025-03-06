@@ -93,7 +93,7 @@ export default function CameraCapture() {
         formData.append("image", blob, "captured-image.jpg");
   
         try {
-          const response = await fetch("http://localhost:5000/upload", {
+          const response = await fetch("https://dbc9-2001-44c8-40b1-b1b5-c415-1c2c-ddbe-6b10.ngrok-free.app/upload", {
             method: "POST",
             body: formData,
           });
