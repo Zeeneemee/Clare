@@ -3,3 +3,13 @@
 @tailwind utilities;
 
 @import url('https://fonts.googleapis.com/css2?family=Fanwood+Text&family=Lato:wght@300;400;700&display=swap');
+video {
+    pointer-events: none;
+  }
+  video::-webkit-media-controls-overlay-play-button {
+    display: none !important;
+  }
+  video::-webkit-media-controls-play-button {
+    display: none !important;
+  }
+  
