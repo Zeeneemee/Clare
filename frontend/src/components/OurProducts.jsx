@@ -16,10 +16,10 @@ const OurProducts = () => {
         rootMargin: "0px 0px -50px 0px",
       }
     );
-
-    if (sectionRef.current) observer.observe(sectionRef.current);
+    const sectionCurrent = sectionRef.current
+    if (sectionCurrent) observer.observe(sectionCurrent);
     return () => {
-      if (sectionRef.current) observer.unobserve(sectionRef.current);
+      if (sectionCurrent) observer.unobserve(sectionCurrent);
     };
   }, []);
 
