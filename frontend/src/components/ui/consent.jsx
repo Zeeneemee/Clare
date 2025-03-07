@@ -1,6 +1,10 @@
 import { useNavigate } from "react-router-dom"
-const Consent = (setConsentGiven, handleConsent, consentGiven)=>{
+const Consent = (setConsentGiven, setShowConsent, consentGiven)=>{
     const navigate = useNavigate()
+    const handleConsent = () => {
+        localStorage.setItem("termsAccepted", "true");
+        setShowConsent(false);
+      };
     return(
     <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-3xl overflow-hidden">
     <div className="bg-white p-6 rounded-xl shadow-lg text-center w-full max-h-[350px] sm:max-h-[400px] overflow-y-auto">
