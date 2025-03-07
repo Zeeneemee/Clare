@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function ContactUs() {
   const [formData, setFormData] = useState({
@@ -7,6 +7,13 @@ export default function ContactUs() {
     subject: "",
     message: "",
   });
+
+  const [fadeIn, setFadeIn] = useState(0);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setFadeIn(1), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -18,7 +25,13 @@ export default function ContactUs() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center py-10 pt-40 px-4 mx-8 md:mx-0 md:px-0">
+    <div
+      className="min-h-screen flex flex-col items-center py-10 pt-40 px-4 mx-8 md:mx-0 md:px-0 transition-opacity duration-1000 ease-in-out"
+      style={{
+        opacity: fadeIn,
+        transform: `translateY(${(1 - fadeIn) * 20}px)`,
+      }}
+    >
       {/* Content Container */}
       <div className="w-full max-w-2xl lg:max-w-4xl">
         {/* Title Section */}

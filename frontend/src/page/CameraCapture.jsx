@@ -9,7 +9,7 @@ export default function CameraCapture() {
   const [fadeOut, setFadeOut] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isRetaking, setIsRetaking] = useState(false);
-  const [showConsent, setShowConsent] = useState(true); // Show consent first
+  const [showConsent, setShowConsent] = useState(true);
   const [consentGiven, setConsentGiven] = useState(false);
  
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ export default function CameraCapture() {
     // Check if the user has already accepted terms
     const termsAccepted = localStorage.getItem("termsAccepted") === "true";
     if (termsAccepted) {
-      setShowConsent(false); // Hide consent if accepted before
+      setShowConsent(false);
     }
 
    let streamRef = null;
@@ -44,8 +44,8 @@ export default function CameraCapture() {
   }, [showConsent]);
 
   const handleConsent = () => {
-    localStorage.setItem("termsAccepted", "true"); // Store acceptance
-    setShowConsent(false); // Hide consent popup
+    localStorage.setItem("termsAccepted", "true");
+    setShowConsent(false);
   };
 
   const captureImage = () => {
@@ -134,9 +134,7 @@ export default function CameraCapture() {
     setShowConfirmation(false);
     const video = videoRef.current;
     video.style.display = "block";
-    video.style.display = "block";
     const canvas = canvasRef.current;
-    canvas.style.display = "none";
     canvas.style.display = "none";
   };
 
@@ -158,12 +156,10 @@ export default function CameraCapture() {
       </p>
 
       <div className="relative w-full max-w-md mt-8 z-10">
-        {/* Camera Feed */}
         <video
           ref={videoRef}
           autoPlay
           className={`transform scale-x-[-1] w-full h-[350px] sm:h-[400px] max-w-md rounded-3xl shadow-lg object-cover ${captured ? "hidden" : "block"}`}
-      
         />
         <canvas
           ref={canvasRef}
@@ -171,58 +167,86 @@ export default function CameraCapture() {
           style={{ display: "none" }}
         />
 
-        {/* Consent Popup Over Camera */}
         {showConsent && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-3xl">
-            <div className="bg-white p-6 rounded-xl shadow-lg text-center max-w-sm">
-              <h2 className="text-xl font-semibold">Notice and Consent</h2>
-              <p className="text-sm text-gray-600 mt-2">
-                This AI simulation service may process, analyze, and collect
-                your facial data. By checking the box, you consent to this
-                processing.
-              </p>
-              <div className="mt-4 flex items-center justify-center">
-                <input
-                  type="checkbox"
-                  id="consent"
-                  onChange={(e) => setConsentGiven(e.target.checked)}
-                  className="mr-2"
-                />
-                <label htmlFor="consent" className="text-sm text-gray-600">
-                  I agree to the{" "}
-                  <button
-                    className="text-blue-500 underline"
-                    onClick={() => navigate("/privacy")}
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-3xl overflow-hidden">
+            <div className="bg-white p-6 rounded-xl shadow-lg text-center w-full max-h-[350px] sm:max-h-[400px] overflow-y-auto">
+              <h2 className="font-lato text-lg font-normal text-darkblue mb-4">
+                Biometric Data Processing Consent
+              </h2>
+              
+              <div className="font-lato font-light text-xs text-gray-700 text-left space-y-4">
+                <p>
+                  The Clare Skin Analysis Service ("Clare") may collect, process, 
+                  and store biometric identifiers including facial geometry, 
+                  skin characteristics, and related physiological data 
+                  ("Biometric Data") through our AI-powered diagnostic platform.
+                </p>
+
+                <p>
+                  <strong>Purpose of Collection:</strong> Your Biometric Data will be 
+                  used exclusively to generate personalized skin health analysis reports, 
+                  provide AI-driven treatment recommendations, improve diagnostic 
+                  algorithms through secure processes, and maintain health records 
+                  for your clinical history.
+                </p>
+
+                <p>
+                  <strong>Data Management:</strong> All biometric information will be 
+                  encrypted during storage and transmission, retained for a maximum 
+                  period of 24 months from last access, and anonymized for 
+                  research and development purposes.
+                </p>
+
+                <p>
+                  Your consent is governed by our{" "}
+                  <button 
+                    onClick={() => navigate('/privacy')}
+                    className="text-blue-600 underline mx-1"
                   >
                     Privacy Policy
-                  </button>{" "}
+                  </button> 
                   and{" "}
                   <button
-                    className="text-blue-500 underline"
-                    onClick={() => navigate("/terms")}
+                    onClick={() => navigate('/terms')}
+                    className="text-blue-600 underline mx-1"
                   >
                     Terms of Service
-                  </button>
-                  .
+                  </button>, 
+                  which outline your rights under applicable data protection regulations.
+                </p>
+              </div>
+
+              <div className="flex items-start mt-4 mb-2">
+                <input
+                  type="checkbox"
+                  id="biometricConsent"
+                  onChange={(e) => setConsentGiven(e.target.checked)}
+                  className="mt-1 mr-3"
+                />
+                <label htmlFor="biometricConsent" className="font-lato text-xs text-gray-700 text-left">
+                  I hereby explicitly authorize Clare to process my Biometric Data 
+                  as described above. I affirm that this consent is voluntary and 
+                  informed, understanding that service access requires data processing 
+                  and that I may withdraw consent through account deletion.
                 </label>
               </div>
+
               <button
                 onClick={handleConsent}
                 disabled={!consentGiven}
-                className={`mt-4 py-2 px-6 rounded-full text-white ${
+                className={`font-lato font-light text-sm py-2 px-6 rounded-full mt-4 transition-colors ${
                   consentGiven
-                    ? "bg-blue-600 hover:bg-blue-700"
-                    : "bg-gray-400 cursor-not-allowed"
+                    ? "bg-darkblue text-white hover:bg-opacity-80"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
               >
-                Submit
+                Accept and Continue
               </button>
             </div>
           </div>
         )}
       </div>
 
-      {/* Capture & Confirmation Buttons */}
       {!showConsent &&
         (showConfirmation ? (
           <div className="mt-8 z-10 relative">
@@ -232,13 +256,13 @@ export default function CameraCapture() {
             <div className="flex gap-4">
               <button
                 onClick={retake}
-                className="font-lato text-lg font-light bg-[#ff4d4d] text-white py-3 px-12 rounded-full transition-all duration-300 hover:bg-[#ff8080] hover:text-darkblue"
+                className="font-lato text-lg font-light bg-[#ff4d4d] text-white py-3 px-12 rounded-full transition-all duration-300 hover:opacity-80"
               >
                 Retake
               </button>
               <button
                 onClick={proceed}
-                className="font-lato text-lg font-light bg-[#003366] text-white py-3 px-12 rounded-full transition-all duration-300 hover:bg-[#ADD8E6] hover:text-darkblue"
+                className="font-lato text-lg font-light bg-[#14213D] text-white py-3 px-12 rounded-full transition-colors duration-300 hover:opacity-80"
               >
                 Proceed
               </button>

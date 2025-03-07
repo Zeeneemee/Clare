@@ -62,7 +62,7 @@ const SkincareSet = () => {
             <h1 className="font-fanwood text-2xl md:text-3xl text-darkblue mb-2 md:mb-4 font-normal">
               CUTISTEM™ Skin Care Set
             </h1>
-            <p className="font-lato text-xl md:text-2xl text-gray-700">$70.00</p>
+            <p className="font-lato font-light text-lg md:text-xl text-gray-500">$70.00</p>
           </div>
 
           <div className="space-y-5 md:space-y-6">
