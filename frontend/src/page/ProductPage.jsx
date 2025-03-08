@@ -12,9 +12,10 @@ const ProductPage = () => {
       { threshold: 0.2, rootMargin: "0px 0px -50px 0px" }
     );
 
-    if (sectionRef.current) observer.observe(sectionRef.current);
+    const currentSectionRef = sectionRef.current;
+    if (currentSectionRef) observer.observe(currentSectionRef);
     return () => {
-      if (sectionRef.current) observer.unobserve(sectionRef.current);
+      if (currentSectionRef) observer.unobserve(currentSectionRef);
     };
   }, []);
 
