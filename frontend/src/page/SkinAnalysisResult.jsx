@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import LoadingScreen from "../components/ui/LoadingScreen";
 import MetricCard from "../components/ui/metric";
 
 export default function SkinAnalysisResult() {
@@ -11,7 +10,7 @@ export default function SkinAnalysisResult() {
   useEffect(() => {
     const timer = setTimeout(() => setFadeIn(1), 100);
     
-    // ✅ Retrieve Data from localStorage
+    // Retrieve data from localStorage
     const storedData = {
       processedImage: localStorage.getItem("processedImage"),
       acne: {
@@ -42,10 +41,6 @@ export default function SkinAnalysisResult() {
     return () => clearTimeout(timer);
   }, []);
 
-  if (!bioMetrics || !bioMetrics.processedImage) {
-    return <LoadingScreen />;
-  }
-
   return (
     <div
       className="min-h-screen flex flex-col items-center relative px-5 py-16 mt-12 transition-opacity duration-1000 ease-in-out"
@@ -58,7 +53,7 @@ export default function SkinAnalysisResult() {
 
       {/* Header Section */}
       <div className="z-10 w-full max-w-7xl text-center mb-12">
-        {bioMetrics.processedImage && (
+        {bioMetrics?.processedImage && (
           <>
             <h1 className="font-fanwood text-3xl md:text-4xl text-darkblue mb-4">
               Your Skin Report
@@ -72,7 +67,7 @@ export default function SkinAnalysisResult() {
       </div>
 
       {/* Content Section */}
-      {bioMetrics.processedImage ? (
+      {bioMetrics?.processedImage ? (
         <div className="w-full max-w-7xl z-10 mt-18">
           {/* Mobile Layout */}
           <div className="md:hidden flex flex-col items-center">
@@ -81,7 +76,7 @@ export default function SkinAnalysisResult() {
                 <img
                   src={bioMetrics.processedImage}
                   alt="Skin analysis"
-                  className="rounded-2xl w-full h-[420px] object-cover shadow-xl"
+                  className="rounded-2xl max-w-full h-auto object-contain shadow-xl"
                 />
                 <div className="font-lato font-light absolute -bottom-5 left-1/2 -translate-x-1/2 bg-white px-6 py-2 rounded-full shadow-md text-[#797979]">
                   Skin Age: {bioMetrics.age || "Not Detected"}
@@ -141,13 +136,12 @@ export default function SkinAnalysisResult() {
                 <img
                   src={bioMetrics.processedImage}
                   alt="Skin analysis"
-                  className="rounded-2xl w-[380px] h-[420px] object-cover shadow-xl"
+                  className="rounded-2xl max-w-full h-auto object-contain shadow-xl"
                 />
                 <div className="font-lato font-light absolute -bottom-5 left-1/2 -translate-x-1/2 bg-white px-6 py-2 rounded-full shadow-md text-[#797979]">
                   Skin Age: {bioMetrics.age || "Not Detected"}
                 </div>
               </div>
-              
             </div>
 
             {/* Right Metrics Column */}
@@ -171,8 +165,7 @@ export default function SkinAnalysisResult() {
           <div className="text-center mt-6 md:mt-16">
             <button
               onClick={() => navigate("/skincareroutine")}
-              className="font-lato font-light text-sm md:text-lg bg-[#14213D] text-white px-16 py-3 rounded-full 
-                        transition-colors duration-300 hover:opacity-80"
+              className="font-lato font-light text-sm md:text-lg bg-[#14213D] text-white px-16 py-3 rounded-full transition-colors duration-300 hover:opacity-80"
             >
               Suggest My Skincare Routine
             </button>
@@ -184,7 +177,10 @@ export default function SkinAnalysisResult() {
           </div>
         </div>
       ) : (
-        <LoadingScreen />
+        // Optionally, you could display a loading indicator or a message if no image is present
+        <div className="z-10">
+          <p className="font-lato text-gray-600">No analysis available.</p>
+        </div>
       )}
     </div>
   );
