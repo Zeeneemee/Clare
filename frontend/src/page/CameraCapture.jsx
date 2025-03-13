@@ -14,6 +14,7 @@ export default function CameraCapture() {
 
   const navigate = useNavigate();
 
+
   useEffect(() => {
     localStorage.removeItem("processedImage"); // Clear previous im age
 
@@ -98,7 +99,7 @@ export default function CameraCapture() {
         formData.append("image", blob, "captured-image.jpg");
         setIsLoading(true)
         try {
-          const response = await fetch("https://263f-2001-44c8-40b1-b1b5-3565-20ca-1503-950e.ngrok-free.app/upload", {
+          const response = await fetch("http://localhost:5000/upload", {
             method: "POST",
             body: formData,
           });
@@ -183,6 +184,8 @@ export default function CameraCapture() {
                 className="w-full h-[400px] max-w-md rounded-3xl shadow-lg object-cover"
                 style={{ display: "none" }}
               />
+              {/* Optionally, display real-time detection info */}
+            
 
               {showConsent && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-3xl overflow-hidden">
