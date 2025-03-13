@@ -47,7 +47,7 @@ def Predict_underEye(image_path, output_dir="undereye_result"):
 
     # Initialize dlib's face detector and shape predictor
     face_detector = dlib.get_frontal_face_detector()
-    shape_predictor = dlib.shape_predictor("/Users/tt/Documents/Coding/Claire/backend/ml/undereye/shape_predictor_68_face_landmarks.dat")
+    shape_predictor = dlib.shape_predictor(os.path.join(os.path.dirname(__file__),'shape_predictor_68_face_landmarks.dat'))
 
     # Detect faces in the image
     detected_faces = face_detector(image_rgb, 1)

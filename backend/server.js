@@ -81,15 +81,10 @@ app.post("/upload", upload.single("image"), async (req, res) => {
                         processedAt: new Date(),
                         "resultData.originalFilename": req.file.filename,
                         "resultData.processedImage": pythonResponse.processedImage,
-                        "resultData.analysis.acne.ResultImage": pythonResponse.acne?.ResultImage || null,
-                        "resultData.analysis.acne.positions": pythonResponse.acne?.positions || [],
-                        "resultData.analysis.acne.score": pythonResponse.acne?.score || 0,
+                        "resultData.analysis.acne": pythonResponse.acne || { ResultImage: null, positions: [], score: 0 },
                         "resultData.analysis.wrinkles": pythonResponse.wrinkles || { ResultImage: null, positions: [], score: 0 },
                         "resultData.analysis.scar": pythonResponse.scar || { ResultImage: null, positions: [], score: 0 },
-                        "resultData.analysis.undereye.score": pythonResponse.undereye.score || { ResultImage: null, positions: [], score: 0 },
-                        "resultData.analysis.undereye.ResultImage": pythonResponse.undereye.ResultImage || { ResultImage: null, positions: [], score: 0 },
-                        "resultData.analysis.undereye.label": pythonResponse.undereye.label || { ResultImage: null, positions: [], score: 0 },
-
+                        "resultData.analysis.undereye": pythonResponse.undereye || { ResultImage: null, positions: [], score: 0 },
                         "resultData.analysis.darkspot": pythonResponse.darkspot || { ResultImage: null, positions: [], score: 0 },
                         "resultData.analysis.age": pythonResponse.age || "Not Detected",
                         "resultData.analysis.gender": pythonResponse.gender?.label || "Not Detected"

@@ -136,7 +136,7 @@ export default function SkinAnalysisResult() {
                 <img
                   src={bioMetrics.processedImage}
                   alt="Skin analysis"
-                  className="rounded-2xl max-w-full h-auto object-contain shadow-xl"
+                  className="rounded-2xl max-w-[400px] h-[400px] object-contain shadow-xl"
                 />
                 <div className="font-lato font-light absolute -bottom-5 left-1/2 -translate-x-1/2 bg-white px-6 py-2 rounded-full shadow-md text-[#797979]">
                   Skin Age: {bioMetrics.age || "Not Detected"}
