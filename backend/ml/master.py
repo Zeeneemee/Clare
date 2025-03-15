@@ -6,15 +6,15 @@ import io
 from PIL import Image
 from acne.acne import acne_detection  # Import ML model
 from gender.gender import Gender  # Import Gender model
-from undereye.underEye import Predict_underEye  # Import Under-eye model\
+from undereye.underEye import Predict_underEye  # Import Under-eye model
 from darkspot.darkspot import darkspot_detection 
 
-# ✅ Define directories
+# ✅ Define directories using relative paths
 BASE_UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
 ACNE_RESULT_DIR = os.path.join(BASE_UPLOAD_DIR, "acne_result")
 GENDER_RESULT_DIR = os.path.join(BASE_UPLOAD_DIR, "gender_result")
 UNDEREYE_RESULT_DIR = os.path.join(BASE_UPLOAD_DIR, "undereye_result")
-DARKSPOT_RESULT_DIR = os.path.join(BASE_UPLOAD_DIR, "darkspot_result")
+DARKSPOT_RESULT_DIR = os.path.join(BASE_UPLOAD_DIR, 'darkspot_result',"darkspot_result")
 
 def decode_base64_image(base64_string, output_path):
     """Decodes a Base64-encoded image and saves it as a file."""
@@ -45,7 +45,7 @@ if __name__ == "__main__":
         input_data = sys.argv[1]  # Could be a file path or a Base64 string
 
         # ✅ Check if input is a file path or Base64 string
-        if os.path.exists(input_data):  
+        if os.path.exists(input_data):
             temp_image_path = input_data  # Use file path directly
         else:
             # ✅ Decode Base64 to temporary image file
@@ -64,7 +64,13 @@ if __name__ == "__main__":
         # Extract under-eye score and result image
         dark_circle_score = undereye_results[0]["dark_circle_score"] if undereye_results else 0.0
         dark_circle_label = undereye_results[0]["label"] if undereye_results else "Not Detected"
-        darkspot_results = darkspot_detection(temp_image_path, DARKSPOT_RESULT_DIR)
+        
+        # ✅ Run darkspot detection only if no darkspot result file already exists
+        if not os.path.exists(DARKSPOT_RESULT_DIR) or not os.listdir(DARKSPOT_RESULT_DIR):
+            darkspot_results = darkspot_detection(temp_image_path, DARKSPOT_RESULT_DIR)
+        else:
+            # Use existing results or set default values
+            darkspot_results = {"positions": [], "confidence": []}
 
         # ✅ Find processed images
         def find_processed_image(directory):
