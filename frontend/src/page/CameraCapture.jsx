@@ -1,155 +1,260 @@
-
-import React, { useRef, useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import * as faceapi from "face-api.js";
 
 export default function CameraCapture() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const [captured, setCaptured] = useState(false);
-  const [fadeOut, setFadeOut] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [isRetaking, setIsRetaking] = useState(false);
-  const [showConsent, setShowConsent] = useState(true);
-  const [consentGiven, setConsentGiven] = useState(false);
- 
+  const overlayCanvasRef = useRef(null);
+  const [state, setState] = useState({
+    captured: false,
+    fadeOut: false,
+    fadeIn: 0,
+    showConfirmation: false,
+    showConsent: localStorage.getItem("termsAccepted") !== "true",
+    consentGiven: false,
+    lighting: "Analyzing...",
+    facePosition: "No Face ❌",
+    modelsLoaded: false,
+    error: null
+  });
   const navigate = useNavigate();
+  const detectionInterval = useRef();
 
   useEffect(() => {
-    localStorage.removeItem("processedImage"); // Clear previous image
+    const timer = setTimeout(() => {
+      setState(prev => ({ ...prev, fadeIn: 1 }));
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
-    // Check if the user has already accepted terms
-    const termsAccepted = localStorage.getItem("termsAccepted") === "true";
-    if (termsAccepted) {
-      setShowConsent(false);
+  useEffect(() => {
+    initializeCamera();
+    return () => cleanup();
+  }, []);
+
+  const initializeCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: "user" } 
+      });
+      videoRef.current.srcObject = stream;
+      await loadModels();
+    } catch (error) {
+      handleError("Camera initialization failed:", error);
     }
+  };
 
-   let streamRef = null;
-   
-  if (!showConsent){navigator.mediaDevices
-    .getUserMedia({ video: true })
-    .then((stream) => {
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
+  const loadModels = async () => {
+    try {
+      await Promise.all([
+        faceapi.nets.ssdMobilenetv1.loadFromUri(process.env.PUBLIC_URL + '/models'),
+        faceapi.nets.faceLandmark68Net.loadFromUri(process.env.PUBLIC_URL + '/models'),
+        faceapi.nets.faceExpressionNet.loadFromUri(process.env.PUBLIC_URL + '/models')
+      ]);
+      setState(prev => ({ ...prev, modelsLoaded: true }));
+      startDetection();
+    } catch (error) {
+      handleError("Model loading failed. Check models in /public/models", error);
+    }
+  };
+
+  const startDetection = () => {
+    detectionInterval.current = setInterval(async () => {
+      if (!state.captured && videoRef.current?.readyState >= 4) {
+        try {
+          const detections = await faceapi.detectAllFaces(
+            videoRef.current,
+            new faceapi.SsdMobilenetv1Options({ 
+              minConfidence: 0.5,
+              inputSize: 320 
+            })
+          );
+          const { isValid, facePosition } = checkConditions(detections);
+          updateOverlay(detections, isValid);
+          setState(prev => ({
+            ...prev,
+            lighting: calculateLighting(),
+            facePosition,
+            facePresent: isValid
+          }));
+        } catch (error) {
+          console.error("Detection error:", error);
+        }
       }
-      streamRef = stream; // Store stream reference
-    })
-    .catch((err) => console.error("Camera access denied:", err));
+    }, 100);
+  };
 
-  // ✅ Cleanup: Stop camera when component unmounts
-  return () => {
-    if (streamRef) {
-      streamRef.getTracks().forEach((track) => track.stop()); // Stop all tracks
+  const updateOverlay = (detections, isValid) => {
+    const canvas = overlayCanvasRef.current;
+    const video = videoRef.current;
+    if (!video?.videoWidth) return;
+
+    const ctx = canvas.getContext("2d");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = Math.min(canvas.width, canvas.height) * 0.4;
+    
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    detections.forEach(detection => {
+      const box = detection.box;
+      ctx.strokeStyle = isValid ? "rgba(0, 255, 0, 0.5)" : "rgba(255, 0, 0, 0.5)";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(box.x, box.y, box.width, box.height);
+    });
+
+    ctx.restore();
+  };
+
+  const checkConditions = (detections) => {
+    const video = videoRef.current;
+    if (!video) return { isValid: false, facePosition: "Face Undetected" };
+
+    const videoWidth = video.videoWidth;
+    const videoHeight = video.videoHeight;
+
+    if (detections.length === 1) {
+      const face = detections[0].box;
+      const centerX = videoWidth / 2;
+      const centerY = videoHeight / 2;
+      const radius = Math.min(videoWidth, videoHeight) * 0.35;
+
+      const faceCenterX = face.x + face.width / 2;
+      const faceCenterY = face.y + face.height / 2;
+      const buffer = 10;
+
+      const distance = Math.sqrt(
+        Math.pow(faceCenterX - centerX, 2) + 
+        Math.pow(faceCenterY - centerY, 2)
+      );
+      const isCentered = distance <= radius + buffer;
+
+      const targetDiameter = radius * 2;
+      const minSize = targetDiameter * 0.6;
+      const maxSize = targetDiameter * 0.9;
+      const widthValid = face.width >= minSize && face.width <= maxSize;
+      const heightValid = face.height >= minSize && face.height <= maxSize;
+
+      const padding = Math.max(videoWidth * 0.05, 50);
+      const withinFrame = face.x > padding && 
+                         face.x + face.width < videoWidth - padding &&
+                         face.y > padding && 
+                         face.y + face.height < videoHeight - padding;
+
+      const isValid = isCentered && widthValid && heightValid && withinFrame;
+      
+      return {
+        isValid,
+        facePosition: isValid ? "Good" : "Adjust"
+      };
     }
-  }};
-  }, [showConsent]);
+    return {
+      isValid: false,
+      facePosition: detections.length > 1 ? "Multiple faces" : "Face Undetected"
+    };
+  };
 
-  const handleConsent = () => {
-    localStorage.setItem("termsAccepted", "true");
-    setShowConsent(false);
+  const calculateLighting = () => {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const video = videoRef.current;
+    
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    
+    ctx.save();
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    ctx.restore();
+
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let brightnessSum = 0;
+
+    for (let i = 0; i < imageData.data.length; i += 4) {
+      brightnessSum += (imageData.data[i] + imageData.data[i+1] + imageData.data[i+2]) / 3;
+    }
+    
+    const avgBrightness = brightnessSum / (imageData.data.length / 4);
+    if (avgBrightness < 80) return "Too Dark";
+    if (avgBrightness > 180) return "Too Bright";
+    return "Good";
   };
 
   const captureImage = () => {
-    setCaptured(true);
-    const canvas = canvasRef.current;
     const video = videoRef.current;
-    const context = canvas.getContext("2d");
-  
-    // Get the video dimensions
-    const videoWidth = video.videoWidth;
-    const videoHeight = video.videoHeight;
-  
-    // Set canvas size to match the video aspect ratio
-    canvas.width = videoWidth;
-    canvas.height = videoHeight;
-  
-    // Draw the current video frame on the canvas (freezing the frame)
-    context.save();
-    context.translate(canvas.width, 0);
-    context.scale(-1, 1);
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-  
-    // Stop all media tracks (turns off the camera)
-    if (video.srcObject) {
-      const tracks = video.srcObject.getTracks();
-      tracks.forEach((track) => track.stop());
-      video.srcObject = null;
-    }
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
     
-    // Hide the video and show the canvas
-    video.style.display = "none";
-    canvas.style.display = "block";
-    setShowConfirmation(true);
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    
+    ctx.save();
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    ctx.restore();
+
+    // Added image storage logic
+    const imageData = canvas.toDataURL('image/jpeg', 0.9);
+    localStorage.setItem('image', imageData);
+    
+    setState(prev => ({ ...prev, captured: true, showConfirmation: true }));
   };
-  
 
-  // Proceed to the loading screen with fade-out effect
-  const proceed = async () => {
-    if (captured && !isRetaking) {
-      const canvas = canvasRef.current;
-      
-      // ✅ Convert Canvas to Blob
-      canvas.toBlob(async (blob) => {
-        const formData = new FormData();
-        formData.append("image", blob, "captured-image.jpg");
-  
-        try {
-          const response = await fetch("https://263f-2001-44c8-40b1-b1b5-3565-20ca-1503-950e.ngrok-free.app/upload", {
-            method: "POST",
-            body: formData,
-          });
-  
-          const result = await response.json();
-          console.log("✅ Processed Result:", result);
-  
-          // ✅ Store Data in localStorage
-          localStorage.setItem("processedImage", result.processedImage);
-          localStorage.setItem("acneImage", result.acne.acneImage);
-          localStorage.setItem("acneScore", result.acne.acneScore);
-          localStorage.setItem("wrinklesImage", result.wrinkles.wrinklesImage);
-          localStorage.setItem("wrinklesScore", result.wrinkles.wrinklesScore);
-          localStorage.setItem("scarImage", result.scar.scarImage);
-          localStorage.setItem("scarScore", result.scar.scarScore);
-          localStorage.setItem("undereyeImage", result.undereye.undereyeImage);
-          localStorage.setItem("undereyeScore", result.undereye.undereyeScore);
-          localStorage.setItem("undereyeLabel", result.undereye.undereyeLabel);
-
-          localStorage.setItem("darkspotImage", result.darkspot.darkspotImage);
-          localStorage.setItem("darkspotScore", result.darkspot.darkspotScore);
-          localStorage.setItem("age", result.age);
-          localStorage.setItem("gender", result.gender);
-          navigate("/result");
-  
-        } catch (error) {
-          console.error("❌ Error Uploading Image:", error);
-        }
-      }, "image/jpeg");
-    }
-    setFadeOut(true);
+  const handleConsent = () => {
+    localStorage.setItem("termsAccepted", "true");
+    setState(prev => ({ ...prev, showConsent: false }));
   };
   
   
   // Retake the photo
   const retake = () => {
-    setCaptured(false);
-    setShowConfirmation(false);
-    const video = videoRef.current;
-    video.style.display = "block";
-    const canvas = canvasRef.current;
-    canvas.style.display = "none";
+    setState(prev => ({ ...prev, captured: false, showConfirmation: false }));
+  };
+
+  const proceed = () => {
+    setState(prev => ({ ...prev, fadeOut: true }));
+    setTimeout(() => navigate("/loading"), 1000);
+  };
+
+  const handleError = (message, error) => {
+    console.error(message, error);
+    setState(prev => ({ ...prev, error: error.message, modelsLoaded: false }));
+  };
+
+  const cleanup = () => {
+    clearInterval(detectionInterval.current);
+    videoRef.current?.srcObject?.getTracks().forEach(track => track.stop());
   };
 
   return (
-    <div
-      className={`min-h-screen flex flex-col items-center justify-center relative px-5 py-16 mt-5`}
-      style={{ transition: "opacity 1s ease-in-out", opacity: fadeOut ? 0 : 1 }}
-    >
-      <div
-        className="absolute inset-0 bg-cover bg-center blur-lg"
-        style={{ backgroundImage: "url('/assets/bg5.png')" }}
-      ></div>
+    <div className={`min-h-screen flex flex-col items-center justify-center relative px-5 py-16 mt-12`}
+         style={{ 
+           transition: "opacity 1s ease-in-out", 
+           opacity: state.fadeOut ? 0 : state.fadeIn
+         }}>
+      
+      <div className="absolute inset-0 bg-cover bg-center blur-lg"
+           style={{ backgroundImage: "url('/assets/bg5.png')" }}></div>
+
       <h1 className="font-fanwood text-3xl sm:text-4xl text-darkblue mb-4 z-10 relative">
         Clare Analysis Model
       </h1>
+
       <p className="font-lato font-light italic text-sm sm:text-base text-gray-500 text-center max-w-3xl mb-6 z-10 relative">
         Our Clare Analysis Model utilizes cutting-edge AI technology to analyze
         your skin and generate a detailed report with personalized insights.
@@ -159,15 +264,23 @@ export default function CameraCapture() {
         <video
           ref={videoRef}
           autoPlay
-          className={`transform scale-x-[-1] w-full h-[350px] sm:h-[400px] max-w-md rounded-3xl shadow-lg object-cover ${captured ? "hidden" : "block"}`}
+          playsInline
+          className={`transform scale-x-[-1] w-full h-[350px] sm:h-[400px] max-w-md rounded-3xl shadow-lg object-cover ${
+            state.captured ? "hidden" : "block"
+          }`}
         />
         <canvas
           ref={canvasRef}
           className="w-full h-auto max-w-md rounded-3xl shadow-lg object-cover"
-          style={{ display: "none" }}
+          style={{ display: state.captured ? "block" : "none" }}
+        />
+        <canvas
+          ref={overlayCanvasRef}
+          className="absolute top-0 left-0 w-full h-full pointer-events-none"
+          style={{ display: state.captured ? "none" : "block", zIndex: 10 }}
         />
 
-        {showConsent && (
+        {state.showConsent && (
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-3xl overflow-hidden">
             <div className="bg-white p-6 rounded-xl shadow-lg text-center w-full max-h-[350px] sm:max-h-[400px] overflow-y-auto">
               <h2 className="font-lato text-lg font-normal text-darkblue mb-4">
@@ -220,7 +333,7 @@ export default function CameraCapture() {
                 <input
                   type="checkbox"
                   id="biometricConsent"
-                  onChange={(e) => setConsentGiven(e.target.checked)}
+                  onChange={(e) => setState(prev => ({ ...prev, consentGiven: e.target.checked }))}
                   className="mt-1 mr-3"
                 />
                 <label htmlFor="biometricConsent" className="font-lato text-xs text-gray-700 text-left">
@@ -233,9 +346,9 @@ export default function CameraCapture() {
 
               <button
                 onClick={handleConsent}
-                disabled={!consentGiven}
+                disabled={!state.consentGiven}
                 className={`font-lato font-light text-sm py-2 px-6 rounded-full mt-4 transition-colors ${
-                  consentGiven
+                  state.consentGiven
                     ? "bg-darkblue text-white hover:bg-opacity-80"
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
@@ -245,37 +358,52 @@ export default function CameraCapture() {
             </div>
           </div>
         )}
+
+        {!state.showConsent && !state.captured && (
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center bg-black bg-opacity-50 px-4 py-2 rounded-lg z-20">
+            <p className="font-lato text-sm text-white">
+              Lighting: {state.lighting} | 
+              Position: {state.facePosition}
+            </p>
+          </div>
+        )}
       </div>
 
-      {!showConsent &&
-        (showConfirmation ? (
-          <div className="mt-8 z-10 relative">
-            <p className="font-lato font-light text-lg text-darkblue mb-4">
-              Do you want to proceed with this image?
-            </p>
-            <div className="flex gap-4">
-              <button
-                onClick={retake}
-                className="font-lato text-lg font-light bg-[#ff4d4d] text-white py-3 px-12 rounded-full transition-all duration-300 hover:opacity-80"
-              >
-                Retake
-              </button>
-              <button
-                onClick={proceed}
-                className="font-lato text-lg font-light bg-[#14213D] text-white py-3 px-12 rounded-full transition-colors duration-300 hover:opacity-80"
-              >
-                Proceed
-              </button>
-            </div>
+      {!state.showConsent && (state.showConfirmation ? (
+        <div className="mt-8 z-10 relative">
+          <p className="font-lato font-light text-lg text-darkblue mb-4">
+            Do you want to proceed with this image?
+          </p>
+          <div className="flex gap-4">
+            <button
+              onClick={retake}
+              className="font-lato text-lg font-light bg-[#ff4d4d] text-white py-3 px-12 rounded-full transition-all duration-300 hover:opacity-80"
+            >
+              Retake
+            </button>
+            <button
+              onClick={proceed}
+              className="font-lato text-lg font-light bg-[#14213D] text-white py-3 px-12 rounded-full transition-colors duration-300 hover:opacity-80"
+            >
+              Proceed
+            </button>
           </div>
-        ) : (
-          <button
-            onClick={captureImage}
-            className="font-lato text-sm sm:text-lg font-light bg-[#14213D] text-white py-3 px-12 rounded-full transition-colors duration-300 hover:opacity-80 mt-8 z-10 relative"
-          >
-            Capture Image
-          </button>
-        ))}
+        </div>
+      ) : (
+        <button
+          onClick={captureImage}
+          className={`font-lato text-sm sm:text-lg font-light ${state.facePresent || state.lighting !== "Good" || !state.modelsLoaded? 'bg-[#14213D]': 'bg-[#808080]' }  text-white py-3 px-12 rounded-full transition-colors duration-300 hover:opacity-80 mt-8 z-10 relative`}
+          disabled={!state.facePresent || state.lighting !== "Good" || !state.modelsLoaded}
+        >
+          {state.modelsLoaded ? "Capture Image" : "Loading Models..."}
+        </button>
+      ))}
+
+      {state.error && (
+        <div className="font-lato font-light text-red-500 mt-4 z-10">
+          Error: {state.error}. Please refresh the page.
+        </div>
+      )}
     </div>
   );
 }
