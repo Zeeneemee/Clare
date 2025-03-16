@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback ,useRef, useState } from "react";
+import React, { useEffect, useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as faceapi from "face-api.js";
 import LoadingScreen from "../components/ui/LoadingScreen";
@@ -42,27 +42,27 @@ export default function CameraCapture() {
   }, [state.showConsent]);
 
   const initializeCamera = useCallback(async () => {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ 
-      video: { facingMode: "user" } 
-    });
-    if (videoRef.current) {
-      videoRef.current.srcObject = stream;
-      videoRef.current.play().catch(error => {
-        console.error("Error playing video:", error);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: "user" } 
       });
-      
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play().catch(error => {
+          console.error("Error playing video:", error);
+        });
+      }
+      await loadModels();
+    } catch (error) {
+      handleError("Camera initialization failed:", error);
     }
-    await loadModels();
-  } catch (error) {
-    handleError("Camera initialization failed:", error);
-  }
-}, []); 
+  }, []); 
 
-  const loadModels = async () => {
+  // Wrap loadModels in useCallback.
+  const loadModels = useCallback(async () => {
     try {
       await Promise.all([
-        faceapi.nets.ssdMobilenetv1.loadFromUri(process.env.PUBLIC_URL + "/models"),
+        faceapi.nets.tinyFaceDetector.loadFromUri(process.env.PUBLIC_URL + "/models"),
         faceapi.nets.faceLandmark68Net.loadFromUri(process.env.PUBLIC_URL + "/models"),
         faceapi.nets.faceExpressionNet.loadFromUri(process.env.PUBLIC_URL + "/models"),
       ]);
@@ -71,7 +71,7 @@ export default function CameraCapture() {
     } catch (error) {
       handleError("Model loading failed. Check models in /public/models", error);
     }
-  };
+  }, []); 
 
   const startDetection = () => {
     detectionInterval.current = setInterval(async () => {
@@ -79,7 +79,7 @@ export default function CameraCapture() {
         try {
           const detections = await faceapi.detectAllFaces(
             videoRef.current,
-            new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5, inputSize: 320 })
+            new faceapi.TinyFaceDetectorOptions({ scoreThreshold: 0.5, inputSize: 320 })
           );
           const { isValid, facePosition } = checkConditions(detections);
           updateOverlay(detections, isValid);
@@ -206,22 +206,30 @@ export default function CameraCapture() {
     return "Good";
   };
   
-
   const captureImage = () => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    
+    // Get the displayed dimensions
+    // Get the device pixel ratio
+    
+    // Set canvas size to the displayed size times the DPR
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    // Set the CSS size of the canvas to match the displayed size
+    canvas.style.width = canvas.width
+    canvas.style.height = canvas.height
+    
+    // Scale the drawing context to account for the DPR
     ctx.save();
+  
+    // Mirror the image by translating and scaling
     ctx.translate(canvas.width, 0);
     ctx.scale(-1, 1);
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     ctx.restore();
-
-    // Save the image data for preview.
-    const imageData = canvas.toDataURL("image/jpeg", 0.9);
-    localStorage.setItem("image", imageData);
+    
     setState(prev => ({ ...prev, captured: true, showConfirmation: true }));
   };
 
@@ -297,8 +305,7 @@ export default function CameraCapture() {
         .getUserMedia({
           video: {
             frameRate: { ideal: 15, max: 15 },
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
+      
           },
         })
         .then((stream) => {
@@ -347,7 +354,7 @@ export default function CameraCapture() {
             />
             <canvas
               ref={canvasRef}
-              className="w-full h-[400px] max-w-md rounded-3xl shadow-lg object-cover"
+              className="w-auto h-[400px] max-w-md rounded-3xl shadow-lg object-cover"
               style={{ display: state.captured ? "block" : "none" }}
             />
             <canvas
