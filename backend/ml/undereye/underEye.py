@@ -47,7 +47,7 @@ def Predict_underEye(image_path, output_dir="undereye_result"):
 
     # Initialize dlib's face detector and shape predictor
     face_detector = dlib.get_frontal_face_detector()
-    shape_predictor = dlib.shape_predictor("/Users/tt/Documents/Coding/Claire/backend/ml/undereye/shape_predictor_68_face_landmarks.dat")
+    shape_predictor = dlib.shape_predictor(os.path.join(os.path.dirname(__file__),'shape_predictor_68_face_landmarks.dat'))
 
     # Detect faces in the image
     detected_faces = face_detector(image_rgb, 1)
@@ -131,10 +131,10 @@ def Predict_underEye(image_path, output_dir="undereye_result"):
     return results
 
 
-# Example usage
-image_path = "/Users/tt/Documents/Coding/Claire/backend/uploads/65b8af6fd81c2eb031fb59e3_IMG_1938 (1)-p-500.jpg"  # Replace with your image path
-results = Predict_underEye(image_path)
+# # Example usage
+# image_path = "/Users/tt/Documents/Coding/Claire/backend/uploads/65b8af6fd81c2eb031fb59e3_IMG_1938 (1)-p-500.jpg"  # Replace with your image path
+# results = Predict_underEye(image_path)
 
-# Print the results
-for result in results:
-    print(f"Face {result['face_index']}: Dark Circle Score = {result['dark_circle_score']} ({result['label']})")
+# # Print the results
+# for result in results:
+#     print(f"Face {result['face_index']}: Dark Circle Score = {result['dark_circle_score']} ({result['label']})")

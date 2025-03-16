@@ -10,7 +10,7 @@ const LoadingScreen = () => {
     const timer = setTimeout(() => setFadeIn(1), 100); // Fade in after 100ms
     const interval = setInterval(() => {
       setProgress((prev) => {
-        let newProgress = prev + Math.random() * 10;
+        let newProgress = prev + Math.random() * 5;
         if (newProgress >= 100) {
           clearInterval(interval);
           setTimeout(() => navigate("/result"), 500);

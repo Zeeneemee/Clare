@@ -5,11 +5,11 @@ import shutil
 def Gender(image_path, save_dir):
     BASE_UPLOAD_DIR = "/Users/tt/Documents/Coding/Claire/backend/uploads/"
     output_dir = os.path.join(BASE_UPLOAD_DIR, "gender_result")
-
+    model_path = os.path.join(os.path.dirname(__file__),'gender.pt')
     if os.path.exists(output_dir):
         shutil.rmtree(output_dir)  
 
-    model = YOLO("/Users/tt/Documents/Coding/Claire/backend/ml/gender/gender.pt")
+    model = YOLO(model_path)
     results = model.predict(image_path, save=True, project=save_dir, name="gender_result", show=True)
 
     # Gender mapping
