@@ -100,17 +100,17 @@ export default function CameraCapture() {
     const canvas = overlayCanvasRef.current;
     const video = videoRef.current;
     if (!video?.videoWidth) return;
-
+  
     const ctx = canvas.getContext("2d");
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-
+  
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
-    // Flip horizontally to match the mirrored video.
-    ctx.translate(canvas.width, 0);
-    ctx.scale(-1, 1);
-
+    // Remove or comment out the following two lines to avoid horizontal flip:
+    // ctx.translate(canvas.width, 0);
+    // ctx.scale(-1, 1);
+  
     // Draw circular guideline.
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
@@ -120,7 +120,7 @@ export default function CameraCapture() {
     ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
     ctx.lineWidth = 4;
     ctx.stroke();
-
+  
     // Draw boxes for detected faces.
     detections.forEach(detection => {
       const box = detection.box;
@@ -130,44 +130,46 @@ export default function CameraCapture() {
     });
     ctx.restore();
   };
+  
 
   const checkConditions = (detections) => {
     const video = videoRef.current;
     if (!video) return { isValid: false, facePosition: "Face Undetected" };
-
+  
     const videoWidth = video.videoWidth;
     const videoHeight = video.videoHeight;
-
+  
     if (detections.length === 1) {
       const face = detections[0].box;
       const centerX = videoWidth / 2;
       const centerY = videoHeight / 2;
       const radius = Math.min(videoWidth, videoHeight) * 0.35;
-
+  
       const faceCenterX = face.x + face.width / 2;
       const faceCenterY = face.y + face.height / 2;
-      const buffer = 10;
-
+      // Increased buffer for tolerance.
+      const buffer = 30;
+  
       const distance = Math.sqrt(
         Math.pow(faceCenterX - centerX, 2) + Math.pow(faceCenterY - centerY, 2)
       );
       const isCentered = distance <= radius + buffer;
-
+  
       const targetDiameter = radius * 2;
       const minSize = targetDiameter * 0.6;
       const maxSize = targetDiameter * 0.9;
       const widthValid = face.width >= minSize && face.width <= maxSize;
       const heightValid = face.height >= minSize && face.height <= maxSize;
-
+  
       const padding = Math.max(videoWidth * 0.05, 50);
       const withinFrame =
         face.x > padding &&
         face.x + face.width < videoWidth - padding &&
         face.y > padding &&
         face.y + face.height < videoHeight - padding;
-
+  
       const isValid = isCentered && widthValid && heightValid && withinFrame;
-
+  
       return {
         isValid,
         facePosition: isValid ? "Good" : "Adjust",
@@ -178,10 +180,10 @@ export default function CameraCapture() {
       facePosition: detections.length > 1 ? "Multiple faces" : "Face Undetected",
     };
   };
+  
 
   const calculateLighting = () => {
     const video = videoRef.current;
-    // Check if the video element exists and has valid dimensions.
     if (!video || !video.videoWidth || !video.videoHeight) {
       return "Analyzing...";
     }
@@ -194,7 +196,7 @@ export default function CameraCapture() {
     ctx.scale(-1, 1);
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     ctx.restore();
-  
+
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     let brightnessSum = 0;
     for (let i = 0; i < imageData.data.length; i += 4) {
@@ -205,33 +207,39 @@ export default function CameraCapture() {
     if (avgBrightness > 180) return "Too Bright";
     return "Good";
   };
-  
+
+  // Capture the image using the displayed dimensions and accounting for DPR.
   const captureImage = () => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-    
-    // Get the displayed dimensions
-    // Get the device pixel ratio
-    
-    // Set canvas size to the displayed size times the DPR
-    canvas.width = video.videoWidth
-    canvas.height = video.videoHeight
-    // Set the CSS size of the canvas to match the displayed size
-    canvas.style.width = canvas.width
-    canvas.style.height = canvas.height
-    
-    // Scale the drawing context to account for the DPR
-    ctx.save();
   
-    // Mirror the image by translating and scaling
-    ctx.translate(canvas.width, 0);
+    // Get the computed style of the video element.
+    const style = window.getComputedStyle(video);
+    const width = parseFloat(style.width);
+    const height = parseFloat(style.height);
+    const dpr = window.devicePixelRatio || 1;
+  
+    // Set the canvas's internal resolution to the displayed size multiplied by the DPR.
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    // Set the CSS size of the canvas to match the displayed size.
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+  
+    ctx.save();
+    // Scale the drawing context so drawing uses the high-resolution backing store.
+    ctx.scale(dpr, dpr);
+    // Mirror the image to match the video mirroring.
+    ctx.translate(width, 0);
     ctx.scale(-1, 1);
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    // Draw the video frame using the displayed width and height.
+    ctx.drawImage(video, 0, 0, width, height);
     ctx.restore();
-    
+  
     setState(prev => ({ ...prev, captured: true, showConfirmation: true }));
   };
+  
 
   const handleConsent = () => {
     localStorage.setItem("termsAccepted", "true");
@@ -303,10 +311,7 @@ export default function CameraCapture() {
       video.style.display = "block";
       navigator.mediaDevices
         .getUserMedia({
-          video: {
-            frameRate: { ideal: 15, max: 15 },
-      
-          },
+          video: { frameRate: { ideal: 15, max: 15 } },
         })
         .then((stream) => {
           video.srcObject = stream;
