@@ -33,47 +33,107 @@ export default function CameraCapture() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Initialize camera when consent has been given.
-  useEffect(() => {
-    if (!state.showConsent) {
-      initializeCamera();
-      return () => cleanup();
-    }
-  }, [state.showConsent]);
+  const checkConditions = useCallback((detections) => {
+    const video = videoRef.current;
+    if (!video) return { isValid: false, facePosition: "Face Undetected" };
 
-  const initializeCamera = useCallback(async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: "user" } 
-      });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play().catch(error => {
-          console.error("Error playing video:", error);
-        });
-      }
-      await loadModels();
-    } catch (error) {
-      handleError("Camera initialization failed:", error);
-    }
-  }, []); 
+    const videoWidth = video.videoWidth;
+    const videoHeight = video.videoHeight;
 
-  // Wrap loadModels in useCallback.
-  const loadModels = useCallback(async () => {
-    try {
-      await Promise.all([
-        faceapi.nets.tinyFaceDetector.loadFromUri(process.env.PUBLIC_URL + "/models"),
-        faceapi.nets.faceLandmark68Net.loadFromUri(process.env.PUBLIC_URL + "/models"),
-        faceapi.nets.faceExpressionNet.loadFromUri(process.env.PUBLIC_URL + "/models"),
-      ]);
-      setState(prev => ({ ...prev, modelsLoaded: true }));
-      startDetection();
-    } catch (error) {
-      handleError("Model loading failed. Check models in /public/models", error);
-    }
-  }, []); 
+    if (detections.length === 1) {
+      const face = detections[0].box;
+      const centerX = videoWidth / 2;
+      const centerY = videoHeight / 2;
+      const radius = Math.min(videoWidth, videoHeight) * 0.35;
 
-  const startDetection = () => {
+      const faceCenterX = face.x + face.width / 2;
+      const faceCenterY = face.y + face.height / 2;
+      const buffer = 30;
+
+      const distance = Math.sqrt(
+        Math.pow(faceCenterX - centerX, 2) + Math.pow(faceCenterY - centerY, 2)
+      );
+      const isCentered = distance <= radius + buffer;
+
+      const targetDiameter = radius * 2;
+      const minSize = targetDiameter * 0.6;
+      const maxSize = targetDiameter * 0.9;
+      const widthValid = face.width >= minSize && face.width <= maxSize;
+      const heightValid = face.height >= minSize && face.height <= maxSize;
+
+      const padding = Math.max(videoWidth * 0.05, 50);
+      const withinFrame =
+        face.x > padding &&
+        face.x + face.width < videoWidth - padding &&
+        face.y > padding &&
+        face.y + face.height < videoHeight - padding;
+
+      const isValid = isCentered && widthValid && heightValid && withinFrame;
+
+      return {
+        isValid,
+        facePosition: isValid ? "Good" : "Adjust",
+      };
+    }
+    return {
+      isValid: false,
+      facePosition: detections.length > 1 ? "Multiple faces" : "Face Undetected",
+    };
+  }, []);
+
+  const calculateLighting = useCallback(() => {
+    const video = videoRef.current;
+    if (!video || !video.videoWidth || !video.videoHeight) {
+      return "Analyzing...";
+    }
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let brightnessSum = 0;
+    for (let i = 0; i < imageData.data.length; i += 4) {
+      brightnessSum += (imageData.data[i] + imageData.data[i + 1] + imageData.data[i + 2]) / 3;
+    }
+    const avgBrightness = brightnessSum / (imageData.data.length / 4);
+    if (avgBrightness < 80) return "Too Dark";
+    if (avgBrightness > 180) return "Too Bright";
+    return "Good";
+  }, []);
+
+  const updateOverlay = useCallback((detections, isValid) => {
+    const canvas = overlayCanvasRef.current;
+    const video = videoRef.current;
+    if (!video?.videoWidth) return;
+
+    const ctx = canvas.getContext("2d");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw circular guideline.
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = Math.min(canvas.width, canvas.height) * 0.4;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    // Draw boxes for detected faces.
+    detections.forEach(detection => {
+      const box = detection.box;
+      ctx.strokeStyle = isValid ? "rgba(0, 255, 0, 0.5)" : "rgba(255, 0, 0, 0.5)";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(box.x, box.y, box.width, box.height);
+    });
+  }, []);
+
+  const startDetection = useCallback(() => {
     detectionInterval.current = setInterval(async () => {
       if (!state.captured && videoRef.current?.readyState >= 4) {
         try {
@@ -94,152 +154,73 @@ export default function CameraCapture() {
         }
       }
     }, 100);
-  };
+  }, [state.captured, checkConditions, updateOverlay, calculateLighting]);
 
-  const updateOverlay = (detections, isValid) => {
-    const canvas = overlayCanvasRef.current;
-    const video = videoRef.current;
-    if (!video?.videoWidth) return;
-  
-    const ctx = canvas.getContext("2d");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-  
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.save();
-    // Remove or comment out the following two lines to avoid horizontal flip:
-    // ctx.translate(canvas.width, 0);
-    // ctx.scale(-1, 1);
-  
-    // Draw circular guideline.
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const radius = Math.min(canvas.width, canvas.height) * 0.4;
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
-    ctx.lineWidth = 4;
-    ctx.stroke();
-  
-    // Draw boxes for detected faces.
-    detections.forEach(detection => {
-      const box = detection.box;
-      ctx.strokeStyle = isValid ? "rgba(0, 255, 0, 0.5)" : "rgba(255, 0, 0, 0.5)";
-      ctx.lineWidth = 4;
-      ctx.strokeRect(box.x, box.y, box.width, box.height);
-    });
-    ctx.restore();
-  };
-  
-
-  const checkConditions = (detections) => {
-    const video = videoRef.current;
-    if (!video) return { isValid: false, facePosition: "Face Undetected" };
-  
-    const videoWidth = video.videoWidth;
-    const videoHeight = video.videoHeight;
-  
-    if (detections.length === 1) {
-      const face = detections[0].box;
-      const centerX = videoWidth / 2;
-      const centerY = videoHeight / 2;
-      const radius = Math.min(videoWidth, videoHeight) * 0.35;
-  
-      const faceCenterX = face.x + face.width / 2;
-      const faceCenterY = face.y + face.height / 2;
-      // Increased buffer for tolerance.
-      const buffer = 30;
-  
-      const distance = Math.sqrt(
-        Math.pow(faceCenterX - centerX, 2) + Math.pow(faceCenterY - centerY, 2)
-      );
-      const isCentered = distance <= radius + buffer;
-  
-      const targetDiameter = radius * 2;
-      const minSize = targetDiameter * 0.6;
-      const maxSize = targetDiameter * 0.9;
-      const widthValid = face.width >= minSize && face.width <= maxSize;
-      const heightValid = face.height >= minSize && face.height <= maxSize;
-  
-      const padding = Math.max(videoWidth * 0.05, 50);
-      const withinFrame =
-        face.x > padding &&
-        face.x + face.width < videoWidth - padding &&
-        face.y > padding &&
-        face.y + face.height < videoHeight - padding;
-  
-      const isValid = isCentered && widthValid && heightValid && withinFrame;
-  
-      return {
-        isValid,
-        facePosition: isValid ? "Good" : "Adjust",
-      };
+  const loadModels = useCallback(async () => {
+    try {
+      await Promise.all([
+        faceapi.nets.tinyFaceDetector.loadFromUri(process.env.PUBLIC_URL + "/models"),
+        faceapi.nets.faceLandmark68Net.loadFromUri(process.env.PUBLIC_URL + "/models"),
+        faceapi.nets.faceExpressionNet.loadFromUri(process.env.PUBLIC_URL + "/models"),
+      ]);
+      setState(prev => ({ ...prev, modelsLoaded: true }));
+      startDetection();
+    } catch (error) {
+      handleError("Model loading failed. Check models in /public/models", error);
     }
-    return {
-      isValid: false,
-      facePosition: detections.length > 1 ? "Multiple faces" : "Face Undetected",
-    };
-  };
-  
+  }, [startDetection]);
 
-  const calculateLighting = () => {
-    const video = videoRef.current;
-    if (!video || !video.videoWidth || !video.videoHeight) {
-      return "Analyzing...";
+  const initializeCamera = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: "user" } 
+      });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play().catch(error => {
+          console.error("Error playing video:", error);
+        });
+      }
+      await loadModels();
+    } catch (error) {
+      handleError("Camera initialization failed:", error);
     }
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    ctx.save();
-    ctx.translate(canvas.width, 0);
-    ctx.scale(-1, 1);
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    ctx.restore();
+  }, [loadModels]);
 
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    let brightnessSum = 0;
-    for (let i = 0; i < imageData.data.length; i += 4) {
-      brightnessSum += (imageData.data[i] + imageData.data[i + 1] + imageData.data[i + 2]) / 3;
+  // Initialize camera when consent has been given.
+  useEffect(() => {
+    if (!state.showConsent) {
+      initializeCamera();
+      return () => cleanup();
     }
-    const avgBrightness = brightnessSum / (imageData.data.length / 4);
-    if (avgBrightness < 80) return "Too Dark";
-    if (avgBrightness > 180) return "Too Bright";
-    return "Good";
-  };
+  }, [state.showConsent]);
 
-  // Capture the image using the displayed dimensions and accounting for DPR.
   const captureImage = () => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-  
-    // Get the computed style of the video element.
-    const style = window.getComputedStyle(video);
-    const width = parseFloat(style.width);
-    const height = parseFloat(style.height);
-    const dpr = window.devicePixelRatio || 1;
-  
-    // Set the canvas's internal resolution to the displayed size multiplied by the DPR.
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
-    // Set the CSS size of the canvas to match the displayed size.
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
-  
-    ctx.save();
-    // Scale the drawing context so drawing uses the high-resolution backing store.
-    ctx.scale(dpr, dpr);
-    // Mirror the image to match the video mirroring.
-    ctx.translate(width, 0);
-    ctx.scale(-1, 1);
-    // Draw the video frame using the displayed width and height.
-    ctx.drawImage(video, 0, 0, width, height);
-    ctx.restore();
-  
+
+    // Get the intrinsic dimensions of the video
+    const videoWidth = video.videoWidth;
+    const videoHeight = video.videoHeight;
+
+    // Set the canvas dimensions to match the video's intrinsic dimensions
+    canvas.width = videoWidth;
+    canvas.height = videoHeight;
+
+    // Draw the last frame of the video onto the canvas
+    ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
+
+    // Set the CSS size of the canvas to match the displayed size
+    // const style = window.getComputedStyle(video);
+    // const displayedWidth = parseFloat(style.width);
+    // const displayedHeight = parseFloat(style.height);
+    // canvas.style.width = `${displayedWidth}px`;
+    // canvas.style.height = `${displayedHeight}px`;
+
+    // Update the state to show the captured image
     setState(prev => ({ ...prev, captured: true, showConfirmation: true }));
   };
-  
 
   const handleConsent = () => {
     localStorage.setItem("termsAccepted", "true");
@@ -247,9 +228,18 @@ export default function CameraCapture() {
   };
 
   const retake = () => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+
+    // Reset canvas transformations
+    ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset to identity matrix
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+
+    // Update state
     setState(prev => ({ ...prev, captured: false, showConfirmation: false }));
-    // Restart the camera and detection.
-    initializeCamera();
+
+    // Restart the camera and detection
+   
   };
 
   const proceed = async () => {
@@ -311,7 +301,7 @@ export default function CameraCapture() {
       video.style.display = "block";
       navigator.mediaDevices
         .getUserMedia({
-          video: { frameRate: { ideal: 15, max: 15 } },
+          video: { facingMode: "user" } 
         })
         .then((stream) => {
           video.srcObject = stream;
@@ -353,13 +343,13 @@ export default function CameraCapture() {
               playsInline
               muted
               disablePictureInPicture
-              className={`transform scale-x-[-1] w-full h-[350px] sm:h-[400px] max-w-md rounded-3xl shadow-lg object-cover ${
-                state.captured ? "hidden" : "block"
+              className={`w-full h-[350px] scale-x-[-1] sm:h-[400px] max-w-md rounded-3xl shadow-lg object-cover ${
+                state.captured ? "hidden" : "block "
               }`}
             />
             <canvas
               ref={canvasRef}
-              className="w-auto h-[400px] max-w-md rounded-3xl shadow-lg object-cover"
+              className="w-full h-[350px] scale-x-[-1] max-w-md rounded-3xl shadow-lg object-cover"
               style={{ display: state.captured ? "block" : "none" }}
             />
             <canvas
