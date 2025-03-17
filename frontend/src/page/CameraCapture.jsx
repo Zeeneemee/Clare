@@ -207,10 +207,12 @@ export default function CameraCapture() {
     // Set the canvas dimensions to match the video's intrinsic dimensions
     canvas.width = videoWidth;
     canvas.height = videoHeight;
+    ctx.save();
 
-    // Draw the last frame of the video onto the canvas
+    // Flip horizontally by scaling and translating
+    ctx.translate(canvas.width, 0);  // Move origin to right edge
+    ctx.scale(-1, 1);  
     ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
-
     // Set the CSS size of the canvas to match the displayed size
     // const style = window.getComputedStyle(video);
     // const displayedWidth = parseFloat(style.width);
@@ -349,7 +351,7 @@ export default function CameraCapture() {
             />
             <canvas
               ref={canvasRef}
-              className="w-full h-[350px] scale-x-[-1] max-w-md rounded-3xl shadow-lg object-cover"
+              className="w-full h-[350px] max-w-md rounded-3xl shadow-lg object-cover"
               style={{ display: state.captured ? "block" : "none" }}
             />
             <canvas
