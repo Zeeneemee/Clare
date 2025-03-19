@@ -10,30 +10,25 @@ const imageProcessingSchema = new Schema({
     processedImage: { type: String }, // Can store Base64 or file path
     analysis: {
       acne: {
-        ResultImage: { type: String }, // ✅ Stores acne result image (Base64 or file path)
         positions: [{ x: Number, y: Number, width: Number, height: Number }],
         score: { type: Number, default: 0 },
         confidence: [{ type: Number, default: 0 }]
       },
       wrinkles: {
-        ResultImage: { type: String },
         positions: [{ x: Number, y: Number, width: Number, height: Number }],
         score: { type: Number, default: 0 },
         confidence: [{ type: Number, default: 0 }]
       },
       scar: {
-        ResultImage: { type: String },
         positions: [{ x: Number, y: Number, width: Number, height: Number }],
         score: { type: Number, default: 0 },
         confidence: [{ type: Number, default: 0 }]
       },
       undereye: {
-        ResultImage: { type: String },
         score: { type: Number, default: 0 },
         label: {type: String}
       },
       darkspot: {
-        ResultImage: { type: String },
         positions: [{ x: Number, y: Number, width: Number, height: Number }],
         score: { type: Number, default: 0 },
         confidence: [{ type: Number, default: 0 }]
