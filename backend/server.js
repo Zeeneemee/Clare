@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const fs = require("fs");
 const { spawn } = require("child_process"); // ✅ Use spawn instead of exec
 const upload = require("./controller/fileUpload");
 const mongoose = require("./db"); // ✅ Mongoose connection

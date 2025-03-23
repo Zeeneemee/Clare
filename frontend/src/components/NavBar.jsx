@@ -56,7 +56,7 @@ export default function NavBar({ scrolled }) {
               <li key={item} className="w-full text-center py-3">
                 <Link
                   to={
-                    item === 'Our Products' ? '/products'
+                    item === 'Our Products' ? 'https://vbicar-59.myshopify.com/collections/clare'
                     : item === 'Home' ? '/'
                     : item === 'Skin Analysis' ? '/skinanalysis'
                     : item === 'Contact Us' ? '/contactus'
