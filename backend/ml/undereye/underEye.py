@@ -2,7 +2,6 @@ import os
 import cv2
 import dlib
 import numpy as np
-import matplotlib.pyplot as plt
 
 # Function to calculate the distance between two points
 def distance(p1, p2):
@@ -33,13 +32,10 @@ def calculate_dark_circle_score(brightness_diff):
     return score, label
 
 # Function to process the image and calculate dark circle score
-def Predict_underEye(image_path, output_dir="undereye_result"):
+def Predict_underEye(image_path):
     # Validate image path
     if not os.path.exists(image_path):
         raise FileNotFoundError(f"Image not found at {image_path}")
-
-    # Create output directory if it does not exist
-    os.makedirs(output_dir, exist_ok=True)
 
     # Load the image
     image = cv2.imread(image_path)
@@ -47,7 +43,7 @@ def Predict_underEye(image_path, output_dir="undereye_result"):
 
     # Initialize dlib's face detector and shape predictor
     face_detector = dlib.get_frontal_face_detector()
-    shape_predictor = dlib.shape_predictor(os.path.join(os.path.dirname(__file__),'shape_predictor_68_face_landmarks.dat'))
+    shape_predictor = dlib.shape_predictor(os.path.join(os.path.dirname(__file__), 'shape_predictor_68_face_landmarks.dat'))
 
     # Detect faces in the image
     detected_faces = face_detector(image_rgb, 1)
@@ -69,7 +65,7 @@ def Predict_underEye(image_path, output_dir="undereye_result"):
 
         # Define regions dynamically based on face proportions
         regions = {
-            'under_eye_left': (landmarks[36, 0] - int(eye_distance * 0), landmarks[36, 1] + 15, int(eye_distance * 0.3), 20),
+            'under_eye_left': (landmarks[36, 0], landmarks[36, 1] + 15, int(eye_distance * 0.3), 20),
             'under_eye_right': (landmarks[45, 0] - int(eye_distance * 0.3), landmarks[45, 1] + 15, int(eye_distance * 0.3), 20),
             'forehead': (landmarks[19, 0] + int(face_width * 0.05), landmarks[19, 1] - 50, int(face_width * 0.4), 50),
             'left_cheek': (landmarks[2, 0] + int(face_width * 0.05), landmarks[30, 1] - 20, int(face_width * 0.15), 30),
@@ -96,45 +92,9 @@ def Predict_underEye(image_path, output_dir="undereye_result"):
 
         # Store the result
         results.append({
-            "face_index": i+1,
-            "dark_circle_score": round(score, 2),
+            "dark_circle_score": float(score),
             "label": score_label
         })
 
-        # Visualization with rectangles
-        fig, ax = plt.subplots(figsize=(10, 10))
-        ax.imshow(image_rgb)
-
-        # Draw under-eye regions in red
-        for region in [regions['under_eye_left'], regions['under_eye_right']]:
-            x, y, w, h = region
-            rect = plt.Rectangle((x, y), w, h, linewidth=2, edgecolor='red', facecolor='none')
-            ax.add_patch(rect)
-
-        # Draw facial regions in green
-        for region in [regions['forehead'], regions['left_cheek'], regions['right_cheek'], regions['chin']]:
-            x, y, w, h = region
-            rect = plt.Rectangle((x, y), w, h, linewidth=2, edgecolor='green', facecolor='none')
-            ax.add_patch(rect)
-
-        # Add title
-        plt.title(f"Face {i+1} Dark Circle Score: {score:.2f} ({score_label})")
-        plt.axis("off")
-
-        # Save the annotated image
-        output_path = os.path.join(output_dir, f"darkcircle_result_face_{i+1}.png")
-        plt.savefig(output_path, bbox_inches="tight", pad_inches=0.1)
-        plt.close()
-
-        print(f"Saved result image for Face {i+1} at {output_path}")
-
     return results
 
-
-# # Example usage
-# image_path = "/Users/tt/Documents/Coding/Claire/backend/uploads/65b8af6fd81c2eb031fb59e3_IMG_1938 (1)-p-500.jpg"  # Replace with your image path
-# results = Predict_underEye(image_path)
-
-# # Print the results
-# for result in results:
-#     print(f"Face {result['face_index']}: Dark Circle Score = {result['dark_circle_score']} ({result['label']})")

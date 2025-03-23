@@ -2,16 +2,11 @@ from ultralytics import YOLO
 import os
 import shutil  
 
-def darkspot_detection(image_path,save_dir):
+def darkspot_detection(image_path):
     detection_data = {"positions": [], "confidence": []}
-    output_dir = os.path.join(save_dir, "darkspot_result")
     model_path = os.path.join(os.path.dirname(__file__), "darkspot.pt")
-
-    # ✅ Remove existing output directory if it exists
-    if os.path.exists(output_dir):
-        shutil.rmtree(output_dir)  # Delete previous results
     model = YOLO(model_path)
-    results = model.predict(image_path, save=True, project=save_dir,name="darkspot_result" , show=True)  # Process the image
+    results = model.predict(image_path ,name="darkspot_result" , show=True)  # Process the image
     for result in results:
         boxes = result.boxes  
         for box in boxes:

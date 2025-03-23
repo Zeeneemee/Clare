@@ -4,23 +4,22 @@ import json
 import os
 import io
 from PIL import Image
+import uuid
 from acne.acne import acne_detection  # Import ML model
-from gender.gender import Gender  # Import Gender model
+from gender.gender import Gender        # Import Gender model
 from undereye.underEye import Predict_underEye  # Import Under-eye model
-from darkspot.darkspot import darkspot_detection 
+from darkspot.darkspot import darkspot_detection  # Import Darkspot model
+from scar.scar import Scar_detection
 
 # ✅ Define directories using relative paths
 BASE_UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
-ACNE_RESULT_DIR = os.path.join(BASE_UPLOAD_DIR, "acne_result")
-GENDER_RESULT_DIR = os.path.join(BASE_UPLOAD_DIR, "gender_result")
-UNDEREYE_RESULT_DIR = os.path.join(BASE_UPLOAD_DIR, "undereye_result")
-DARKSPOT_RESULT_DIR = os.path.join(BASE_UPLOAD_DIR, 'darkspot_result',"darkspot_result")
+
 
 def decode_base64_image(base64_string, output_path):
     """Decodes a Base64-encoded image and saves it as a file."""
     image_data = base64.b64decode(base64_string)
     image = Image.open(io.BytesIO(image_data))
-    image.save(output_path, format="JPEG")  # ✅ Ensure JPEG format
+    image.save(output_path, format="JPEG")  # Ensure JPEG format
     return output_path
 
 def encode_image(file_path):
@@ -43,95 +42,73 @@ if __name__ == "__main__":
             sys.exit(1)
 
         input_data = sys.argv[1]  # Could be a file path or a Base64 string
-
-        # ✅ Check if input is a file path or Base64 string
-        if os.path.exists(input_data):
-            temp_image_path = input_data  # Use file path directly
-        else:
-            # ✅ Decode Base64 to temporary image file
-            temp_image_path = os.path.join(BASE_UPLOAD_DIR, "temp_image.jpg")
-            decode_base64_image(input_data, temp_image_path)
-
-        # ✅ Run acne detection
-        results_acne = acne_detection(temp_image_path, BASE_UPLOAD_DIR)
         
-        # ✅ Run gender detection
-        result_gender = Gender(temp_image_path, BASE_UPLOAD_DIR)
+        # ✅ Save the original image with a unique name
+        unique_filename = f"{uuid.uuid4().hex}.jpg"
+        original_image_path = os.path.join(BASE_UPLOAD_DIR, unique_filename)
+        
+        if os.path.exists(input_data):
+            # Input is a file path; copy it to our storage directory.
+            with open(input_data, "rb") as src_file:
+                with open(original_image_path, "wb") as dst_file:
+                    dst_file.write(src_file.read())
+        else:
+            # Input is a Base64 string; decode and save it.
+            decode_base64_image(input_data, original_image_path)
+        
+        # ✅ Run predictions on the original image without storing processed images.
+        # We pass None as the directory so the models return results only.
+        results_acne = acne_detection(original_image_path)
+        result_gender = Gender(original_image_path)
         detected_gender = result_gender
+        results_scar = Scar_detection(original_image_path)
 
-        # ✅ Run under-eye detection
-        undereye_results = Predict_underEye(temp_image_path, UNDEREYE_RESULT_DIR)
-        # Extract under-eye score and result image
+        undereye_results = Predict_underEye(original_image_path)
         dark_circle_score = undereye_results[0]["dark_circle_score"] if undereye_results else 0.0
         dark_circle_label = undereye_results[0]["label"] if undereye_results else "Not Detected"
+
+        darkspot_results = darkspot_detection(original_image_path)
+
+        # ✅ Optionally encode the original image to send to the client.
+        encoded_original_image = encode_image(original_image_path)
         
-        # ✅ Run darkspot detection only if no darkspot result file already exists
-        if not os.path.exists(DARKSPOT_RESULT_DIR) or not os.listdir(DARKSPOT_RESULT_DIR):
-            darkspot_results = darkspot_detection(temp_image_path, DARKSPOT_RESULT_DIR)
-        else:
-            # Use existing results or set default values
-            darkspot_results = {"positions": [], "confidence": []}
-
-        # ✅ Find processed images
-        def find_processed_image(directory):
-            if os.path.exists(directory):
-                for file in os.listdir(directory):
-                    if file.endswith(".jpg") or file.endswith(".png"):
-                        return os.path.join(directory, file)
-            return None
-
-        processed_acne_image_path = find_processed_image(ACNE_RESULT_DIR)
-        processed_gender_image_path = find_processed_image(GENDER_RESULT_DIR)
-        processed_undereye_image_path = find_processed_image(UNDEREYE_RESULT_DIR)
-        processed_darkspot_image_path = find_processed_image(DARKSPOT_RESULT_DIR)
-
-        # ✅ Convert processed images to Base64
-        encoded_acne_image = encode_image(processed_acne_image_path) if processed_acne_image_path else None
-        encoded_gender_image = encode_image(processed_gender_image_path) if processed_gender_image_path else None
-        encoded_undereye_image = encode_image(processed_undereye_image_path) if processed_undereye_image_path else None
-        encoded_darkspot_image = encode_image(processed_darkspot_image_path) if processed_darkspot_image_path else None
-
-        # ✅ Default Values for Other Features
+        # ✅ Default detection for features not implemented.
         default_detection = {
-            "ResultImage": None,
             "positions": [],
             "confidence": [],
             "score": 0.0
         }
-
-        # ✅ Construct JSON output
+        
+        # ✅ Construct JSON output containing only analysis results (bounding box positions, etc.)
         combined_result = {
+            "originalImage": f"data:image/jpeg;base64,{encoded_original_image}" if encoded_original_image else None,
             "acne": {
-                "ResultImage": f"data:image/jpeg;base64,{encoded_acne_image}" if encoded_acne_image else None,
                 "positions": results_acne.get("positions", []),
                 "confidence": results_acne.get("confidence", []),
                 "score": compute_score(results_acne.get("confidence", []))
             },
             "wrinkles": default_detection,
-            "scar": default_detection,
+            "scar": {
+                "positions": results_scar.get("positions", []),
+                "confidence": results_scar.get("confidence", []),
+                "score": compute_score(results_scar.get("confidence", []))
+            },
             "undereye": {
-                "ResultImage": f"data:image/jpeg;base64,{encoded_undereye_image}" if encoded_undereye_image else None,
                 "score": round(dark_circle_score),
                 "label": dark_circle_label
             },
             "darkspot": {
-                "ResultImage": f"data:image/jpeg;base64,{encoded_darkspot_image}" if encoded_darkspot_image else None,
                 "positions": darkspot_results.get("positions", []),
                 "confidence": darkspot_results.get("confidence", []),
                 "score": compute_score(darkspot_results.get("confidence", []))
             },
             "age": "Not Detected",
             "gender": {
-                "label": detected_gender,
-                "ResultImage": f"data:image/jpeg;base64,{encoded_gender_image}" if encoded_gender_image else None
+                "label": detected_gender
             }
         }
 
-        # ✅ Cleanup only if we created a temp file
-        if not os.path.exists(input_data) and os.path.exists(temp_image_path):
-            os.remove(temp_image_path)
-
-        # ✅ Print JSON output
+        # ✅ Print JSON output.
         sys.stdout.flush()
         print(json.dumps(combined_result))
 

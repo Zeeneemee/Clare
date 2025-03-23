@@ -1,10 +1,6 @@
 import { useNavigate } from "react-router-dom"
-const Consent = (setConsentGiven, setShowConsent, consentGiven)=>{
+const Consent = ({state,setState, onClick})=>{
     const navigate = useNavigate()
-    const handleConsent = () => {
-        localStorage.setItem("termsAccepted", "true");
-        setShowConsent(false);
-      };
     return(
     <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-3xl overflow-hidden">
     <div className="bg-white p-6 rounded-xl shadow-lg text-center w-full max-h-[350px] sm:max-h-[400px] overflow-y-auto">
@@ -37,18 +33,20 @@ const Consent = (setConsentGiven, setShowConsent, consentGiven)=>{
         <input
           type="checkbox"
           id="biometricConsent"
-          onChange={(e) => setConsentGiven(e.target.checked)}
-          className="mt-1 mr-3"
-        />
+          onChange={(e) =>
+                        setState(prev => ({ ...prev, consentGiven: e.target.checked }))
+                      }
+          className="mt-1 w-20 h-20 mr-3" // Increased size
+          />
         <label htmlFor="biometricConsent" className="font-lato text-xs text-gray-700 text-left">
           I hereby explicitly authorize Clare to process my Biometric Data as described above. I affirm that this consent is voluntary and informed, understanding that service access requires data processing and that I may withdraw consent through account deletion.
         </label>
       </div>
       <button
-        onClick={handleConsent}
-        disabled={!consentGiven}
+        onClick={onClick}
+        disabled={!state.consentGiven}
         className={`font-lato font-light text-sm py-2 px-6 rounded-full mt-4 transition-colors ${
-          consentGiven ? "bg-darkblue text-white hover:bg-opacity-80" : "bg-gray-300 text-gray-500 cursor-not-allowed"
+          state.consentGiven ? "bg-darkblue text-white hover:bg-opacity-80" : "bg-gray-300 text-gray-500 cursor-not-allowed"
         }`}
       >
         Accept and Continue

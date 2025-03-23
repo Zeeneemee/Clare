@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const fs = require("fs");
 const { spawn } = require("child_process"); // ✅ Use spawn instead of exec
 const upload = require("./controller/fileUpload");
 const mongoose = require("./db"); // ✅ Mongoose connection
@@ -81,11 +80,11 @@ app.post("/upload", upload.single("image"), async (req, res) => {
                         processedAt: new Date(),
                         "resultData.originalFilename": req.file.filename,
                         "resultData.processedImage": pythonResponse.processedImage,
-                        "resultData.analysis.acne": pythonResponse.acne || { ResultImage: null, positions: [], score: 0 },
-                        "resultData.analysis.wrinkles": pythonResponse.wrinkles || { ResultImage: null, positions: [], score: 0 },
-                        "resultData.analysis.scar": pythonResponse.scar || { ResultImage: null, positions: [], score: 0 },
-                        "resultData.analysis.undereye": pythonResponse.undereye || { ResultImage: null, positions: [], score: 0 },
-                        "resultData.analysis.darkspot": pythonResponse.darkspot || { ResultImage: null, positions: [], score: 0 },
+                        "resultData.analysis.acne": pythonResponse.acne || { positions: [], score: 0 },
+                        "resultData.analysis.wrinkles": pythonResponse.wrinkles || { positions: [], score: 0 },
+                        "resultData.analysis.scar": pythonResponse.scar || { positions: [], score: 0 },
+                        "resultData.analysis.undereye": pythonResponse.undereye || {positions: [], score: 0 },
+                        "resultData.analysis.darkspot": pythonResponse.darkspot || { positions: [], score: 0 },
                         "resultData.analysis.age": pythonResponse.age || "Not Detected",
                         "resultData.analysis.gender": pythonResponse.gender?.label || "Not Detected"
                     },

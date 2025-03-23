@@ -103,35 +103,7 @@ export default function CameraCapture() {
     return "Good";
   }, []);
 
-  const updateOverlay = useCallback((detections, isValid) => {
-    const canvas = overlayCanvasRef.current;
-    const video = videoRef.current;
-    if (!video?.videoWidth) return;
-
-    const ctx = canvas.getContext("2d");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Draw circular guideline.
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const radius = Math.min(canvas.width, canvas.height) * 0.4;
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
-    ctx.lineWidth = 4;
-    ctx.stroke();
-
-    // Draw boxes for detected faces.
-    detections.forEach(detection => {
-      const box = detection.box;
-      ctx.strokeStyle = isValid ? "rgba(0, 255, 0, 0.5)" : "rgba(255, 0, 0, 0.5)";
-      ctx.lineWidth = 4;
-      ctx.strokeRect(box.x, box.y, box.width, box.height);
-    });
-  }, []);
+  
 
   const startDetection = useCallback(() => {
     detectionInterval.current = setInterval(async () => {
@@ -142,7 +114,6 @@ export default function CameraCapture() {
             new faceapi.TinyFaceDetectorOptions({ scoreThreshold: 0.5, inputSize: 320 })
           );
           const { isValid, facePosition } = checkConditions(detections);
-          updateOverlay(detections, isValid);
           setState(prev => ({
             ...prev,
             lighting: calculateLighting(),
@@ -154,7 +125,7 @@ export default function CameraCapture() {
         }
       }
     }, 100);
-  }, [state.captured, checkConditions, updateOverlay, calculateLighting]);
+  }, [state.captured, checkConditions, calculateLighting]);
 
   const loadModels = useCallback(async () => {
     try {
@@ -354,11 +325,7 @@ export default function CameraCapture() {
               className="w-full h-[350px] max-w-md rounded-3xl shadow-lg object-cover"
               style={{ display: state.captured ? "block" : "none" }}
             />
-            <canvas
-              ref={overlayCanvasRef}
-              className="absolute top-0 left-0 w-full h-full pointer-events-none"
-              style={{ display: state.captured ? "none" : "block", zIndex: 10 }}
-            />
+            
 
             {state.showConsent && (
               <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-3xl overflow-hidden">
