@@ -1,0 +1,3 @@
+rsync -avz --exclude 'node_modules' --exclude '.git' --exclude '.env' \
+-e "ssh -i ~/.ssh tt-test.pem" \
+. ubuntu@ec2-3-25-197-216.ap-southeast-2.compute.amazonaws.com:~/app

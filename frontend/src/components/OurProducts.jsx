@@ -23,7 +23,7 @@ const OurProducts = () => {
     };
   }, []);
 
-  const handleButtonClick = () => navigate("/products");
+  const handleButtonClick = () => navigate("https://vbicar-59.myshopify.com/collections/clare");
 
   const products = [
     { 

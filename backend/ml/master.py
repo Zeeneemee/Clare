@@ -10,17 +10,24 @@ from gender.gender import Gender        # Import Gender model
 from undereye.underEye import Predict_underEye  # Import Under-eye model
 from darkspot.darkspot import darkspot_detection  # Import Darkspot model
 from scar.scar import Scar_detection
+from wrinkle.wrinkle import analyze_wrinkles, UNet
+import torch
 
 # ✅ Define directories using relative paths
 BASE_UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
-
-
 def decode_base64_image(base64_string, output_path):
     """Decodes a Base64-encoded image and saves it as a file."""
     image_data = base64.b64decode(base64_string)
     image = Image.open(io.BytesIO(image_data))
     image.save(output_path, format="JPEG")  # Ensure JPEG format
     return output_path
+
+def acne_score(confidences: list) -> list:
+    valid_confidences = [c for c in confidences if c > 0.1]
+    score = (sum(valid_confidences)/7.46) * 10
+    if score > 10: 
+        return 10
+    return score
 
 def encode_image(file_path):
     """Convert an image to Base64 for frontend display."""
@@ -32,7 +39,7 @@ def encode_image(file_path):
 def compute_score(confidences):
     """Compute the average confidence score safely."""
     valid_confidences = [c for c in confidences if c > 0.1]
-    return (sum(valid_confidences) / len(valid_confidences)) * 100 if valid_confidences else 0.0
+    return (sum(valid_confidences) / len(valid_confidences)) * 10 if valid_confidences else 0.0
 
 if __name__ == "__main__":
     try:
@@ -66,12 +73,14 @@ if __name__ == "__main__":
         undereye_results = Predict_underEye(original_image_path)
         dark_circle_score = undereye_results[0]["dark_circle_score"] if undereye_results else 0.0
         dark_circle_label = undereye_results[0]["label"] if undereye_results else "Not Detected"
-
         darkspot_results = darkspot_detection(original_image_path)
-
-        # ✅ Optionally encode the original image to send to the client.
+        wrinkles_model = UNet() 
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        model_path = os.path.join(os.path.dirname(__file__), 'wrinkle/wrinkle_model.pth')
+        state_dict = torch.load(model_path, map_location=device)
+        wrinkles_model.load_state_dict(state_dict)
+        severity_score, wrinkle_percent = analyze_wrinkles(wrinkles_model, original_image_path)
         encoded_original_image = encode_image(original_image_path)
-        
         # ✅ Default detection for features not implemented.
         default_detection = {
             "positions": [],
@@ -85,13 +94,16 @@ if __name__ == "__main__":
             "acne": {
                 "positions": results_acne.get("positions", []),
                 "confidence": results_acne.get("confidence", []),
-                "score": compute_score(results_acne.get("confidence", []))
+                "score": round(acne_score(results_acne.get("confidence", [])))
             },
-            "wrinkles": default_detection,
+            "wrinkles": {
+                "severity": severity_score,
+                "percentage": wrinkle_percent
+            },
             "scar": {
                 "positions": results_scar.get("positions", []),
                 "confidence": results_scar.get("confidence", []),
-                "score": compute_score(results_scar.get("confidence", []))
+                "score": round(compute_score(results_scar.get("confidence", [])))
             },
             "undereye": {
                 "score": round(dark_circle_score),
@@ -100,7 +112,7 @@ if __name__ == "__main__":
             "darkspot": {
                 "positions": darkspot_results.get("positions", []),
                 "confidence": darkspot_results.get("confidence", []),
-                "score": compute_score(darkspot_results.get("confidence", []))
+                "score": round(compute_score(darkspot_results.get("confidence", [])))
             },
             "age": "Not Detected",
             "gender": {

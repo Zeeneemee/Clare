@@ -41,7 +41,7 @@ export default function SkinAnalysisResult() {
     return () => clearTimeout(timer);
   }, []);
 
-  return (
+  return (    
     <div
       className="min-h-screen flex flex-col items-center relative px-5 py-16 mt-12 transition-opacity duration-1000 ease-in-out"
       style={{ opacity: fadeIn }}
@@ -85,47 +85,67 @@ export default function SkinAnalysisResult() {
             </div>
 
             <div className="w-full max-w-7xl space-y-2">
+            <MetricCard
+                color="bg-[#00C2AB]"
+                title="Skin Age"
+                value={30}
+                isAge={true}
+                description="Your skin's biological age based on analysis"
+              />
               <MetricCard
                 color="bg-[#7F7DFF]"
                 title="Dark Circles"
-                percentage={bioMetrics.undereye.undereyeScore || 0}
+                value={bioMetrics.undereye.undereyeScore || 0}
                 description="AI analysis detected under-eye circles. Recommended hydration and skincare routine."
               />
               <MetricCard
                 color="bg-[#FFEB40]"
                 title="Wrinkles"
-                percentage={bioMetrics.wrinkles.wrinklesScore || 0}
+                value={bioMetrics.wrinkles.wrinklesScore || 0}
                 description="AI analysis detected wrinkles. Consider using anti-aging serums and hydration."
+              />
+              <MetricCard
+                color="bg-[#FFA500]"
+                title="Dark Spot"
+                value={bioMetrics.darkspot.darkspotScore || 0}
+                description="Moderate hyperpigmentation detected in cheek areas."
               />
               <MetricCard
                 color="bg-[#9CDA8A]"
                 title="Acne Severity"
-                percentage={bioMetrics.acne.acneScore || 0}
+                value={bioMetrics.acne.acneScore || 0}
                 description="Moderate acne detected. Recommended cleansing routine and acne treatment."
               />
               <MetricCard
                 color="bg-[#FF8080]"
                 title="Scar"
-                percentage={bioMetrics.scar.scarScore || 0}
+                value={bioMetrics.scar.scarScore || 0}
                 description="Some scarring detected. Consider scar-reducing treatments and moisturization."
               />
             </div>
           </div>
 
           {/* Desktop Layout */}
-          <div className="hidden md:flex justify-between items-start gap-8">
+          <div className="hidden md:flex justify-between items-center gap-8">
             {/* Left Metrics Column */}
             <div className="flex-1 space-y-8">
+            <MetricCard
+                color="bg-[#00C2AB]"
+                title="Skin Age"
+                value={30}
+                isAge={true}
+                description="Your skin's biological age based on analysis"
+              />
               <MetricCard
                 color="bg-[#7F7DFF]"
                 title="Dark Circles"
-                percentage={bioMetrics.undereye.undereyeScore || 0}
+                value={bioMetrics.undereye.undereyeScore || 0}
                 description="AI analysis detected under-eye circles. Recommended hydration and skincare routine."
               />
               <MetricCard
                 color="bg-[#FFEB40]"
                 title="Wrinkles"
-                percentage={bioMetrics.wrinkles.wrinklesScore || 0}
+                value={bioMetrics.wrinkles.wrinklesScore || 0}
                 description="AI analysis detected wrinkles. Consider using anti-aging serums and hydration."
               />
             </div>
@@ -149,13 +169,19 @@ export default function SkinAnalysisResult() {
               <MetricCard
                 color="bg-[#9CDA8A]"
                 title="Acne Severity"
-                percentage={bioMetrics.acne.acneScore || 0}
+                value={bioMetrics.acne.acneScore || 0}
                 description="Moderate acne detected. Recommended cleansing routine and acne treatment."
+              />
+              <MetricCard
+                color="bg-[#FFA500]"
+                title="Dark Spot"
+                value={bioMetrics.darkspot.darkspotScore || 0}
+                description="Moderate hyperpigmentation detected in cheek areas."
               />
               <MetricCard
                 color="bg-[#FF8080]"
                 title="Scar"
-                percentage={bioMetrics.scar.scarScore || 0}
+                value={bioMetrics.scar.scarScore || 0}
                 description="Some scarring detected. Consider scar-reducing treatments and moisturization."
               />
             </div>
