@@ -14,7 +14,9 @@ app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // ✅ Function to Convert Image to Base64
-
+app.get("/", (req, res) => {
+    res.send("✅ Server running. Use POST /upload to upload an image.");
+});
 // ✅ POST: Upload Image & Process with Python
 app.post("/upload", upload.single("image"), async (req, res) => {
     if (!req.file) {
@@ -148,3 +150,5 @@ mongoose.connection.on("error", (err) => {
     console.error("❌ MongoDB Connection Error:", err);
     process.exit(1); // Exit server if database connection fails
 });
+
+

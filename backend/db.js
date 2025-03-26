@@ -4,7 +4,7 @@ require("dotenv").config();
 // ✅ Load MongoDB credentials from `.env`
 const userName = process.env.DB_USERNAME;
 const password = process.env.DB_PASSWORD;
-const uri = `mongodb+srv://${userName}:${password}@clare.foyag.mongodb.net/?retryWrites=true&w=majority&appName=Clare`;
+const uri = `mongodb+srv://Zeeneemee:Kristapas2004@clare.foyag.mongodb.net/?retryWrites=true&w=majority&appName=Clare`;
 
 // ✅ Configure Mongoose Connection with Proper Options
 const connectToDatabase = async () => {
