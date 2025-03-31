@@ -99,27 +99,22 @@ app.post("/upload", upload.single("image"), async (req, res) => {
                 res.json({
                     processedImage: updatedImage.resultData.processedImage,
                     acne: {
-                        acneImage: updatedImage.resultData.analysis.acne.ResultImage,
                         acnePosition: updatedImage.resultData.analysis.acne.positions,
                         acneScore: updatedImage.resultData.analysis.acne.score,
                     },
                     wrinkles: {
-                        wrinklesImage: updatedImage.resultData.analysis.wrinkles.ResultImage,
                         wrinklesPosition: updatedImage.resultData.analysis.wrinkles.positions,
                         wrinklesScore: updatedImage.resultData.analysis.wrinkles.score,
                     },
                     scar: {
-                        scarImage: updatedImage.resultData.analysis.scar.ResultImage,
                         scarPosition: updatedImage.resultData.analysis.scar.positions,
                         scarScore: updatedImage.resultData.analysis.scar.score,
                     },
                     undereye: {
-                        undereyeImage: updatedImage.resultData.analysis.undereye.ResultImage,
                         undereyeLabel: updatedImage.resultData.analysis.undereye.label,
                         undereyeScore: updatedImage.resultData.analysis.undereye.score,
                     },
                     darkspot: {
-                        darkspotImage: updatedImage.resultData.analysis.darkspot.ResultImage,
                         darkspotPosition: updatedImage.resultData.analysis.darkspot.positions,
                         darkspotScore: updatedImage.resultData.analysis.darkspot.score,
                     },
