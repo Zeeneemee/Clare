@@ -81,7 +81,4 @@ state_dict = torch.load(model_path, map_location=device)
 model.load_state_dict(state_dict)
 criterion = nn.BCEWithLogitsLoss()
 optimizer = optim.Adam(model.parameters(), lr=1e-4)
-images_dir = "/Users/tt/Documents/Coding/Claire/backend/uploads"
-test_image = os.path.join(images_dir, "wrinkles.jpeg") 
-severity_score, wrinkle_percent = analyze_wrinkles(model, test_image)
-print(f"Severity Score: {severity_score}, Wrinkle Percentage: {wrinkle_percent:.2f}%")
+

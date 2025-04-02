@@ -3,8 +3,11 @@ const path = require("path");
 const filePath = path.join(__dirname,'uploads','messageImage_1742931840475.jpg');
 // ✅ Execute Python script
 const { spawn } = require("child_process");
-const pythonProcess = spawn("python3", ["/Users/tt/Documents/Coding/Claire/backend/ml/master.py", filePath]);
+const pythonProcess = spawn("python3", ["/Users/tt/Documents/Coding/Claire/backend/ml/master.py"]);
+
 let stdoutData = "";
+pythonProcess.stdin.write(base64Image);
+pythonProcess.stdin.end();
 pythonProcess.stdout.on("data", (data) => {
     stdoutData += data.toString();
 });

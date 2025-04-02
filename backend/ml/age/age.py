@@ -19,7 +19,7 @@ def age_detection(image_path):
   if not faces:
       mssg = "No face detected"
       cv2.putText(im, mssg, (40, 40), cv2.FONT_HERSHEY_SIMPLEX, 2, (200, 200, 200), 2)
-      cv2_imshow(cv2.resize(im, (720, 720)))
+      cv2.imshow("Detected Faces", cv2.resize(im, (720, 720)))
       cv2.waitKey(0)
   else:
       # Initialize bounding boxes
@@ -63,5 +63,5 @@ def age_detection(image_path):
                       cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 255), 2, cv2.LINE_AA)
 
       # Show the final image
-      cv2_imshow(cv2.resize(im, (720, 720)))
+      cv2.imshow(cv2.resize(im, (720, 720)))
       cv2.waitKey(0)

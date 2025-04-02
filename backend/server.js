@@ -49,9 +49,10 @@ app.post("/upload", upload.single("image"), async (req, res) => {
         const savedImage = await newImage.save();
 
         // ✅ Spawn Python Process
-        const pythonProcess = spawn("python3", ["ml/master.py", base64Image]);
+        const pythonProcess = spawn("python3", ["ml/master.py"]);
         let stdoutData = "";
-
+        pythonProcess.stdin.write(base64Image);
+        pythonProcess.stdin.end();
         pythonProcess.stdout.on("data", (data) => {
             stdoutData += data.toString();
         });

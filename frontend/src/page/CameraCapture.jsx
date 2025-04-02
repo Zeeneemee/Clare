@@ -231,16 +231,11 @@ export default function CameraCapture() {
           console.log("✅ Processed Result:", result);
           // Store processed data.
           localStorage.setItem("processedImage", result.processedImage);
-          localStorage.setItem("acneImage", result.acne.acneImage);
           localStorage.setItem("acneScore", result.acne.acneScore);
-          localStorage.setItem("wrinklesImage", result.wrinkles.wrinklesImage);
           localStorage.setItem("wrinklesScore", result.wrinkles.wrinklesScore);
-          localStorage.setItem("scarImage", result.scar.scarImage);
           localStorage.setItem("scarScore", result.scar.scarScore);
-          localStorage.setItem("undereyeImage", result.undereye.undereyeImage);
           localStorage.setItem("undereyeScore", result.undereye.undereyeScore);
           localStorage.setItem("undereyeLabel", result.undereye.undereyeLabel);
-          localStorage.setItem("darkspotImage", result.darkspot.darkspotImage);
           localStorage.setItem("darkspotScore", result.darkspot.darkspotScore);
           localStorage.setItem("age", result.age);
           localStorage.setItem("gender", result.gender);
