@@ -1,0 +1,11 @@
+torch
+Pillow
+numpy
+opencv-python
+scikit-learn
+numpy
+dlib
+cv2
+os
+ultralytics
+albumentations
