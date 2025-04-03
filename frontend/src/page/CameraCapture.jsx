@@ -223,7 +223,7 @@ export default function CameraCapture() {
         const formData = new FormData();
         formData.append("image", blob, "captured-image.jpg");
         try {
-          const response = await fetch("http://ec2-3-25-197-216.ap-southeast-2.compute.amazonaws.com:5000/upload", {
+          const response = await fetch("https://clare-nrnl.onrender.com/upload", {
             method: "POST",
             body: formData,
           });

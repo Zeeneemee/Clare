@@ -1,6 +1,5 @@
 import numpy as np
 from PIL import Image
-import matplotlib.pyplot as plt
 import torch
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
@@ -60,17 +59,8 @@ def analyze_wrinkles(model, image_path):
         severity = 7  # Severe
     else:
         severity = 10  # Very Severe
-        plt.figure(figsize=(10, 5))
 
-    plt.subplot(1, 2, 1)
-    plt.imshow(image)
-    plt.title("Original Image")
 
-    plt.subplot(1, 2, 2)
-    plt.imshow(binary_mask, cmap="gray")
-    plt.title(f"Predicted Mask\nSeverity Score: {severity}/10")
-
-    plt.show()
     return severity, wrinkle_percentage
 
 # Set up device and load model

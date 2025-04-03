@@ -6,7 +6,7 @@ def Gender(image_path):
     BASE_UPLOAD_DIR = "/Users/tt/Documents/Coding/Claire/backend/uploads/"
     model_path = os.path.join(os.path.dirname(__file__),'gender.pt')
     model = YOLO(model_path)
-    results = model.predict(image_path, name="gender_result", show=True)
+    results = model.predict(image_path, name="gender_result")
 
     # Gender mapping
     class_map = {0: "Female", 1: "Male"}

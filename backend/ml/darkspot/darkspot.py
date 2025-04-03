@@ -8,7 +8,7 @@ def darkspot_detection(image_path):
     model = YOLO(model_path)
 
     # Show the prediction window
-    results = model.predict(source=image_path, name="darkspot_result", show=True)
+    results = model.predict(source=image_path, name="darkspot_result", )
 
 
     # Process the detection results

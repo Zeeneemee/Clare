@@ -2,3 +2,4 @@ node_modules
 uploads
 *.pyc
 __pycache__/
+venv

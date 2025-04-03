@@ -4,7 +4,7 @@ def Scar_detection(image_path):
     detection_data = {"positions": [], "confidence": []}
     model_path = os.path.join(os.path.dirname(__file__), "scar.pt")
     model = YOLO(model_path)
-    results = model.predict(image_path ,name="scar_predict" , show=True)  # Process the image
+    results = model.predict(image_path ,name="scar_predict" )  # Process the image
     for result in results:
         boxes = result.boxes
         for box in boxes:
