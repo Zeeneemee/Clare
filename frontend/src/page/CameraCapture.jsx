@@ -6,7 +6,6 @@ import LoadingScreen from "../components/ui/LoadingScreen";
 export default function CameraCapture() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const overlayCanvasRef = useRef(null);
   const detectionInterval = useRef(null);
   const navigate = useNavigate();
 
@@ -27,6 +26,7 @@ export default function CameraCapture() {
 
   // Fade in effect on mount.
   useEffect(() => {
+    localStorage.setItem('processedImage','')
     const timer = setTimeout(() => {
       setState(prev => ({ ...prev, fadeIn: 1 }));
     }, 100);
@@ -184,13 +184,6 @@ export default function CameraCapture() {
     ctx.translate(canvas.width, 0);  // Move origin to right edge
     ctx.scale(-1, 1);  
     ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
-    // Set the CSS size of the canvas to match the displayed size
-    // const style = window.getComputedStyle(video);
-    // const displayedWidth = parseFloat(style.width);
-    // const displayedHeight = parseFloat(style.height);
-    // canvas.style.width = `${displayedWidth}px`;
-    // canvas.style.height = `${displayedHeight}px`;
-
     // Update the state to show the captured image
     setState(prev => ({ ...prev, captured: true, showConfirmation: true }));
   };
