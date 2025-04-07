@@ -1,7 +1,7 @@
 import cv2
 import dlib
 from PIL import Image
-from transformers import ViTFeatureExtractor, ViTForImageClassification
+from transformers import ViTImageProcessor, ViTForImageClassification
 
 import torch
 
@@ -18,9 +18,7 @@ def age_detection(image_path):
   faces = face_detector(cv2.cvtColor(im, cv2.COLOR_BGR2GRAY))
   if not faces:
       mssg = "No face detected"
-      cv2.putText(im, mssg, (40, 40), cv2.FONT_HERSHEY_SIMPLEX, 2, (200, 200, 200), 2)
-      cv2.imshow("Detected Faces", cv2.resize(im, (720, 720)))
-      cv2.waitKey(0)
+      return mssg
   else:
       # Initialize bounding boxes
       Boxes = []
@@ -35,7 +33,7 @@ def age_detection(image_path):
 
       # Load the Hugging Face model and transforms
       model = ViTForImageClassification.from_pretrained("nateraw/vit-age-classifier")
-      transforms = ViTFeatureExtractor.from_pretrained("nateraw/vit-age-classifier")
+      transforms = ViTImageProcessor.from_pretrained("nateraw/vit-age-classifier")
 
       for box in Boxes:
           # Crop face
@@ -58,10 +56,9 @@ def age_detection(image_path):
           ]
           age_label = labels[age_class_index]
 
-          # Add label to image
-          cv2.putText(im, f"Face detected: {age_label}", (box[0], box[1] - 10),
-                      cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 255), 2, cv2.LINE_AA)
+          return age_label
+          
 
-      # Show the final image
-      cv2.imshow(cv2.resize(im, (720, 720)))
-      cv2.waitKey(0)
+    
+
+

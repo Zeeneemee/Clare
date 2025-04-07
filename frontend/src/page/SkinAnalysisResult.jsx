@@ -85,13 +85,6 @@ export default function SkinAnalysisResult() {
             </div>
 
             <div className="w-full max-w-7xl space-y-2">
-            <MetricCard
-                color="bg-[#00C2AB]"
-                title="Skin Age"
-                value={30}
-                isAge={true}
-                description="Your skin's biological age based on analysis"
-              />
               <MetricCard
                 color="bg-[#7F7DFF]"
                 title="Dark Circles"
@@ -129,13 +122,6 @@ export default function SkinAnalysisResult() {
           <div className="hidden md:flex justify-between items-center gap-8">
             {/* Left Metrics Column */}
             <div className="flex-1 space-y-8">
-            <MetricCard
-                color="bg-[#00C2AB]"
-                title="Skin Age"
-                value={30}
-                isAge={true}
-                description="Your skin's biological age based on analysis"
-              />
               <MetricCard
                 color="bg-[#7F7DFF]"
                 title="Dark Circles"

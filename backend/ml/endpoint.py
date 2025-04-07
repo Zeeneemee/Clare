@@ -13,6 +13,7 @@ from gender.gender import Gender
 from undereye.underEye import Predict_underEye
 from darkspot.darkspot import darkspot_detection
 from scar.scar import Scar_detection
+from age.age import age_detection
 from wrinkle.wrinkle import analyze_wrinkles, UNet
 import torch
 
@@ -69,6 +70,8 @@ def analyze_image():
         results_scar = Scar_detection(temp_path)
         undereye_results = Predict_underEye(temp_path)
         darkspot_results = darkspot_detection(temp_path)
+        age_results = age_detection(temp_path)
+        
         severity_score, wrinkle_percent = analyze_wrinkles(wrinkles_model, temp_path)
 
         # Clean up temporary file
@@ -101,7 +104,7 @@ def analyze_image():
                 "confidence": darkspot_results.get("confidence", []),
                 "score": round(compute_score(darkspot_results.get("confidence", [])))
             },
-            "age": "Not Detected",
+            "age": age_results,
             "gender": {
                 "label": result_gender
             }
@@ -112,4 +115,5 @@ def analyze_image():
 
 if __name__ == '__main__':
     # Run the Flask API on host 0.0.0.0 and port 5000
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=4000, debug=True)
+    print('running on port',80)
