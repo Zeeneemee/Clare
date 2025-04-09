@@ -25,7 +25,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model_path = os.path.join(os.path.dirname(__file__), 'wrinkle/wrinkle_model.pth')
 wrinkles_model.load_state_dict(torch.load(model_path, map_location=device))
 wrinkles_model.eval()  # Put model in inference mode
-
+port = 80
 # === Utility Functions ===
 def decode_base64_image(base64_string):
     """Decode Base64 image and return a PIL image."""
@@ -37,6 +37,7 @@ def acne_score(confidences):
     score = (sum(valid) / 7.46) * 10
     return min(score, 10)
 
+# Change the len to the severe image 
 def compute_score(confidences):
     valid = [c for c in confidences if c > 0.1]
     return (sum(valid) / len(valid)) * 10 if valid else 0.0
@@ -115,5 +116,5 @@ def analyze_image():
 
 if __name__ == '__main__':
     # Run the Flask API on host 0.0.0.0 and port 5000
-    app.run(host='0.0.0.0', port=80, debug=True)
-    print('running on port',80)
+    app.run(host='0.0.0.0', port=port, debug=True)
+    print('running on port',port)

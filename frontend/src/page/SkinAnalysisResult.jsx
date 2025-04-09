@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import MetricCard from "../components/ui/metric";
+import metricDetails from "../lib/skinanalysis"; // Assuming this is the correct path
+
 
 export default function SkinAnalysisResult() {
   const navigate = useNavigate();
@@ -40,6 +42,46 @@ export default function SkinAnalysisResult() {
     setBioMetrics(storedData);
     return () => clearTimeout(timer);
   }, []);
+
+  const getMetricDescription = (metric, score) => {
+    if (score < 0 || score > 10) return "Invalid score";
+    
+    switch(metric) {
+      case 'wrinkles':
+        if (score <= 2) return metricDetails.wrinkles.content[0];
+        if (score <= 5) return metricDetails.wrinkles.content[1];
+        if (score <= 8) return metricDetails.wrinkles.content[2];
+        return metricDetails.wrinkles.content[3];
+
+      case 'darkspot':
+        if (score <= 2) return metricDetails.darkspot.content[0];
+        if (score <= 5) return metricDetails.darkspot.content[1];
+        if (score <= 8) return metricDetails.darkspot.content[2];
+        return metricDetails.darkspot.content[3];
+
+      case 'acne':
+        if (score <= 2) return metricDetails.acne.content[0];
+        if (score <= 5) return metricDetails.acne.content[1];
+        if (score <= 8) return metricDetails.acne.content[2];
+        return metricDetails.acne.content[3];
+
+      case 'undereye':
+        if (score <= 2) return metricDetails.undereye.content[0];
+        if (score <= 5) return metricDetails.undereye.content[1];
+        if (score <= 8) return metricDetails.undereye.content[2];
+        return metricDetails.undereye.content[3];
+
+      case 'scar':
+        if (score <= 3) return metricDetails.scar.content[0];
+        if (score <= 6) return metricDetails.scar.content[1];
+        if (score <= 9) return metricDetails.scar.content[2];
+        return metricDetails.scar.content[3];
+
+      default:
+        return "No description available";
+    }
+  };
+
 
   return (    
     <div
@@ -89,31 +131,31 @@ export default function SkinAnalysisResult() {
                 color="bg-[#7F7DFF]"
                 title="Dark Circles"
                 value={bioMetrics.undereye.undereyeScore || 0}
-                description="AI analysis detected under-eye circles. Recommended hydration and skincare routine."
+                description= {getMetricDescription("undereye", bioMetrics.undereye.undereyeScore)}
               />
               <MetricCard
                 color="bg-[#FFEB40]"
                 title="Wrinkles"
                 value={bioMetrics.wrinkles.wrinklesScore || 0}
-                description="AI analysis detected wrinkles. Consider using anti-aging serums and hydration."
-              />
+                description={getMetricDescription("wrinkles", bioMetrics.wrinkles.wrinklesScore)}
+                />
               <MetricCard
                 color="bg-[#FFA500]"
                 title="Dark Spot"
                 value={bioMetrics.darkspot.darkspotScore || 0}
-                description="Moderate hyperpigmentation detected in cheek areas."
+                description={getMetricDescription("darkspot", bioMetrics.darkspot.darkspotScore)}
               />
               <MetricCard
                 color="bg-[#9CDA8A]"
                 title="Acne Severity"
                 value={bioMetrics.acne.acneScore || 0}
-                description="Moderate acne detected. Recommended cleansing routine and acne treatment."
-              />
+                description={getMetricDescription("acne", bioMetrics.acne.acneScore)}
+                />
               <MetricCard
                 color="bg-[#FF8080]"
                 title="Scar"
                 value={bioMetrics.scar.scarScore || 0}
-                description="Some scarring detected. Consider scar-reducing treatments and moisturization."
+                description={getMetricDescription("scar", bioMetrics.scar.scarScore)}
               />
             </div>
           </div>
@@ -126,13 +168,13 @@ export default function SkinAnalysisResult() {
                 color="bg-[#7F7DFF]"
                 title="Dark Circles"
                 value={bioMetrics.undereye.undereyeScore || 0}
-                description="AI analysis detected under-eye circles. Recommended hydration and skincare routine."
+                description={getMetricDescription("undereye", bioMetrics.undereye.undereyeScore)}
               />
               <MetricCard
                 color="bg-[#FFEB40]"
                 title="Wrinkles"
                 value={bioMetrics.wrinkles.wrinklesScore || 0}
-                description="AI analysis detected wrinkles. Consider using anti-aging serums and hydration."
+                description={getMetricDescription("wrinkles", bioMetrics.wrinkles.wrinklesScore)}
               />
             </div>
 
@@ -156,20 +198,20 @@ export default function SkinAnalysisResult() {
                 color="bg-[#9CDA8A]"
                 title="Acne Severity"
                 value={bioMetrics.acne.acneScore || 0}
-                description="Moderate acne detected. Recommended cleansing routine and acne treatment."
+                description={getMetricDescription("acne", bioMetrics.acne.acneScore)}
               />
               <MetricCard
                 color="bg-[#FFA500]"
                 title="Dark Spot"
                 value={bioMetrics.darkspot.darkspotScore || 0}
-                description="Moderate hyperpigmentation detected in cheek areas."
+                description={getMetricDescription("darkspot", bioMetrics.darkspot.darkspotScore)}
               />
               <MetricCard
                 color="bg-[#FF8080]"
                 title="Scar"
                 value={bioMetrics.scar.scarScore || 0}
-                description="Some scarring detected. Consider scar-reducing treatments and moisturization."
-              />
+                description={getMetricDescription("scar", bioMetrics.scar.scarScore)}
+                />
             </div>
           </div>
 
