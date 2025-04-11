@@ -1,12 +1,16 @@
 from ultralytics import YOLO
 import os
 import cv2
-def acne_detection(image_path):
+import numpy as np
+def acne_detection(image_PIL):
+    image = np.array(image_PIL)
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)  # Convert RGB to BGR for OpenCV
     detection_data = {"positions": [], "confidence": []}
     model_path = os.path.join(os.path.dirname(__file__), "acne_best (1).pt")
     # ✅ Remove existing output directory if it exists
     model = YOLO(model_path)
-    results = model.predict(image_path, imgsz=1024,name="acne_result", conf=0.1, iou=0.4)  # Process the image
+    
+    results = model.predict(source=image, imgsz=1024,name="acne_result", conf=0.1, iou=0.4)  # Process the image
     for result in results:
         boxes = result.boxes  
         for box in boxes:

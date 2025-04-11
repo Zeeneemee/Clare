@@ -25,7 +25,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model_path = os.path.join(os.path.dirname(__file__), 'wrinkle/wrinkle_model.pth')
 wrinkles_model.load_state_dict(torch.load(model_path, map_location=device))
 wrinkles_model.eval()  # Put model in inference mode
-port = 80
+port = 4000
 # === Utility Functions ===
 def decode_base64_image(base64_string):
     """Decode Base64 image and return a PIL image."""
@@ -61,23 +61,18 @@ def analyze_image():
         image = decode_base64_image(base64_input)
 
         # Save temporary file for model compatibility
-        unique_filename = f"{uuid.uuid4().hex}.jpg"
-        temp_path = os.path.join("/tmp", unique_filename)
-        image.save(temp_path)
+       
 
         # Run models
-        results_acne = acne_detection(temp_path)
-        result_gender = Gender(temp_path)
-        results_scar = Scar_detection(temp_path)
-        undereye_results = Predict_underEye(temp_path)
-        darkspot_results = darkspot_detection(temp_path)
-        age_results = age_detection(temp_path)
+        results_acne = acne_detection(image)
+        result_gender = Gender(image)
+        results_scar = Scar_detection(image)
+        undereye_results = Predict_underEye(image)
+        darkspot_results = darkspot_detection(image)
+        age_results = age_detection(image)
         
-        severity_score, wrinkle_percent = analyze_wrinkles(wrinkles_model, temp_path)
+        severity_score, wrinkle_percent = analyze_wrinkles(wrinkles_model, image)
 
-        # Clean up temporary file
-        if os.path.exists(temp_path):
-            os.remove(temp_path)
 
         # Prepare and return results
         result = {

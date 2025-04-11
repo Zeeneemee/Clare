@@ -1,12 +1,14 @@
 from ultralytics import YOLO
 import os
-import shutil
-
-def Gender(image_path):
+import numpy as np
+import cv2  
+def Gender(image_PIL):
     BASE_UPLOAD_DIR = "/Users/tt/Documents/Coding/Claire/backend/uploads/"
+    image = np.array(image_PIL) 
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)  # Convert RGB to BGR for OpenCV
     model_path = os.path.join(os.path.dirname(__file__),'gender.pt')
     model = YOLO(model_path)
-    results = model.predict(image_path, name="gender_result")
+    results = model.predict(source=image, name="gender_result")
 
     # Gender mapping
     class_map = {0: "Female", 1: "Male"}
