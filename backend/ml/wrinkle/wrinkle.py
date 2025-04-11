@@ -20,11 +20,10 @@ class UNet(nn.Module):
     def forward(self, x):
         return self.model(x)
     
-def analyze_wrinkles(model, image_path):
+def analyze_wrinkles(model, image_PIL):
     model.eval()
     # Load Image
-    image = np.array(Image.open(image_path).convert("RGB"))
-
+    image = np.array(image_PIL)
     # Preprocessing
     transform = A.Compose([
         A.Resize(256, 256),

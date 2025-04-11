@@ -31,23 +31,19 @@ def calculate_dark_circle_score(brightness_diff):
 
     return score, label
 
-# Function to process the image and calculate dark circle score
-def Predict_underEye(image_path):
-    # Validate image path
-    if not os.path.exists(image_path):
-        raise FileNotFoundError(f"Image not found at {image_path}")
-
-    # Load the image
-    image = cv2.imread(image_path)
-    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+# Function to process a PIL image and calculate dark circle score
+def Predict_underEye(img_PIL):
+    # Ensure the image is in RGB mode and convert to a NumPy array
+    img_PIL = img_PIL.convert("RGB")
+    image_rgb = np.array(img_PIL)
 
     # Initialize dlib's face detector and shape predictor
     face_detector = dlib.get_frontal_face_detector()
-    shape_predictor = dlib.shape_predictor(os.path.join(os.path.dirname(__file__), 'shape_predictor_68_face_landmarks.dat'))
+    predictor_path = os.path.join(os.path.dirname(__file__), 'shape_predictor_68_face_landmarks.dat')
+    shape_predictor = dlib.shape_predictor(predictor_path)
 
     # Detect faces in the image
     detected_faces = face_detector(image_rgb, 1)
-
     if len(detected_faces) == 0:
         raise ValueError("No faces detected in the image.")
 
@@ -61,7 +57,7 @@ def Predict_underEye(image_path):
 
         # Calculate key distances for dynamic scaling
         eye_distance = distance(landmarks[36], landmarks[45])  # Distance between left and right eye
-        face_width = distance(landmarks[0], landmarks[16])  # Total width of the face
+        face_width = distance(landmarks[0], landmarks[16])      # Total width of the face
 
         # Define regions dynamically based on face proportions
         regions = {
@@ -80,21 +76,20 @@ def Predict_underEye(image_path):
         under_eye_brightness = [calculate_brightness(region, image_rgb) for region in [regions['under_eye_left'], regions['under_eye_right']]]
         face_brightness = [calculate_brightness(region, image_rgb) for region in [regions['forehead'], regions['left_cheek'], regions['right_cheek'], regions['chin']]]
 
-        # Compute average brightness
+        # Compute average brightness values
         avg_under_eye_brightness = np.mean(under_eye_brightness)
         avg_face_brightness = np.mean(face_brightness)
 
         # Calculate the difference between face and under-eye brightness
         brightness_diff = avg_face_brightness - avg_under_eye_brightness
 
-        # Calculate the dark circle score
+        # Calculate the dark circle score and determine the label
         score, score_label = calculate_dark_circle_score(brightness_diff)
 
-        # Store the result
+        # Store the result for this face
         results.append({
             "dark_circle_score": float(score),
             "label": score_label
         })
 
     return results
-

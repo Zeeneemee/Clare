@@ -1,14 +1,18 @@
 from ultralytics import YOLO
 import os
 import cv2  # <-- Import OpenCV
+import numpy as np
+from PIL import Image
 
-def darkspot_detection(image_path):
+def darkspot_detection(image_PIL):
     detection_data = {"positions": [], "confidence": []}
     model_path = os.path.join(os.path.dirname(__file__), "darkspot.pt")
     model = YOLO(model_path)
-
+    # Convert PIL image to OpenCV format
+    image = np.array(image_PIL)
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)  # Convert RGB to BGR for OpenCV
     # Show the prediction window
-    results = model.predict(source=image_path, name="darkspot_result", )
+    results = model.predict(source=image, name="darkspot_result" )
 
 
     # Process the detection results
