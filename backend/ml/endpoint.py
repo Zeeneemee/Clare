@@ -25,7 +25,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model_path = os.path.join(os.path.dirname(__file__), 'wrinkle/wrinkle_model.pth')
 wrinkles_model.load_state_dict(torch.load(model_path, map_location=device))
 wrinkles_model.eval()  # Put model in inference mode
-port = 4000
+port = 80
 # === Utility Functions ===
 def decode_base64_image(base64_string):
     """Decode Base64 image and return a PIL image."""
