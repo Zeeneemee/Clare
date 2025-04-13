@@ -30,8 +30,12 @@ export default function CameraCapture() {
     const timer = setTimeout(() => {
       setState(prev => ({ ...prev, fadeIn: 1 }));
     }, 100);
+    if (state.isLoading){
+      return cleanup();
+    }
     return () => clearTimeout(timer);
   }, []);
+  
 
   const checkConditions = useCallback((detections) => {
     const video = videoRef.current;
@@ -164,7 +168,7 @@ export default function CameraCapture() {
       initializeCamera();
       return () => cleanup();
     }
-  }, [state.showConsent]);
+  }, [state.showConsent,state.isLoading]);
 
   const captureImage = () => {
     const video = videoRef.current;
@@ -225,7 +229,8 @@ export default function CameraCapture() {
           // Store processed data.
           localStorage.setItem("processedImage", result.processedImage);
           localStorage.setItem("acneScore", result.acne.acneScore);
-          localStorage.setItem("wrinklesScore", result.wrinkles.wrinklesScore);
+          localStorage.setItem("wrinklesScore", result.wrinkles.severity);
+          localStorage.setItem("wrinklePercentage",result.wrinkles.percentage)
           localStorage.setItem("scarScore", result.scar.scarScore);
           localStorage.setItem("undereyeScore", result.undereye.undereyeScore);
           localStorage.setItem("undereyeLabel", result.undereye.undereyeLabel);
