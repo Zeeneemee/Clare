@@ -20,8 +20,8 @@ export default function SkinAnalysisResult() {
         acneScore: localStorage.getItem("acneScore"),
       },
       wrinkles: {
-        wrinklesImage: localStorage.getItem("wrinklesImage"),
         wrinklesScore: localStorage.getItem("wrinklesScore"),
+        wrinklesPercentage: localStorage.getItem("wrinklePercentage")
       },
       scar: {
         scarImage: localStorage.getItem("scarImage"),

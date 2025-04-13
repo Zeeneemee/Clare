@@ -47,6 +47,11 @@ def encode_image_to_base64(image: Image.Image) -> str:
     image.save(buffer, format="JPEG")
     return base64.b64encode(buffer.getvalue()).decode("utf-8")
 
+def darkspot_score(confidences):
+    valid = [c for c in confidences if c > 0.1]
+    score = (sum(valid) / 25.12) * 10
+    return min(score, 10)
+
 # === Flask Routes ===
 @app.route('/analyze', methods=['POST'])
 def analyze_image():
@@ -98,7 +103,7 @@ def analyze_image():
             "darkspot": {
                 "positions": darkspot_results.get("positions", []),
                 "confidence": darkspot_results.get("confidence", []),
-                "score": round(compute_score(darkspot_results.get("confidence", [])))
+                "score": round(darkspot_score(darkspot_results.get("confidence", [])))
             },
             "age": age_results,
             "gender": {
