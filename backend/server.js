@@ -64,7 +64,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
                 "resultData.originalFilename": req.file.filename,
                 "resultData.processedImage": pythonResponse.processedImage,
                 "resultData.analysis.acne": pythonResponse.acne || { positions: [], score: 0 },
-                "resultData.analysis.wrinkles": pythonResponse.wrinkles || { positions: [], score: 0 },
+                "resultData.analysis.wrinkles": pythonResponse.wrinkles || { severity: 0, percentage: 0 },
                 "resultData.analysis.scar": pythonResponse.scar || { positions: [], score: 0 },
                 "resultData.analysis.undereye": pythonResponse.undereye || { positions: [], score: 0 },
                 "resultData.analysis.darkspot": pythonResponse.darkspot || { positions: [], score: 0 },
@@ -84,8 +84,8 @@ app.post("/upload", upload.single("image"), async (req, res) => {
                 acneScore: updatedImage.resultData.analysis.acne.score,
             },
             wrinkles: {
-                wrinklesPosition: updatedImage.resultData.analysis.wrinkles.positions,
-                wrinklesScore: updatedImage.resultData.analysis.wrinkles.score,
+                wrinklesSeverity: updatedImage.resultData.analysis.wrinkles.severity,
+                wrinklesPercentage: updatedImage.resultData.analysis.wrinkles.percentage,
             },
             scar: {
                 scarPosition: updatedImage.resultData.analysis.scar.positions,

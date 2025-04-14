@@ -229,8 +229,8 @@ export default function CameraCapture() {
           // Store processed data.
           localStorage.setItem("processedImage", result.processedImage);
           localStorage.setItem("acneScore", result.acne.acneScore);
-          localStorage.setItem("wrinklesScore", result.wrinkles.severity);
-          localStorage.setItem("wrinklePercentage",result.wrinkles.percentage)
+          localStorage.setItem("wrinklesScore", result.wrinkles.wrinklesSeverity);
+          localStorage.setItem("wrinklePercentage",result.wrinkles.wrinklesPercentage)
           localStorage.setItem("scarScore", result.scar.scarScore);
           localStorage.setItem("undereyeScore", result.undereye.undereyeScore);
           localStorage.setItem("undereyeLabel", result.undereye.undereyeLabel);
