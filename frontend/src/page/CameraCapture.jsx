@@ -202,7 +202,6 @@ export default function CameraCapture() {
     const ctx = canvas.getContext("2d");
 
     // Reset canvas transformations
-    ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset to identity matrix
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
 
     // Update state
@@ -220,7 +219,7 @@ export default function CameraCapture() {
         const formData = new FormData();
         formData.append("image", blob, "captured-image.jpg");
         try {
-          const response = await fetch("https://clare-nrnl.onrender.com/upload", {
+          const response = await fetch("http://localhost:5000/upload", {
             method: "POST",
             body: formData,
           });
@@ -282,7 +281,7 @@ export default function CameraCapture() {
   return (
     <div>
       {state.isLoading ? (
-        <LoadingScreen />
+        <LoadingScreen/>
       ) : (
         <div
           className="min-h-screen flex flex-col items-center justify-center relative px-5 py-16 mt-5"
