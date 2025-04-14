@@ -17,7 +17,7 @@ const imageProcessingSchema = new Schema({
       wrinkles: {
         positions: [{ x: Number, y: Number, width: Number, height: Number }],
         score: { type: Number, default: 0 },
-        confidence: [{ type: Number, default: 0 }]
+        percentage: { type: Number, default: 0 }
       },
       scar: {
         positions: [{ x: Number, y: Number, width: Number, height: Number }],

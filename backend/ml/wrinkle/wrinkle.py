@@ -20,6 +20,13 @@ class UNet(nn.Module):
     def forward(self, x):
         return self.model(x)
     
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = UNet().to(device)
+model_path = os.path.join(os.path.dirname(__file__), 'wrinkle_model.pth')
+state_dict = torch.load(model_path, map_location=device)
+model.load_state_dict(state_dict)
+criterion = nn.BCEWithLogitsLoss()
+optimizer = optim.Adam(model.parameters(), lr=1e-4)
 def analyze_wrinkles(model, image_PIL):
     model.eval()
     # Load Image
@@ -46,28 +53,22 @@ def analyze_wrinkles(model, image_PIL):
     wrinkle_percentage = (wrinkle_pixels / total_pixels) * 100
 
     # Convert percentage to severity scale (0-10)
+    
     if wrinkle_percentage < 1:
-        severity = 0  # Good
+        score = 0  # Good
     elif wrinkle_percentage < 5:
-        severity = 1  # Very Mild
+        score = 1  # Very Mild
     elif wrinkle_percentage < 10:
-        severity = 3  # Mild
+        score = 3  # Mild
     elif wrinkle_percentage < 20:
-        severity = 5  # Moderate
+        score = 5  # Moderate
     elif wrinkle_percentage < 30:
-        severity = 7  # Severe
+        score = 7  # Severe
     else:
-        severity = 10  # Very Severe
+        score = 10  # Very Severe
 
 
-    return severity, wrinkle_percentage
+    return score, wrinkle_percentage
 
-# Set up device and load model
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = UNet().to(device)
-model_path = os.path.join(os.path.dirname(__file__), 'wrinkle_model.pth')
-state_dict = torch.load(model_path, map_location=device)
-model.load_state_dict(state_dict)
-criterion = nn.BCEWithLogitsLoss()
-optimizer = optim.Adam(model.parameters(), lr=1e-4)
+
 

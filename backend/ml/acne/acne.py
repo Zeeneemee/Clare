@@ -18,7 +18,6 @@ def acne_detection(image_PIL):
            confidence = float(box.conf[0]) 
            detection_data["positions"].append({"x": int(x_min), "y": int(x_max), "width": int(x_min-x_max), "height": int(y_min-y_max)})
            detection_data["confidence"].append(confidence)
-           total_con = sum(detection_data["confidence"])
     return detection_data
 
 

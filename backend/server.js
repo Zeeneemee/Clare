@@ -35,7 +35,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
                 processedImage: `data:image/jpeg;base64,${base64Image}`,
                 analysis: {
                     acne: { ResultImage: null, positions: [], confidence: 0, score: 0 },
-                    wrinkles: { ResultImage: null, positions: [], confidence: 0, score: 0 },
+                    wrinkles: { ResultImage: null, percentage: 0, score: 0 },
                     scar: { ResultImage: null, positions: [], confidence: 0, score: 0 },
                     undereye: { ResultImage: null, positions: [], confidence: 0, score: 0 },
                     darkspot: { ResultImage: null, positions: [], confidence: 0, score: 0 },
@@ -49,12 +49,12 @@ app.post("/upload", upload.single("image"), async (req, res) => {
 
         // Post the base64 image to the Flask API endpoint.
         // Update the URL to match your Flask server address and port.
-        const FLASK_API_URL = "http://clare.centralindia.cloudapp.azure.com/analyze"; // Example: http://localhost:5000/analyze
+        const FLASK_API_URL = "http://localhost:4000/analyze"; // Example: http://localhost:5000/analyze
         
         
         const flaskResponse = await axios.post(FLASK_API_URL, { image: base64Image });
         const pythonResponse = flaskResponse.data;
-
+        console.log("✅ Flask API Response:", pythonResponse);
         // Update MongoDB with the processed data from the Flask API
         const updatedImage = await ImageProcessing.findByIdAndUpdate(
             savedImage._id,
@@ -64,7 +64,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
                 "resultData.originalFilename": req.file.filename,
                 "resultData.processedImage": pythonResponse.processedImage,
                 "resultData.analysis.acne": pythonResponse.acne || { positions: [], score: 0 },
-                "resultData.analysis.wrinkles": pythonResponse.wrinkles || { severity: 0, percentage: 0 },
+                "resultData.analysis.wrinkles": pythonResponse.wrinkles || { score: 0, percentage: 0 },
                 "resultData.analysis.scar": pythonResponse.scar || { positions: [], score: 0 },
                 "resultData.analysis.undereye": pythonResponse.undereye || { positions: [], score: 0 },
                 "resultData.analysis.darkspot": pythonResponse.darkspot || { positions: [], score: 0 },
@@ -84,8 +84,8 @@ app.post("/upload", upload.single("image"), async (req, res) => {
                 acneScore: updatedImage.resultData.analysis.acne.score,
             },
             wrinkles: {
-                wrinklesSeverity: updatedImage.resultData.analysis.wrinkles.severity,
-                wrinklesPercentage: updatedImage.resultData.analysis.wrinkles.percentage,
+                wrinklesSeverity: updatedImage.resultData.analysis.wrinkles.score,
+                wrinklesPercentage: updatedImage.resultData.analysis.wrinkles.percentage
             },
             scar: {
                 scarPosition: updatedImage.resultData.analysis.scar.positions,
