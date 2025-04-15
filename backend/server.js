@@ -49,7 +49,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
 
         // Post the base64 image to the Flask API endpoint.
         // Update the URL to match your Flask server address and port.
-        const FLASK_API_URL = "http://localhost:4000/analyze"; // Example: http://localhost:5000/analyze
+        const FLASK_API_URL = "http://clare.centralindia.cloudapp.azure.com/analyze"; // Example: http://localhost:5000/analyze
         
         
         const flaskResponse = await axios.post(FLASK_API_URL, { image: base64Image });
