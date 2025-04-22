@@ -16,6 +16,8 @@ import Signup from "./page/SignupPage";
 import Terms from "./page/TermsPage";
 import PrivacyPolicy from "./page/Privacy";
 import ContactUs from "./page/ContactUs"; // Imported ContactUs component
+import CameraComponent from "./page/cameraTest";
+import ComingSoon from "./page/comingSoon";
 
 // Importing individual product pages
 import MoisturiserMen from "./page/productpages/MoisturiserMen";
@@ -63,7 +65,8 @@ export default function App() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/contactus" element={<ContactUs />} /> {/* New route for ContactUs */}
-
+          <Route path="/test" element={<CameraComponent/>} />
+          <Route path="/feedback" element={<ComingSoon />} />
           {/* Individual product pages */}
           <Route path="/products/moisturiser-men" element={<MoisturiserMen />} />
           <Route path="/products/night-revitaliser-men" element={<NightRevitaliserMen />} />

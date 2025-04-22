@@ -246,7 +246,7 @@ export default function CameraCapture() {
       }, "image/jpeg");
     }
   };
-
+ 
   const handleError = (message, error) => {
     console.error(message, error);
     setState(prev => ({ ...prev, error: error.message, modelsLoaded: false }));

@@ -2,12 +2,16 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import MetricCard from "../components/ui/metric";
 import metricDetails from "../lib/skinanalysis"; // Assuming this is the correct path
+import Pagination from "../components/ui/pagination";
+import Level from "../components/ui/level";
 
 
 export default function SkinAnalysisResult() {
   const navigate = useNavigate();
   const [fadeIn, setFadeIn] = useState(0);
   const [bioMetrics, setBioMetrics] = useState(null);
+  const [isLevelOpen, setIsLevelOpen] = useState(false);
+
   
   useEffect(() => {
     const timer = setTimeout(() => setFadeIn(1), 100);
@@ -87,9 +91,10 @@ export default function SkinAnalysisResult() {
     <div
       className="min-h-screen flex flex-col items-center relative px-5 py-16 mt-12 transition-opacity duration-1000 ease-in-out"
       style={{ opacity: fadeIn }}
+      
     >
       <div
-        className="absolute inset-0 bg-cover bg-center blur-lg opacity-30"
+        className=" inset-0 bg-cover bg-center blur-lg opacity-30"
         style={{ backgroundImage: "url('/assets/bg5.png')" }}
       ></div>
 
@@ -120,8 +125,8 @@ export default function SkinAnalysisResult() {
                   alt="Skin analysis"
                   className="rounded-2xl max-w-full h-auto object-contain shadow-xl"
                 />
-                <div className="font-lato font-light absolute -bottom-5 left-1/2 -translate-x-1/2 bg-white px-6 py-2 rounded-full shadow-md text-[#797979]">
-                  Skin Age: {bioMetrics.age || "Not Detected"}
+                <div className="flex justify-center w-[180px] text-center font-lato font-light absolute -bottom-5 left-1/2 -translate-x-1/2 bg-white py-2 rounded-full shadow-md text-[#797979]">
+                  <p>Skin Age: {bioMetrics.age || "Not Detected"}</p>
                 </div>
               </div>
             </div>
@@ -219,24 +224,45 @@ export default function SkinAnalysisResult() {
           </div>
 
           {/* Action Section */}
-          <div className="text-center mt-6 md:mt-16">
+          <div className="text-center mt-6 md:mt-16 ">
             <button
-              onClick={() => navigate("/skincareroutine")}
-              className="font-lato font-light text-sm md:text-lg bg-[#14213D] text-white px-16 py-3 rounded-full transition-colors duration-300 hover:opacity-80"
+              onClick={() => navigate("/feedback")}
+              className="font-lato mr-5 font-light text-sm md:text-lg bg-[#14213D] text-white px-6 py-3 rounded-full transition-colors duration-300 hover:opacity-80"
             >
-              Suggest My Skincare Routine
+              Suggest My Skincare 
             </button>
-            <div className="flex justify-center gap-3 mt-6 md:mt-8">
-              <div className="w-20 md:w-24 h-1 bg-[#003366] rounded-full"></div>
-              <div className="w-20 md:w-24 h-1 bg-gray-300 rounded-full"></div>
-              <div className="w-20 md:w-24 h-1 bg-gray-300 rounded-full"></div>
-            </div>
+            <button
+          onClick={() => setIsLevelOpen(true)}
+          className="cursor-pointer font-lato font-light text-sm md:text-lg bg-[#F0EA47] text-darkblue px-6 py-3 rounded-full transition-colors duration-300 hover:opacity-80"
+        >Check our scale</button>
+
+
+            <Pagination current={1} />
           </div>
         </div>
       ) : (
         // Optionally, you could display a loading indicator or a message if no image is present
         <div className="z-10">
           <p className="font-lato text-gray-600">No analysis available.</p>
+        </div>
+      )}
+      {isLevelOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 "
+          onClick={() => setIsLevelOpen(false)}
+        >
+          <div
+            className="relative w-[90%]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Level />
+            <button
+              onClick={() => setIsLevelOpen(false)}
+              className="absolute top-2 right-10 text-gray-600 hover:text-gray-800 text-2xl leading-none"
+            >
+              &times;
+            </button>
+          </div>
         </div>
       )}
     </div>

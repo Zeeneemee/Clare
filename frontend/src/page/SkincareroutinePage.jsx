@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
+import Pagination from "../components/ui/pagination";
 
 export default function Routine() {
   const [fadeIn, setFadeIn] = useState(0);
@@ -93,14 +94,10 @@ export default function Routine() {
 
       {/* Progress Indicators */}
       <div className="flex justify-center gap-3 mt-5 md:hidden">
-        <div className="w-20 h-1 bg-[#003366] rounded-full"></div>
-        <div className="w-20 h-1 bg-gray-300 rounded-full"></div>
-        <div className="w-20 h-1 bg-gray-300 rounded-full"></div>
+        <Pagination current={2}/>
       </div>
       <div className="hidden md:flex gap-3 mt-5">
-        <div className="w-24 h-1 bg-[#14213D] rounded-full"></div>
-        <div className="w-24 h-1 bg-[#14213D] rounded-full"></div>
-        <div className="w-24 h-1 bg-gray-300 rounded-full"></div>
+      <Pagination current={2}/>
       </div>
     </div>
   );
