@@ -1,4 +1,5 @@
 import { useState } from "react";
+import  Pagination  from "../components/ui/pagination";
 import { Link } from "react-router-dom";
 
 export default function SignUp() {
@@ -103,14 +104,7 @@ export default function SignUp() {
 
       {/* Progress Bar */}
       <div className="flex justify-center gap-3 md:gap-3 mt-8">
-        {Array(3)
-          .fill("")
-          .map((_, index) => (
-            <div
-              key={index}
-              className="w-16 sm:w-20 md:w-24 h-1 bg-[#14213D] rounded-full"
-            ></div>
-          ))}
+        <Pagination current={3} />
       </div>
     </div>
   );

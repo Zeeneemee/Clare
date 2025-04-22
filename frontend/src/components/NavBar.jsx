@@ -23,7 +23,7 @@ export default function NavBar({ scrolled }) {
       <div className="lg:hidden" onClick={toggleMenu}>
         <span className={`block w-5 h-0.5 transition-all duration-300 ${scrolled ? 'bg-[#14213D]' : 'bg-white'} mb-2 ${isMobileMenuOpen ? 'rotate-45 absolute' : ''}`} />
         <span className={`block w-5 h-0.5 transition-all duration-300 ${scrolled ? 'bg-[#14213D]' : 'bg-white'} mb-2 ${isMobileMenuOpen ? 'opacity-0' : ''}`} />
-        <span className={`block w-5 h-0.5 transition-all duration-300 ${scrolled ? 'bg-[#14213D]' : 'bg-white'} ${isMobileMenuOpen ? '-rotate-45 absolute' : ''}`} />
+        <span className={`block w-5 h-0.5 transition-all duration-300 ${scrolled ? 'bg-[#14213D]' : 'bg-white'} ${isMobileMenuOpen ? '-rotate-45 absolute mt-1 ' : ''}`} />
       </div>
 
       {/* Desktop Menu */}

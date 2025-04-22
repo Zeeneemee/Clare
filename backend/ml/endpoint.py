@@ -86,7 +86,7 @@ def analyze_image():
             },
             "wrinkles": {
                 "severity": severity_score,
-                "percentage": wrinkle_percent
+                "percentage": round(wrinkle_percent)
             },
             "scar": {
                 "positions": results_scar.get("positions", []),
