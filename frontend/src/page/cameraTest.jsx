@@ -314,7 +314,7 @@ export default function CameraCapture() {
                         <label className="font-lato phone:text-[14px]">Lighting: </label>
                         <div className={`${state.lightingValid ? "bg-[#D1FADF]" : "bg-[#FF8080]"} py-1 px-4 w-full h-full rounded-md`}>
                         <p className={`font-lato phone:text-[14px] ${state.lightingValid ? "text-[#039855]" : "text-[#BD0101]"}`}>
-                            {state.lightingValid ? "okay" : "shit"}
+                            {state.lightingValid ? "okay" : "adjust"}
                         </p>
                         </div>
                     </div>
@@ -323,7 +323,7 @@ export default function CameraCapture() {
                         <label className="font-lato phone:text-[14px]">Distance: </label>
                         <div className={`${state.distanceValid ? "bg-[#D1FADF]" : "bg-[#FF8080]"} py-1 px-4 w-full h-full rounded-md`}>
                         <p className={`font-lato phone:text-[14px] ${state.distanceValid ? "text-[#039855]" : "text-[#BD0101]"}`}>
-                            {state.distanceValid ? "okay" : "shit"}
+                            {state.distanceValid ? "okay" : "adjust"}
                         </p>
                         </div>
                     </div>
