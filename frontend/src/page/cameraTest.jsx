@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import * as faceapi from "face-api.js";
 import LoadingScreen from "../components/ui/LoadingScreen";
-import axios from "axios";
 
 
 export default function CameraCapture() {
