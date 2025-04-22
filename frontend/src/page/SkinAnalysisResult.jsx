@@ -46,6 +46,19 @@ export default function SkinAnalysisResult() {
     setBioMetrics(storedData);
     return () => clearTimeout(timer);
   }, []);
+  useEffect(() => {
+    if (isLevelOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  
+    // Clean up when component unmounts
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isLevelOpen]);
+  
 
   const getMetricDescription = (metric, score) => {
     if (score < 0 || score > 10) return "Invalid score";

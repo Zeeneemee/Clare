@@ -18,7 +18,7 @@ const [userImage, setUserImage] = useState(null);
         We’re hard at work on something awesome. In the meantime, we’d love your feedback to make it even better!
       </p>
       <button
-        onClick={() => navigate("/feedback")}
+        onClick={() => navigate("/")}
         className="font-lato font-light bg-darkblue text-white px-6 py-3 rounded-full hover:opacity-80 transition"
       >
         Give Feedback

@@ -56,7 +56,7 @@ export default function App() {
           />
 
           {/* Other routes */}
-          <Route path="/camera" element={<CameraCapture />} />
+          <Route path="/camera" element={<CameraComponent/>} />
           <Route path="/loading" element={<LoadingScreen />} />
           <Route path="/result" element={<SkinAnalysisResult />} />
           <Route path="/products" element={<ProductPage />} />
@@ -65,7 +65,7 @@ export default function App() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/contactus" element={<ContactUs />} /> {/* New route for ContactUs */}
-          <Route path="/test" element={<CameraComponent/>} />
+          <Route path="/test" element={<CameraCapture/>} />
           <Route path="/feedback" element={<ComingSoon />} />
           {/* Individual product pages */}
           <Route path="/products/moisturiser-men" element={<MoisturiserMen />} />

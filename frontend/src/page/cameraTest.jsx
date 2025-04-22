@@ -2,141 +2,156 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import * as faceapi from "face-api.js";
 import LoadingScreen from "../components/ui/LoadingScreen";
+import axios from "axios";
 
 
 export default function CameraCapture() {
-  const navigate = useNavigate();
-  const canvasRef = useRef(null);
-
-  const [state, setState] = useState({
-    captured: false,
-    fadeIn: false,
-    showConfirmation: false,
-    showConsent: localStorage.getItem("termsAccepted") !== "true",
-    consentGiven: false,
-    isLoading: false,
-    error: null,
-    lightingValid: false,
-    distanceValid: false,
-    lightingMessage: "",
-    distanceMessage: "",
-    modelsLoaded: false
-  });
-  const [capturedDataUrl, setCapturedDataUrl] = useState(null);
-
-  // Load face-api models on mount
-  useEffect(() => {
-    const loadModels = async () => {
-      try {
-        await Promise.all([
-          faceapi.nets.tinyFaceDetector.loadFromUri(process.env.PUBLIC_URL + "/models"),
-        ]);
-        setState(prev => ({ ...prev, modelsLoaded: true }));
-      } catch (err) {
-        console.error("Model load error", err);
-        setState(prev => ({ ...prev, error: "Failed to load models" }));
-      }
-    };
-    loadModels();
-  }, []);
-
-  // Validate image once selected
-  const validateImage = async (dataUrl) => {
-    const img = new Image();
-    img.src = dataUrl;
+    const navigate = useNavigate();
+    const canvasRef = useRef(null);
+    const fileInputRef = useRef(null);
   
-    img.onload = async () => {
-      // create your own canvas on the fly
-      const canvas = document.createElement("canvas");
-      canvas.width  = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext("2d");
-  
-      // now draw + analyze there
-      ctx.drawImage(img, 0, 0);
-
-      // Lighting check
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      let sum = 0;
-      for (let i = 0; i < imageData.data.length; i += 4) {
-        sum += (imageData.data[i] + imageData.data[i+1] + imageData.data[i+2]) / 3;
-      }
-      const avg = sum / (imageData.data.length/4);
-      let lightingValid = true;
-      let lightingMessage = "Lighting is Good";
-      if (avg < 80) { lightingValid = false; lightingMessage = "Too Dark"; }
-      if (avg > 180) { lightingValid = false; lightingMessage = "Too Bright"; }
-
-      // Distance check via face-api
-      let distanceValid = false;
-      let distanceMessage = "";
-      try {
-        const detection = await faceapi.detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions());
-        if (detection) {
-          const { width, height } = detection.box;
-          const size = Math.max(width, height);
-          const minSize = Math.min(canvas.width, canvas.height) * 0.3;
-          const maxSize = Math.min(canvas.width, canvas.height) * 0.7;
-          distanceValid = size >= minSize && size <= maxSize;
-          distanceMessage = distanceValid
-            ? "Distance is Good"
-            : "Move closer or farther away";
-        } else {
-          distanceMessage = "No face detected";
-        }
-      } catch (err) {
-        console.error("Face detection error", err);
-        distanceMessage = "Detection failed";
-      }
-
-      setState(prev => ({
-        ...prev,
-        lightingValid,
-        distanceValid,
-        lightingMessage,
-        distanceMessage
-      }));
-    };
-  };
-
-  // Handle file input
-  const handleImageSelected = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const dataUrl = reader.result;
-      setCapturedDataUrl(dataUrl);
-      setState(prev => ({ ...prev, captured: true, showConfirmation: true, fadeIn: true }));
-      validateImage(dataUrl);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const retake = () => {
-    setCapturedDataUrl(null);
-    setState(prev => ({
-      ...prev,
+    const [state, setState] = useState({
       captured: false,
-      showConfirmation: false,
       fadeIn: false,
+      showConfirmation: false,
+      isLoading: false,
+      error: null,
       lightingValid: false,
       distanceValid: false,
       lightingMessage: "",
-      distanceMessage: ""
-    }));
-  };
-
-  const handleConsent = () => {
-    localStorage.setItem("termsAccepted", "true");
-    setState(prev => ({ ...prev, showConsent: false }));
-  };
+      distanceMessage: "",
+      modelsLoaded: false
+    });
+    const [capturedDataUrl, setCapturedDataUrl] = useState(null);
+  
+    // Load face-api models on mount
+    useEffect(() => {
+      const loadModels = async () => {
+        try {
+          await faceapi.nets.tinyFaceDetector.loadFromUri(
+            process.env.PUBLIC_URL + "/models"
+          );
+          setState(prev => ({ ...prev, modelsLoaded: true }));
+        } catch (err) {
+          console.error("Model load error", err);
+          setState(prev => ({ ...prev, error: "Failed to load models" }));
+        }
+      };
+      loadModels();
+      
+    }, []);
+  
+    // Validate image once selected
+    const validateImage = async dataUrl => {
+      const img = new Image();
+      img.src = dataUrl;
+      img.onload = async () => {
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext("2d");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+  
+        // Lighting check
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        let sum = 0;
+        for (let i = 0; i < imageData.data.length; i += 4) {
+          sum +=
+            (imageData.data[i] + imageData.data[i + 1] + imageData.data[i + 2]) / 3;
+        }
+        const avg = sum / (imageData.data.length / 4);
+        let lightingValid = true;
+        let lightingMessage = "Lighting is Good";
+        if (avg < 80) {
+          lightingValid = false;
+          lightingMessage = "Too Dark";
+        }
+        if (avg > 180) {
+          lightingValid = false;
+          lightingMessage = "Too Bright";
+        }
+  
+        // Distance check via face-api
+        let distanceValid = false;
+        let distanceMessage = "";
+        try {
+          const detection = await faceapi.detectSingleFace(
+            canvas,
+            new faceapi.TinyFaceDetectorOptions()
+          );
+          if (detection) {
+            const { width, height } = detection.box;
+            const size = Math.max(width, height);
+            const minSize = Math.min(canvas.width, canvas.height) * 0.3;
+            const maxSize = Math.min(canvas.width, canvas.height) * 0.7;
+            distanceValid = size >= minSize && size <= maxSize;
+            distanceMessage = distanceValid
+              ? "Distance is Good"
+              : "Move closer or farther away";
+          } else {
+            distanceMessage = "No face detected";
+          }
+        } catch (err) {
+          console.error("Face detection error", err);
+          distanceMessage = "Detection failed";
+        }
+  
+        setState(prev => ({
+          ...prev,
+          lightingValid,
+          distanceValid,
+          lightingMessage,
+          distanceMessage
+        }));
+      };
+    };
+  
+    // Trigger hidden file input
+    const openFilePicker = () => {
+      fileInputRef.current?.click();
+    };
+    const handleConsent = () => {
+        localStorage.setItem("termsAccepted", "true");
+        setState(prev => ({ ...prev, showConsent: false }));
+      };
+    // Handle file selection
+    const handleImageSelected = e => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const dataUrl = reader.result;
+        setCapturedDataUrl(dataUrl);
+        setState(prev => ({
+          ...prev,
+          captured: true,
+          showConfirmation: true,
+          fadeIn: true
+        }));
+        validateImage(dataUrl);
+      };
+      reader.readAsDataURL(file);
+    };
+  
+    const retake = () => {
+      setCapturedDataUrl(null);
+      setState(prev => ({
+        ...prev,
+        captured: false,
+        showConfirmation: false,
+        fadeIn: false,
+        lightingValid: false,
+        distanceValid: false,
+        lightingMessage: "",
+        distanceMessage: ""
+      }));
+    };
 
   const proceed = async () => {
     if (state.captured) {
       setState(prev => ({ ...prev, isLoading: true, fadeOut: true }));
-        const blob = await (await fetch(capturedDataUrl)).blob();
-
+      const canvas = canvasRef.current;
+      canvas.toBlob(async (blob) => {
         const formData = new FormData();
         formData.append("image", blob, "captured-image.jpg");
         try {
@@ -163,7 +178,7 @@ export default function CameraCapture() {
           console.error("❌ Error Uploading Image:", error);
           setState(prev => ({ ...prev, isLoading: false }));
         }
-      
+      }, "image/jpeg");
     }
   };
 
@@ -174,7 +189,7 @@ export default function CameraCapture() {
         <LoadingScreen/>
       ) : (
         <div
-          className="min-h-screen flex flex-col items-center relative w-full mt-12 py-16"
+          className="min-h-screen flex flex-col items-center relative w-full mt-12 py-16 px-5"
           style={{
             transition: "opacity 1s ease-in-out",
             opacity: state.fadeOut ? 0 : state.fadeIn,
@@ -193,7 +208,7 @@ export default function CameraCapture() {
           <div className="flex flex-col items-center justify-center w-full mt-6">
           <div>
           {state.showConsent && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-3xl overflow-hidden">
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-3xl overflow-hidden z-10">
                 <div className="bg-white p-6 rounded-xl shadow-lg text-center  max-h-[350px] sm:max-h-[400px] overflow-y-auto">
                   <h2 className="font-lato text-lg font-normal text-darkblue mb-4">
                     Biometric Data Processing Consent
@@ -255,8 +270,7 @@ export default function CameraCapture() {
                     <img
                     src={capturedDataUrl}
                     alt="Uploaded"
-                    className="object-cover w-full h-full"
-                    onLoad={() => validateImage(capturedDataUrl)}
+                    className="object-cover w-full h-full transform scale-x-[-1]"
                     />
 
 
@@ -277,13 +291,15 @@ export default function CameraCapture() {
                     </div>
                     
                     <p className="font-fanwood text-[24px]">Upload or Take Photo</p>   
-                        <input
+                    <input
                         type="file"
                         accept="image/*"
+                        capture="user"
+                        ref={fileInputRef}
                         onChange={handleImageSelected}
                         className="hidden"
                         id="fileInput"
-                        />
+                    />
                         <label
                         htmlFor="fileInput"
                         className=" border-solid border-[1px] border-[#000000] text-black font-lato font-light text-sm sm:text-base px-6 py-3 rounded-full cursor-pointer hover:opacity-80 transition"
@@ -294,24 +310,25 @@ export default function CameraCapture() {
                 )}      
                 </div>
                 {state.captured && (
-                <div className="flex justify-center items-center relative top-2 gap-10">
-                    <div className="flex justify-center items-center w-[100px] gap-2 ">
+                    <div className="flex justify-center items-center relative top-2 gap-10">
+                    <div className="flex justify-center items-center w-[100px] gap-2">
                         <label className="font-lato phone:text-[14px]">Lighting: </label>
                         <div className={`${state.lightingValid ? "bg-[#D1FADF]" : "bg-[#FF8080]"} py-1 px-4 w-full h-full rounded-md`}>
-                            <p className={`font-lato phone:text-[14px] ${state.lightingValid? "text-[#039855]":"text-[#BD0101]"}`}>
-                                {state.lightingValid ? "okay": "shit"}
-                            </p>
+                        <p className={`font-lato phone:text-[14px] ${state.lightingValid ? "text-[#039855]" : "text-[#BD0101]"}`}>
+                            {state.lightingValid ? "okay" : "shit"}
+                        </p>
                         </div>
                     </div>
-                    <div className="flex justify-center items-center w-[100px] gap-2 ">
+
+                    <div className="flex justify-center items-center w-[100px] gap-2">
                         <label className="font-lato phone:text-[14px]">Distance: </label>
-                        <div className={`${state.lightingValid ? "bg-[#D1FADF]" : "bg-[#FF8080]"} py-1 px-4 w-full h-full rounded-md`}>
-                            <p className={`font-lato phone:text-[14px] ${state.lightingValid? "text-[#039855]":"text-[#BD0101]"}`}>
-                                {state.lightingValid ? "okay": "shit"}
-                            </p>
+                        <div className={`${state.distanceValid ? "bg-[#D1FADF]" : "bg-[#FF8080]"} py-1 px-4 w-full h-full rounded-md`}>
+                        <p className={`font-lato phone:text-[14px] ${state.distanceValid ? "text-[#039855]" : "text-[#BD0101]"}`}>
+                            {state.distanceValid ? "okay" : "shit"}
+                        </p>
                         </div>
                     </div>
-                </div>
+                    </div>
                 )}
           </div>
         </div>
@@ -329,11 +346,14 @@ export default function CameraCapture() {
                     Retake
                   </button>
                   <button
+                    disabled={!(state.lightingValid && state.distanceValid)}
                     onClick={proceed}
-                    className="font-lato text-lg font-light bg-[#14213D] text-white py-3 px-12 rounded-full transition-colors duration-300 hover:opacity-80"
-                  >
+                    className={`font-lato text-lg font-light ${
+                        state.lightingValid && state.distanceValid ? "bg-[#14213D]" : "bg-[#808080] cursor-not-allowed"
+                    } text-white py-3 px-12 rounded-full transition-colors duration-300 hover:opacity-80`}
+                    >
                     Proceed
-                  </button>
+                    </button>
                 </div>
               </div>
             ) 
