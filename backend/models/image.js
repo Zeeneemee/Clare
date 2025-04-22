@@ -39,4 +39,4 @@ const imageProcessingSchema = new Schema({
   }
 }, { timestamps: true });
 
-module.exports = mongoose.model("ImageProcessing", imageProcessingSchema);
+module.exports = mongoose.model("testing&Result", imageProcessingSchema);
