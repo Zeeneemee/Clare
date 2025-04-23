@@ -25,6 +25,7 @@ export default function CameraCapture() {
   
     // Load face-api models on mount
     useEffect(() => {
+    localStorage.clear();
       const loadModels = async () => {
         try {
           await faceapi.nets.tinyFaceDetector.loadFromUri(
@@ -106,9 +107,7 @@ export default function CameraCapture() {
     };
   
     // Trigger hidden file input
-    const openFilePicker = () => {
-      fileInputRef.current?.click();
-    };
+    
     const handleConsent = () => {
         localStorage.setItem("termsAccepted", "true");
         setState(prev => ({ ...prev, showConsent: false }));
@@ -154,7 +153,9 @@ export default function CameraCapture() {
         const formData = new FormData();
         formData.append("image", blob, "captured-image.jpg");
         try {
-          const response = await fetch("https://clare-nrnl.onrender.com/upload", {
+            // http://localhost:5000/upload
+            // https://clare-nrnl.onrender.com/upload
+          const response = await fetch("// https://clare-nrnl.onrender.com/upload", {
             method: "POST",
             body: formData,
           });
@@ -293,7 +294,6 @@ export default function CameraCapture() {
                     <input
                         type="file"
                         accept="image/*"
-                        capture="user"
                         ref={fileInputRef}
                         onChange={handleImageSelected}
                         className="hidden"
