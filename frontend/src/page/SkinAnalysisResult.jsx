@@ -154,7 +154,7 @@ export default function SkinAnalysisResult() {
               <MetricCard
                 color="bg-[#FFEB40]"
                 title="Wrinkles"
-                value={bioMetrics.wrinkles.wrinklesPercentage || 0}
+                value={bioMetrics.wrinkles.wrinklesScore || 0}
                 description={getMetricDescription("wrinkles", bioMetrics.wrinkles.wrinklesScore)}
                 isWrinkles={true}
 
@@ -193,7 +193,7 @@ export default function SkinAnalysisResult() {
               <MetricCard
                 color="bg-[#FFEB40]"
                 title="Wrinkles"
-                value={bioMetrics.wrinkles.wrinklesPercentage || 0}
+                value={bioMetrics.wrinkles.wrinklesScore || 0}
                 description={getMetricDescription("wrinkles", bioMetrics.wrinkles.wrinklesScore)}
                 isWrinkles={true}
               />

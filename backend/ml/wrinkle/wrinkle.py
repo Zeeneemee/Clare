@@ -22,7 +22,7 @@ class UNet(nn.Module):
     
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = UNet().to(device)
-model_path = os.path.join(os.path.dirname(__file__), 'wrinkle_model.pth')
+model_path = os.path.join(os.path.dirname(__file__), 'best_model.pth')
 state_dict = torch.load(model_path, map_location=device)
 model.load_state_dict(state_dict)
 criterion = nn.BCEWithLogitsLoss()
@@ -54,18 +54,28 @@ def analyze_wrinkles(model, image_PIL):
 
     # Convert percentage to severity scale (0-10)
     
-    if wrinkle_percentage < 1:
-        score = 0  # Good
-    elif wrinkle_percentage < 5:
-        score = 1  # Very Mild
-    elif wrinkle_percentage < 10:
-        score = 3  # Mild
-    elif wrinkle_percentage < 20:
-        score = 5  # Moderate
-    elif wrinkle_percentage < 30:
-        score = 7  # Severe
+    if wrinkle_percentage < 0.05:
+        score = 0  # No wrinkles detected (Excellent)
+    elif wrinkle_percentage < 0.1:
+        score = 1  # Very minimal wrinkles (Very Good)
+    elif wrinkle_percentage < 0.15:
+        score = 2  # Minimal wrinkles (Good)
+    elif wrinkle_percentage < 0.2:
+        score = 3  # Very mild wrinkles (Above Average)
+    elif wrinkle_percentage < 0.25:
+        score = 4  # Mild wrinkles (Average)
+    elif wrinkle_percentage < 0.3:
+        score = 5  # Noticeable wrinkles (Below Average)
+    elif wrinkle_percentage < 0.35:
+        score = 6  # Moderate wrinkles (Moderate)
+    elif wrinkle_percentage < 0.4:
+        score = 7  # Significant wrinkles (Significant)
+    elif wrinkle_percentage < 0.45:
+        score = 8  # Severe wrinkles (Severe)
+    elif wrinkle_percentage < 0.5:
+        score = 9  # Very severe wrinkles (Very Severe)
     else:
-        score = 10  # Very Severe
+        score = 10  # Extremely severe wrinkles (Extremely Severe)
 
 
     return score, wrinkle_percentage

@@ -85,7 +85,7 @@ def analyze_image():
                 "score": round(acne_score(results_acne.get("confidence", [])))
             },
             "wrinkles": {
-                "severity": severity_score,
+                "score": severity_score,
                 "percentage": round(wrinkle_percent)
             },
             "scar": {
