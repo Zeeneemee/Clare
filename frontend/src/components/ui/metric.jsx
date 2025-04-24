@@ -1,32 +1,41 @@
-const MetricCard = ({ color, title, value, description, isWrinkles }) => (
-  <div className="p-4 md:p-5 bg-white shadow-lg rounded-xl border md:min-h-[170px] md:min-w-[340px]">
-    <div className="flex items-center gap-3 mb-3 md:mb-3">
-      <div className={`w-5 h-5 md:w-6 md:h-6 ${color} rounded-full`}></div>
-      <h2 className="font-lato text-md md:text-lg">{title}</h2>
-    </div>
-    <div className="font-lato text-xl md:text-2xl mb-1 md:mb-2">
-      {isWrinkles ? `${value*100}% ` : `${value}/10`}
-    </div>
-    <div className="w-full bg-gray-200 rounded-full h-2 md:h-2.5">
-      {!isWrinkles &&
-      <div
-        className={`${color} h-2 md:h-2.5 rounded-full`}
-        style={{ width: `${value*10}%` }}
-      ></div>
-      }
-      {isWrinkles &&
-      <div
-        className={`${color} h-2 md:h-2.5 rounded-full`}
-        style={{ width: `${value*100}%` }}
-      ></div>
-      }
-    </div>
-    <p className="font-lato font-light mt-2 md:mt-3 text-gray-500 text-xs md:text-sm leading-snug">
-      {description}
-    </p>
-  </div>
-)
+const MetricCard = ({ color, title, value, description, isWrinkles }) => {
+  const displayValue = isWrinkles
+    ? `${(value * 100).toFixed(0)}%`
+    : `${value}/10`;
+  const progressWidth = isWrinkles ? `${value * 100}%` : `${value * 10}%`;
 
-  
+  return (
+    <div className="p-5 bg-white shadow-xl rounded-2xl border border-gray-200 min-h-[180px] md:min-w-[340px]">
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-3">
+        <div
+          className={`w-5 h-5 ${color} rounded-full`}
+          aria-hidden="true"
+        ></div>
+        <h2 className="font-lato font-medium text-md md:text-lg text-[#14213D]">
+          {title}
+        </h2>
+      </div>
 
-export default MetricCard
+      {/* Value */}
+      <div className="text-2xl font-lato text-[#14213D] mb-2">
+        {displayValue}
+      </div>
+
+      {/* Progress Bar */}
+      <div className="w-full bg-gray-200 rounded-full h-2.5 relative overflow-hidden">
+        <div
+          className={`${color} h-2.5 rounded-full transition-all duration-500`}
+          style={{ width: progressWidth }}
+        ></div>
+      </div>
+
+      {/* Description */}
+      <p className="font-lato font-light mt-3 text-sm text-gray-600 leading-snug">
+        {description}
+      </p>
+    </div>
+  );
+};
+
+export default MetricCard;

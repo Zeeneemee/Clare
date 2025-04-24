@@ -3,15 +3,14 @@ import { useNavigate } from "react-router-dom";
 import MetricCard from "../components/ui/metric";
 import metricDetails from "../lib/skinanalysis"; // Assuming this is the correct path
 
-
 export default function SkinAnalysisResult() {
   const navigate = useNavigate();
   const [fadeIn, setFadeIn] = useState(0);
   const [bioMetrics, setBioMetrics] = useState(null);
-  
+
   useEffect(() => {
     const timer = setTimeout(() => setFadeIn(1), 100);
-    
+
     // Retrieve data from localStorage
     const storedData = {
       processedImage: localStorage.getItem("processedImage"),
@@ -21,7 +20,7 @@ export default function SkinAnalysisResult() {
       },
       wrinkles: {
         wrinklesScore: localStorage.getItem("wrinklesScore"),
-        wrinklesPercentage: localStorage.getItem("wrinklePercentage")
+        wrinklesPercentage: localStorage.getItem("wrinklePercentage"),
       },
       scar: {
         scarImage: localStorage.getItem("scarImage"),
@@ -45,33 +44,33 @@ export default function SkinAnalysisResult() {
 
   const getMetricDescription = (metric, score) => {
     if (score < 0 || score > 10) return "Invalid score";
-    
-    switch(metric) {
-      case 'wrinkles':
+
+    switch (metric) {
+      case "wrinkles":
         if (score <= 2) return metricDetails.wrinkles.content[0];
         if (score <= 5) return metricDetails.wrinkles.content[1];
         if (score <= 8) return metricDetails.wrinkles.content[2];
         return metricDetails.wrinkles.content[3];
 
-      case 'darkspot':
+      case "darkspot":
         if (score <= 2) return metricDetails.darkspot.content[0];
         if (score <= 5) return metricDetails.darkspot.content[1];
         if (score <= 8) return metricDetails.darkspot.content[2];
         return metricDetails.darkspot.content[3];
 
-      case 'acne':
+      case "acne":
         if (score <= 2) return metricDetails.acne.content[0];
         if (score <= 5) return metricDetails.acne.content[1];
         if (score <= 8) return metricDetails.acne.content[2];
         return metricDetails.acne.content[3];
 
-      case 'undereye':
+      case "undereye":
         if (score <= 2) return metricDetails.undereye.content[0];
         if (score <= 5) return metricDetails.undereye.content[1];
         if (score <= 8) return metricDetails.undereye.content[2];
         return metricDetails.undereye.content[3];
 
-      case 'scar':
+      case "scar":
         if (score <= 3) return metricDetails.scar.content[0];
         if (score <= 6) return metricDetails.scar.content[1];
         if (score <= 9) return metricDetails.scar.content[2];
@@ -82,8 +81,7 @@ export default function SkinAnalysisResult() {
     }
   };
 
-
-  return (    
+  return (
     <div
       className="min-h-screen flex flex-col items-center relative px-5 py-16 mt-12 transition-opacity duration-1000 ease-in-out"
       style={{ opacity: fadeIn }}
@@ -131,33 +129,47 @@ export default function SkinAnalysisResult() {
                 color="bg-[#7F7DFF]"
                 title="Dark Circles"
                 value={bioMetrics.undereye.undereyeScore || 0}
-                description= {getMetricDescription("undereye", bioMetrics.undereye.undereyeScore)}
+                description={getMetricDescription(
+                  "undereye",
+                  bioMetrics.undereye.undereyeScore
+                )}
               />
               <MetricCard
                 color="bg-[#FFEB40]"
                 title="Wrinkles"
                 value={bioMetrics.wrinkles.wrinklesPercentage || 0}
-                description={getMetricDescription("wrinkles", bioMetrics.wrinkles.wrinklesScore)}
+                description={getMetricDescription(
+                  "wrinkles",
+                  bioMetrics.wrinkles.wrinklesScore
+                )}
                 isWrinkles={true}
-
-                />
+              />
               <MetricCard
                 color="bg-[#FFA500]"
                 title="Dark Spot"
                 value={bioMetrics.darkspot.darkspotScore || 0}
-                description={getMetricDescription("darkspot", bioMetrics.darkspot.darkspotScore)}
+                description={getMetricDescription(
+                  "darkspot",
+                  bioMetrics.darkspot.darkspotScore
+                )}
               />
               <MetricCard
                 color="bg-[#9CDA8A]"
                 title="Acne Severity"
                 value={bioMetrics.acne.acneScore || 0}
-                description={getMetricDescription("acne", bioMetrics.acne.acneScore)}
-                />
+                description={getMetricDescription(
+                  "acne",
+                  bioMetrics.acne.acneScore
+                )}
+              />
               <MetricCard
                 color="bg-[#FF8080]"
                 title="Scar"
                 value={bioMetrics.scar.scarScore || 0}
-                description={getMetricDescription("scar", bioMetrics.scar.scarScore)}
+                description={getMetricDescription(
+                  "scar",
+                  bioMetrics.scar.scarScore
+                )}
               />
             </div>
           </div>
@@ -170,13 +182,19 @@ export default function SkinAnalysisResult() {
                 color="bg-[#7F7DFF]"
                 title="Dark Circles"
                 value={bioMetrics.undereye.undereyeScore || 0}
-                description={getMetricDescription("undereye", bioMetrics.undereye.undereyeScore)}
+                description={getMetricDescription(
+                  "undereye",
+                  bioMetrics.undereye.undereyeScore
+                )}
               />
               <MetricCard
                 color="bg-[#FFEB40]"
                 title="Wrinkles"
                 value={bioMetrics.wrinkles.wrinklesPercentage || 0}
-                description={getMetricDescription("wrinkles", bioMetrics.wrinkles.wrinklesScore)}
+                description={getMetricDescription(
+                  "wrinkles",
+                  bioMetrics.wrinkles.wrinklesScore
+                )}
                 isWrinkles={true}
               />
             </div>
@@ -201,20 +219,29 @@ export default function SkinAnalysisResult() {
                 color="bg-[#9CDA8A]"
                 title="Acne Severity"
                 value={bioMetrics.acne.acneScore || 0}
-                description={getMetricDescription("acne", bioMetrics.acne.acneScore)}
+                description={getMetricDescription(
+                  "acne",
+                  bioMetrics.acne.acneScore
+                )}
               />
               <MetricCard
                 color="bg-[#FFA500]"
                 title="Dark Spot"
                 value={bioMetrics.darkspot.darkspotScore || 0}
-                description={getMetricDescription("darkspot", bioMetrics.darkspot.darkspotScore)}
+                description={getMetricDescription(
+                  "darkspot",
+                  bioMetrics.darkspot.darkspotScore
+                )}
               />
               <MetricCard
                 color="bg-[#FF8080]"
                 title="Scar"
                 value={bioMetrics.scar.scarScore || 0}
-                description={getMetricDescription("scar", bioMetrics.scar.scarScore)}
-                />
+                description={getMetricDescription(
+                  "scar",
+                  bioMetrics.scar.scarScore
+                )}
+              />
             </div>
           </div>
 
