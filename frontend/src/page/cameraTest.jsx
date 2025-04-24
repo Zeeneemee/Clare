@@ -15,6 +15,7 @@ export default function CameraCapture() {
       showConfirmation: false,
       isLoading: false,
       error: null,
+      showConsent: localStorage.getItem("termsAccepted") !== "true",
       lightingValid: false,
       distanceValid: false,
       lightingMessage: "",
@@ -22,10 +23,21 @@ export default function CameraCapture() {
       modelsLoaded: false
     });
     const [capturedDataUrl, setCapturedDataUrl] = useState(null);
-  
+    const removeStorage = ()=>{
+        localStorage.removeItem("processedImage");
+        localStorage.removeItem("acneScore");
+        localStorage.removeItem("wrinklesScore");
+        localStorage.removeItem("wrinklePercentage");
+        localStorage.removeItem("scarScore");
+        localStorage.removeItem("undereyeScore");
+        localStorage.removeItem("undereyeLabel");
+        localStorage.removeItem("darkspotScore");
+        localStorage.removeItem("age");
+
+    }
     // Load face-api models on mount
     useEffect(() => {
-    localStorage.clear();
+      removeStorage()
       const loadModels = async () => {
         try {
           await faceapi.nets.tinyFaceDetector.loadFromUri(

@@ -16,7 +16,7 @@ export default function CameraCapture() {
     showConfirmation: false,
     showConsent: localStorage.getItem("termsAccepted") !== "true",
     consentGiven: false,
-    isLoading: false,
+    isLoading: "",
     lighting: "Analyzing...",
     facePosition: "No Face ❌",
     modelsLoaded: false,
