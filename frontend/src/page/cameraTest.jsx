@@ -157,48 +157,46 @@ export default function CameraCapture() {
       }));
     };
 
-  const proceed = async () => {
-    if (state.captured) {
-      setState(prev => ({ ...prev, isLoading: true, fadeOut: true }));
-      const canvas = canvasRef.current;
-      canvas.toBlob(async (blob) => {
-        const formData = new FormData();
-        formData.append("image", blob, "captured-image.jpg");
-        try {
-            // http://localhost:5000/upload
-            // https://clare-nrnl.onrender.com/upload
-          const response = await fetch("https://clare-nrnl.onrender.com/upload", {
-            method: "POST",
-            body: formData,
-          });
-          const result = await response.json();
-          console.log("✅ Processed Result:", result);
-          // Store processed data.
-          localStorage.setItem("processedImage", result.processedImage);
-          localStorage.setItem("acneScore", result.acne.acneScore);
-          localStorage.setItem("wrinklesScore", result.wrinkles.wrinklesSeverity);
-          localStorage.setItem("wrinklePercentage",result.wrinkles.wrinklesPercentage)
-          localStorage.setItem("scarScore", result.scar.scarScore);
-          localStorage.setItem("undereyeScore", result.undereye.undereyeScore);
-          localStorage.setItem("undereyeLabel", result.undereye.undereyeLabel);
-          localStorage.setItem("darkspotScore", result.darkspot.darkspotScore);
-          localStorage.setItem("age", result.age);
-          localStorage.setItem("gender", result.gender);
-          setState(prev => ({ ...prev, isLoading: false }));
-          navigate("/result");
-        } catch (error) {
-          console.error("❌ Error Uploading Image:", error);
-          setState(prev => ({ ...prev, isLoading: false }));
-        }
-      }, "image/jpeg");
-    }
-  };
+    const proceed = () => {
+      if (state.captured) {
+        setState(prev => ({ ...prev, isLoading: true, fadeOut: true }));
+        const canvas = canvasRef.current;
+        canvas.toBlob(async (blob) => {
+          const formData = new FormData();
+          formData.append("image", blob, "captured-image.jpg");
+          try {
+            const response = await fetch("https://clare-nrnl.onrender.com/upload", {
+              method: "POST",
+              body: formData,
+            });
+            const result = await response.json();
+            console.log("✅ Processed Result:", result);
+            localStorage.setItem("processedImage", result.processedImage);
+            localStorage.setItem("acneScore", result.acne.acneScore);
+            localStorage.setItem("wrinklesScore", result.wrinkles.wrinklesSeverity);
+            localStorage.setItem("wrinklePercentage", result.wrinkles.wrinklesPercentage);
+            localStorage.setItem("scarScore", result.scar.scarScore);
+            localStorage.setItem("undereyeScore", result.undereye.undereyeScore);
+            localStorage.setItem("undereyeLabel", result.undereye.undereyeLabel);
+            localStorage.setItem("darkspotScore", result.darkspot.darkspotScore);
+            localStorage.setItem("age", result.age);
+            localStorage.setItem("gender", result.gender);
+            setState(prev => ({ ...prev, isLoading: false }));
+            navigate("/result");
+          } catch (error) {
+            console.error("❌ Error Uploading Image:", error);
+            setState(prev => ({ ...prev, isLoading: false }));
+            // Handle errors (show notification, retry logic, etc.)
+          }
+        }, "image/jpeg");
+      }
+    };
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-50 ">
     <canvas ref={canvasRef} className="hidden" />
       {state.isLoading ? (
-        <LoadingScreen/>
+        <LoadingScreen isLoaded={false}/>
       ) : (
         <div
           className="min-h-screen flex flex-col items-center relative w-full mt-12 py-16 px-5"

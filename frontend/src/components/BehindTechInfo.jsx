@@ -33,7 +33,7 @@ export default function BehindTechInfo() {
   return (
     <section
       id="behind-tech-info-section"
-      className="min-h-screen flex flex-col items-center px-5 pt-48 pb-32 bg-white mx-8"
+      className="min-h-screen flex flex-col items-center px-5 pt-24 pb-32 bg-white mx-8"
       style={{ opacity, transition: 'opacity 0.4s ease-in-out' }} // Faster fade-in transition
     >
       {/* Behind the Tech Section */}
