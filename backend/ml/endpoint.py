@@ -41,9 +41,19 @@ def acne_score(confidences):
     score = (sum(valid) / 7.46) * 10
     return min(score, 10)
 
-def compute_score(confidences):
-    valid = [c for c in confidences if c > 0.1]
-    return (sum(valid) / len(valid)) * 10 if valid else 0.0
+def scar_score(confidences):
+    valid = [c for c in confidences if c >= 0.5]
+    if not valid:
+        return 0  # Default when no valid confidences
+
+    conf_average = sum(valid) / len(valid)
+
+    if conf_average > 0.9:
+        return 10
+    else:
+        # Spread 0.5–0.9 across 9 scores (1–9)
+        return int((conf_average - 0.5) / (0.4 / 9)) + 1
+
 
 def darkspot_score(confidences):
     valid = [c for c in confidences if c > 0.1]
@@ -91,7 +101,7 @@ def analyze_image():
             "scar": {
                 "positions": results_scar.get("positions", []),
                 "confidence": results_scar.get("confidence", []),
-                "score": round(compute_score(results_scar.get("confidence", [])))
+                "score": scar_score(results_scar.get("confidence", []))
             },
             "undereye": {
                 "score": round(undereye_results[0]["dark_circle_score"]) if undereye_results else 0.0,

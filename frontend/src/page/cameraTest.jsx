@@ -15,17 +15,30 @@ export default function CameraCapture() {
       showConfirmation: false,
       isLoading: false,
       error: null,
+      showConsent: localStorage.getItem("termsAccepted") !== "true",
       lightingValid: false,
       distanceValid: false,
       lightingMessage: "",
       distanceMessage: "",
-      modelsLoaded: false
+      modelsLoaded: false,
+      isValidating: false,
     });
     const [capturedDataUrl, setCapturedDataUrl] = useState(null);
-  
+    const removeStorage = ()=>{
+        localStorage.removeItem("processedImage");
+        localStorage.removeItem("acneScore");
+        localStorage.removeItem("wrinklesScore");
+        localStorage.removeItem("wrinklePercentage");
+        localStorage.removeItem("scarScore");
+        localStorage.removeItem("undereyeScore");
+        localStorage.removeItem("undereyeLabel");
+        localStorage.removeItem("darkspotScore");
+        localStorage.removeItem("age");
+
+    }
     // Load face-api models on mount
     useEffect(() => {
-    localStorage.clear();
+      removeStorage()
       const loadModels = async () => {
         try {
           await faceapi.nets.tinyFaceDetector.loadFromUri(
@@ -43,6 +56,8 @@ export default function CameraCapture() {
   
     // Validate image once selected
     const validateImage = async dataUrl => {
+      setState(prev => ({ ...prev, isValidating: true }));
+    
       const img = new Image();
       img.src = dataUrl;
       img.onload = async () => {
@@ -51,13 +66,12 @@ export default function CameraCapture() {
         canvas.width = img.width;
         canvas.height = img.height;
         ctx.drawImage(img, 0, 0);
-  
+    
         // Lighting check
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         let sum = 0;
         for (let i = 0; i < imageData.data.length; i += 4) {
-          sum +=
-            (imageData.data[i] + imageData.data[i + 1] + imageData.data[i + 2]) / 3;
+          sum += (imageData.data[i] + imageData.data[i + 1] + imageData.data[i + 2]) / 3;
         }
         const avg = sum / (imageData.data.length / 4);
         let lightingValid = true;
@@ -70,8 +84,8 @@ export default function CameraCapture() {
           lightingValid = false;
           lightingMessage = "Too Bright";
         }
-  
-        // Distance check via face-api
+    
+        // Distance check
         let distanceValid = false;
         let distanceMessage = "";
         try {
@@ -82,8 +96,10 @@ export default function CameraCapture() {
           if (detection) {
             const { width, height } = detection.box;
             const size = Math.max(width, height);
-            const minSize = Math.min(canvas.width, canvas.height) * 0.3;
-            const maxSize = Math.min(canvas.width, canvas.height) * 0.7;
+            const minSize = Math.min(canvas.width, canvas.height) * 0.1; // only 10% minimum!
+            const maxSize = Math.min(canvas.width, canvas.height) * 1.0; // allow very large face up to 80%!
+
+
             distanceValid = size >= minSize && size <= maxSize;
             distanceMessage = distanceValid
               ? "Distance is Good"
@@ -95,16 +111,18 @@ export default function CameraCapture() {
           console.error("Face detection error", err);
           distanceMessage = "Detection failed";
         }
-  
+    
         setState(prev => ({
           ...prev,
           lightingValid,
           distanceValid,
           lightingMessage,
-          distanceMessage
+          distanceMessage,
+          isValidating: false, // ✅ Finish validation
         }));
       };
     };
+    
   
     // Trigger hidden file input
     
@@ -145,48 +163,46 @@ export default function CameraCapture() {
       }));
     };
 
-  const proceed = async () => {
-    if (state.captured) {
-      setState(prev => ({ ...prev, isLoading: true, fadeOut: true }));
-      const canvas = canvasRef.current;
-      canvas.toBlob(async (blob) => {
-        const formData = new FormData();
-        formData.append("image", blob, "captured-image.jpg");
-        try {
-            // http://localhost:5000/upload
-            // https://clare-nrnl.onrender.com/upload
-          const response = await fetch("https://clare-nrnl.onrender.com/upload", {
-            method: "POST",
-            body: formData,
-          });
-          const result = await response.json();
-          console.log("✅ Processed Result:", result);
-          // Store processed data.
-          localStorage.setItem("processedImage", result.processedImage);
-          localStorage.setItem("acneScore", result.acne.acneScore);
-          localStorage.setItem("wrinklesScore", result.wrinkles.wrinklesSeverity);
-          localStorage.setItem("wrinklePercentage",result.wrinkles.wrinklesPercentage)
-          localStorage.setItem("scarScore", result.scar.scarScore);
-          localStorage.setItem("undereyeScore", result.undereye.undereyeScore);
-          localStorage.setItem("undereyeLabel", result.undereye.undereyeLabel);
-          localStorage.setItem("darkspotScore", result.darkspot.darkspotScore);
-          localStorage.setItem("age", result.age);
-          localStorage.setItem("gender", result.gender);
-          setState(prev => ({ ...prev, isLoading: false }));
-          navigate("/result");
-        } catch (error) {
-          console.error("❌ Error Uploading Image:", error);
-          setState(prev => ({ ...prev, isLoading: false }));
-        }
-      }, "image/jpeg");
-    }
-  };
+    const proceed = () => {
+      if (state.captured) {
+        setState(prev => ({ ...prev, isLoading: true, fadeOut: true }));
+        const canvas = canvasRef.current;
+        canvas.toBlob(async (blob) => {
+          const formData = new FormData();
+          formData.append("image", blob, "captured-image.jpg");
+          try {
+            const response = await fetch("https://clare-nrnl.onrender.com/upload", {
+              method: "POST",
+              body: formData,
+            });
+            const result = await response.json();
+            console.log("✅ Processed Result:", result);
+            localStorage.setItem("processedImage", result.processedImage);
+            localStorage.setItem("acneScore", result.acne.acneScore);
+            localStorage.setItem("wrinklesScore", result.wrinkles.wrinklesSeverity);
+            localStorage.setItem("wrinklePercentage", result.wrinkles.wrinklesPercentage);
+            localStorage.setItem("scarScore", result.scar.scarScore);
+            localStorage.setItem("undereyeScore", result.undereye.undereyeScore);
+            localStorage.setItem("undereyeLabel", result.undereye.undereyeLabel);
+            localStorage.setItem("darkspotScore", result.darkspot.darkspotScore);
+            localStorage.setItem("age", result.age);
+            localStorage.setItem("gender", result.gender);
+            setState(prev => ({ ...prev, isLoading: false }));
+            navigate("/result");
+          } catch (error) {
+            console.error("❌ Error Uploading Image:", error);
+            setState(prev => ({ ...prev, isLoading: false }));
+            // Handle errors (show notification, retry logic, etc.)
+          }
+        }, "image/jpeg");
+      }
+    };
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-50 ">
     <canvas ref={canvasRef} className="hidden" />
       {state.isLoading ? (
-        <LoadingScreen/>
+        <LoadingScreen isLoaded={false}/>
       ) : (
         <div
           className="min-h-screen flex flex-col items-center relative w-full mt-12 py-16 px-5"
@@ -262,17 +278,14 @@ export default function CameraCapture() {
               </div>
             )}
           </div>
-            <div className="border-[1px] border-solid border-[#AEAEB2] rounded-lg phone:w-[350px] tablet:w-[400px] laptop:w-[50%]  h-[400px] sm:h-[500px] flex flex-col items-center justify-center relative">
-            
-                <div className={`${capturedDataUrl ? "":"border-[1px]  border-dashed border-[#AEAEB2]"} rounded-md phone:w-[300px] tablet:w-[350px] laptop:w-[80%] h-[80%]  flex flex-col items-center justify-center`}>
+            <div className={`${capturedDataUrl? "" : "border-[1px] border-solid border-[#AEAEB2]"} rounded-lg phone:w-[350px] tablet:w-[400px] laptop:w-[50%]  h-[400px] sm:h-[500px] flex flex-col items-center justify-center relative`}>
                 {capturedDataUrl ? (
                     // 📸 Show the uploaded image full‑bleed
                     <img
                     src={capturedDataUrl}
                     alt="Uploaded"
-                    className="object-cover w-full h-full transform scale-x-[-1]"
-                    />
-
+                    className="object-contain w-full h-full transform scale-x-[-1] rounded-lg"
+                  />
 
                 ):(
                 <div className="flex flex-col items-center justify-center gap-5">
@@ -307,29 +320,71 @@ export default function CameraCapture() {
                         </label>
                 </div>
                 )}      
-                </div>
-                {state.captured && (
-                    <div className="flex justify-center items-center relative top-2 gap-10">
-                    <div className="flex justify-center items-center w-[100px] gap-2">
-                        <label className="font-lato phone:text-[14px]">Lighting: </label>
-                        <div className={`${state.lightingValid ? "bg-[#D1FADF]" : "bg-[#FF8080]"} py-1 px-4 w-full h-full rounded-md`}>
-                        <p className={`font-lato phone:text-[14px] ${state.lightingValid ? "text-[#039855]" : "text-[#BD0101]"}`}>
-                            {state.lightingValid ? "okay" : "adjust"}
-                        </p>
-                        </div>
-                    </div>
+                
 
-                    <div className="flex justify-center items-center w-[100px] gap-2">
-                        <label className="font-lato phone:text-[14px]">Distance: </label>
-                        <div className={`${state.distanceValid ? "bg-[#D1FADF]" : "bg-[#FF8080]"} py-1 px-4 w-full h-full rounded-md`}>
-                        <p className={`font-lato phone:text-[14px] ${state.distanceValid ? "text-[#039855]" : "text-[#BD0101]"}`}>
-                            {state.distanceValid ? "okay" : "adjust"}
-                        </p>
-                        </div>
-                    </div>
-                    </div>
-                )}
+
           </div>
+          {state.captured && (
+  <div className="flex justify-center items-center relative top-2 gap-10">
+    
+    {/* Lighting Box */}
+    <div className="flex flex-col items-center w-[120px]">
+      <label className="font-lato phone:text-[14px] mb-1">Lighting</label>
+      <div className={`w-full py-1 rounded-md text-center ${
+          state.isValidating 
+            ? "bg-gray-300"
+            : state.lightingValid
+              ? "bg-[#D1FADF]"
+              : "bg-[#FF8080]"
+        }`}
+      >
+        {state.isValidating ? (
+          <p className="font-lato phone:text-[12px] text-gray-600 animate-pulse">Checking...</p>
+        ) : (
+          <p className={`font-lato phone:text-[12px] ${
+            state.lightingValid ? "text-[#039855]" : "text-[#BD0101]"
+          }`}>
+            {state.lightingValid 
+              ? "Okay" 
+              : state.lightingMessage === "Too Dark"
+                ? "Too Dark"
+                : "Too Bright"
+            }
+          </p>
+        )}
+      </div>
+    </div>
+
+    {/* Distance Box */}
+    <div className="flex flex-col items-center w-[120px]">
+      <label className="font-lato phone:text-[14px] mb-1">Distance</label>
+      <div className={`w-full py-1 rounded-md text-center ${
+          state.isValidating 
+            ? "bg-gray-300"
+            : state.distanceValid
+              ? "bg-[#D1FADF]"
+              : "bg-[#FF8080]"
+        }`}
+      >
+        {state.isValidating ? (
+          <p className="font-lato phone:text-[12px] text-gray-600 animate-pulse">Checking...</p>
+        ) : (
+          <p className={`font-lato phone:text-[12px] ${
+            state.distanceValid ? "text-[#039855]" : "text-[#BD0101]"
+          }`}>
+            {state.distanceValid
+              ? "Okay"
+              : state.distanceMessage.includes("closer")
+                ? "Too Far"
+                : "Too Near"
+            }
+          </p>
+        )}
+      </div>
+    </div>
+
+  </div>
+)}
         </div>
         {!state.showConsent &&
             (state.showConfirmation && (

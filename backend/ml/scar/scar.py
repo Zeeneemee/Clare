@@ -8,7 +8,7 @@ def Scar_detection(image_PIL):
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)  # Convert RGB to BGR for OpenCV
     # Show the prediction window
     detection_data = {"positions": [], "confidence": []}
-    model_path = os.path.join(os.path.dirname(__file__), "scar.pt")
+    model_path = os.path.join(os.path.dirname(__file__), "scar2.pt")
     model = YOLO(model_path)
     results = model.predict(image ,name="scar_predict" )  # Process the image
     for result in results:
