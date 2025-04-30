@@ -50,7 +50,7 @@ app.post('/upload', upload.single('image'), async (req, res) => {
     const base64Image = Buffer.from(s3Response.data, 'binary').toString('base64');
 
     // 4) Send Base64 payload to Flask API as 'image'
-    const flaskResp = await axios.post(process.env.FLASK_API_TEST, { image: base64Image });
+    const flaskResp = await axios.post(process.env.FLASK_API_URL, { image: base64Image });
     const { processedImage, acne, wrinkles, scar, undereye, darkspot, age } = flaskResp.data;
 
     // 5) Upload processed Base64 image to S3
