@@ -171,20 +171,20 @@ export default function CameraCapture() {
           const formData = new FormData();
           formData.append("image", blob, "captured-image.jpg");
           try {
-            const response = await fetch("https://clare-nrnl.onrender.com/upload", {
+            // http://localhost:5000/
+            const response = await fetch("http://localhost:5000/upload", {
               method: "POST",
               body: formData,
             });
             const result = await response.json();
             console.log("✅ Processed Result:", result);
-            localStorage.setItem("processedImage", result.processedImage);
-            localStorage.setItem("acneScore", result.acne.acneScore);
-            localStorage.setItem("wrinklesScore", result.wrinkles.wrinklesSeverity);
-            localStorage.setItem("wrinklePercentage", result.wrinkles.wrinklesPercentage);
-            localStorage.setItem("scarScore", result.scar.scarScore);
-            localStorage.setItem("undereyeScore", result.undereye.undereyeScore);
-            localStorage.setItem("undereyeLabel", result.undereye.undereyeLabel);
-            localStorage.setItem("darkspotScore", result.darkspot.darkspotScore);
+            localStorage.setItem("processedImage", result.processedImageUrl);
+            localStorage.setItem("acneScore", result.acne.score);
+            localStorage.setItem("wrinklesScore", result.wrinkles.score);
+            localStorage.setItem("wrinklePercentage", result.wrinkles.percentage);
+            localStorage.setItem("scarScore", result.scar.score);
+            localStorage.setItem("undereyeScore", result.undereye.score);
+            localStorage.setItem("darkspotScore", result.darkspot.score);
             localStorage.setItem("age", result.age);
             localStorage.setItem("gender", result.gender);
             setState(prev => ({ ...prev, isLoading: false }));
