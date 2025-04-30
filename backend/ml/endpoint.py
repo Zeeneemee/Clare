@@ -131,6 +131,6 @@ def analyze_image():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    port = 4000
+    port = 80
     print('running on port', port)
     app.run(host='0.0.0.0', port=port, debug=True)
