@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function HeroSection({ scrollY }) {
   const navigate = useNavigate();
@@ -7,17 +8,22 @@ export default function HeroSection({ scrollY }) {
   const scrollOpacity = Math.max(1 - scrollY / 300, 0);
 
   useEffect(() => {
-    const timer = setTimeout(() => setFadeIn(1), 100);
+    const timer = setTimeout(() => setFadeIn(1), 500);
     return () => clearTimeout(timer);
   }, []);
 
   return (
-    <header
+    <motion.div
       className="min-h-screen bg-cover bg-center flex items-center justify-center relative px-6 pt-24 pb-24 sm:px-12 sm:pt-32 sm:pb-32"
       style={{
         backgroundImage: "url('/assets/bg3.png')",
+      }}
+      animate={{
         opacity: fadeIn * scrollOpacity,
-        transition: "opacity 0.4s ease-in-out",
+      }}
+      transition={{
+        duration: 0.4,
+        ease: "easeInOut",
       }}
     >
       <div className="text-center text-white z-10">
@@ -46,6 +52,6 @@ export default function HeroSection({ scrollY }) {
           Analyze Your Skin Now
         </button>
       </div>
-    </header>
+    </motion.div>
   );
 }

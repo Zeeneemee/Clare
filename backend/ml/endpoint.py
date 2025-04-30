@@ -38,26 +38,35 @@ def encode_image_to_base64(image: Image.Image) -> str:
 
 def acne_score(confidences):
     valid = [c for c in confidences if c > 0.1]
-    score = (sum(valid) / 7.46) * 10
+    score = (sum(valid) / 4) * 10
     return min(score, 10)
 
 def scar_score(confidences):
-    valid = [c for c in confidences if c >= 0.5]
+    # only keep detections at or above the 0.45 threshold
+    valid = [c for c in confidences if c >= 0.4]
     if not valid:
-        return 0  # Default when no valid confidences
+        return 0  # no valid detections → score 0
 
     conf_average = sum(valid) / len(valid)
 
-    if conf_average > 0.9:
+    # above 0.8 gets the max score
+    if conf_average > 0.7:
         return 10
-    else:
-        # Spread 0.5–0.9 across 9 scores (1–9)
-        return int((conf_average - 0.5) / (0.4 / 9)) + 1
+
+    # compute bucket size for splitting [0.45, 0.8) into 9 bins
+    step = (0.75 - 0.4) / 9  # ≈0.0388889
+
+    # figure out which bin conf_average falls into, then +1 to make it 1–9
+    score = int((conf_average - 0.4) / step) + 1
+
+    # clamp in case of rounding issues
+    return max(1, min(score, 9))
+
 
 
 def darkspot_score(confidences):
     valid = [c for c in confidences if c > 0.1]
-    score = (sum(valid) / 25.12) * 10
+    score = (sum(valid) / 15) * 10
     return min(score, 10)
 
 # === Flask Routes ===
@@ -79,7 +88,7 @@ def analyze_image():
 
         # Run ML models
         results_acne = acne_detection(image)
-        result_gender = Gender(image)
+        # result_gender = Gender(image)
         results_scar = Scar_detection(image)
         undereye_results = Predict_underEye(image)
         darkspot_results = darkspot_detection(image)
@@ -112,16 +121,16 @@ def analyze_image():
                 "confidence": darkspot_results.get("confidence", []),
                 "score": round(darkspot_score(darkspot_results.get("confidence", [])))
             },
-            "age": age_results,
-            "gender": {
-                "label": result_gender
-            }
+            "age": age_results
+            # "gender": {
+            #     "label": result_gender
+            # }
         }
         return jsonify(result)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    port = 80
+    port = 4000
     print('running on port', port)
     app.run(host='0.0.0.0', port=port, debug=True)

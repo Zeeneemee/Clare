@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 
 export default function BehindTechInfo() {
   const [opacity, setOpacity] = useState(0);
@@ -16,7 +17,7 @@ export default function BehindTechInfo() {
           }
         });
       },
-      { threshold: 0.2 } // Trigger when 20% of the section is visible
+      { threshold: 0.2 }
     );
 
     if (section) {
@@ -31,10 +32,11 @@ export default function BehindTechInfo() {
   }, []);
 
   return (
-    <section
+    <motion.section
       id="behind-tech-info-section"
       className="min-h-screen flex flex-col items-center px-5 pt-24 pb-32 bg-white mx-8"
-      style={{ opacity, transition: 'opacity 0.4s ease-in-out' }} // Faster fade-in transition
+      animate={{ opacity }}
+      transition={{ duration: 0.4, ease: 'easeInOut' }}
     >
       {/* Behind the Tech Section */}
       <div className="max-w-[900px] flex flex-col items-center text-center">
@@ -53,10 +55,10 @@ export default function BehindTechInfo() {
             loop
             muted
             playsInline
-            className="w-full max-w-[1600px] md:w-[1000px] lg:w-[1200px] rounded-2xl" // Responsive width
+            className="w-full max-w-[1600px] md:w-[1000px] lg:w-[1200px] rounded-2xl"
           />
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }

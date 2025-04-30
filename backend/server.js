@@ -1,122 +1,98 @@
-const express = require("express");
-const cors = require("cors");
-const path = require("path");
-const axios = require("axios"); // Using axios to post to the Flask API
-const upload = require("./controller/fileUpload");
-const mongoose = require("./db"); // Mongoose connection
-const ImageProcessing = require("./models/image"); // Import Model
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const mongoose = require('./db');                      // MongoDB connection
+const upload = require('./controller/fileUpload');    // Multer-S3 middleware
+const ImageProcessing = require('./models/ImageProcessing'); // Mongoose model
+const axios = require('axios');
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const path = require('path');
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
+
+// AWS SDK v3 S3 client
+const s3Client = new S3Client({
+  region: process.env.S3_BUCKET_REGION,
+  credentials: {
+    accessKeyId: process.env.S3_ACCESSKEY,
+    secretAccessKey: process.env.S3_SECRETKEY,
+  },
+});
+const BUCKET = process.env.S3_BUCKET;
+if (!BUCKET) throw new Error('Environment variable S3_BUCKET is required');
 
 app.use(cors());
 app.use(express.json());
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-app.get("/", (req, res) => {
-    res.send("✅ Server running. Use POST /upload to upload an image.");
-});
+// Health check
+app.get('/', (req, res) => res.send('✅ Server running. POST /upload to upload an image.'));
 
-app.post("/upload", upload.single("image"), async (req, res) => {
-    if (!req.file) {
-        return res.status(400).json({ message: "No file uploaded." });
+app.post('/upload', upload.single('image'), async (req, res) => {
+  try {
+    // 1) Ensure original was uploaded
+    if (!req.file || !req.file.location) {
+      return res.status(400).json({ message: 'No file uploaded.' });
+    }
+    const originalImageUrl = req.file.location;
+    const imageId = Date.now().toString();
+
+    // 2) Create initial record
+    const doc = await new ImageProcessing({
+      imageId,
+      originalImageUrl,
+      processed: false,
+      analysis: {}
+    }).save();
+
+    // 3) Download image buffer from S3
+    const s3Response = await axios.get(originalImageUrl, { responseType: 'arraybuffer' });
+    const base64Image = Buffer.from(s3Response.data, 'binary').toString('base64');
+
+    // 4) Send Base64 payload to Flask API as 'image'
+    const flaskResp = await axios.post(process.env.FLASK_API_TEST, { image: base64Image });
+    const { processedImage, acne, wrinkles, scar, undereye, darkspot, age } = flaskResp.data;
+
+    // 5) Upload processed Base64 image to S3
+    let processedImageUrl = processedImage;
+    if (processedImage && processedImage.startsWith('data:image')) {
+      const buffer = Buffer.from(processedImage.split(',')[1], 'base64');
+      const key = `processed/${imageId}.jpg`;
+      await s3Client.send(new PutObjectCommand({ Bucket: BUCKET, Key: key, Body: buffer, ContentType: 'image/jpeg' }));
+      processedImageUrl = `https://${BUCKET}.s3.${process.env.S3_BUCKET_REGION}.amazonaws.com/${key}`;
     }
 
-    const imageBuffer = req.file.buffer;
-    const base64Image = imageBuffer.toString("base64");
+    // 6) Update record
+    doc.processed = true;
+    doc.processedAt = new Date();
+    doc.processedImageUrl = processedImageUrl;
+    doc.analysis = { acne, wrinkles, scar, undereye, darkspot, age };
 
-    try {
-        // Save initial data to MongoDB
-        const newImage = new ImageProcessing({
-            imageId: Date.now().toString(),
-            processed: false,
-            processedAt: new Date(),
-            resultData: {
-                processedImage: `data:image/jpeg;base64,${base64Image}`,
-                analysis: {
-                    acne: { ResultImage: null, positions: [], confidence: 0, score: 0 },
-                    wrinkles: { ResultImage: null, percentage: 0, score: 0 },
-                    scar: { ResultImage: null, positions: [], confidence: 0, score: 0 },
-                    undereye: { ResultImage: null, positions: [], confidence: 0, score: 0 },
-                    darkspot: { ResultImage: null, positions: [], confidence: 0, score: 0 },
-                    age: "Not Detected",
-                    gender: "Not Detected"
-                }
-            }
-        });
+    await doc.save();
 
-        const savedImage = await newImage.save();
-
-        // Post the base64 image to the Flask API endpoint.
-        // Update the URL to match your Flask server address and port.
-        // const FLASK_API_URL = "http://localhost:4000/analyze";
-        const FLASK_API_URL = "http://clare.centralindia.cloudapp.azure.com/analyze"; 
-        
-        
-        const flaskResponse = await axios.post(FLASK_API_URL, { image: base64Image });
-        const pythonResponse = flaskResponse.data;
-        console.log("✅ Flask API Response:", pythonResponse);
-        // Update MongoDB with the processed data from the Flask API
-        const updatedImage = await ImageProcessing.findByIdAndUpdate(
-            savedImage._id,
-            {
-                processed: true,
-                processedAt: new Date(),
-                "resultData.originalFilename": req.file.filename,
-                "resultData.processedImage": pythonResponse.processedImage,
-                "resultData.analysis.acne": pythonResponse.acne || { positions: [], score: 0 },
-                "resultData.analysis.wrinkles": pythonResponse.wrinkles || { score: 0, percentage: 0 },
-                "resultData.analysis.scar": pythonResponse.scar || { positions: [], score: 0 },
-                "resultData.analysis.undereye": pythonResponse.undereye || { positions: [], score: 0 },
-                "resultData.analysis.darkspot": pythonResponse.darkspot || { positions: [], score: 0 },
-                "resultData.analysis.age": pythonResponse.age || "Not Detected",
-                "resultData.analysis.gender": pythonResponse.gender?.label || "Not Detected"
-            },
-            { new: true }
-        );
-
-        console.log("✅ MongoDB Updated:", updatedImage);
-
-        // Send the response in the required format
-        res.json({
-            processedImage: updatedImage.resultData.processedImage,
-            acne: {
-                acnePosition: updatedImage.resultData.analysis.acne.positions,
-                acneScore: updatedImage.resultData.analysis.acne.score,
-            },
-            wrinkles: {
-                wrinklesSeverity: updatedImage.resultData.analysis.wrinkles.score,
-                wrinklesPercentage: updatedImage.resultData.analysis.wrinkles.percentage
-            },
-            scar: {
-                scarPosition: updatedImage.resultData.analysis.scar.positions,
-                scarScore: updatedImage.resultData.analysis.scar.score,
-            },
-            undereye: {
-                undereyeLabel: updatedImage.resultData.analysis.undereye.label,
-                undereyeScore: updatedImage.resultData.analysis.undereye.score,
-            },
-            darkspot: {
-                darkspotPosition: updatedImage.resultData.analysis.darkspot.positions,
-                darkspotScore: updatedImage.resultData.analysis.darkspot.score,
-            },
-            age: updatedImage.resultData.analysis.age,
-            gender: updatedImage.resultData.analysis.gender
-        });
-    } catch (error) {
-        console.error("❌ Error processing image:", error);
-        res.status(500).json({ message: "Error processing image." });
+    // 7) Send back analysis
+    res.json({ processedImageUrl, acne, wrinkles, scar, undereye, darkspot, age });
+    console.log('✅ Image processed and saved:', { processedImageUrl, acne, wrinkles, scar, undereye, darkspot, age });
+  } catch (err) {
+    // Capture and log detailed response errors
+    let errInfo;
+    if (err.response && err.response.data) {
+      errInfo = err.response.data;
+      if (Buffer.isBuffer(errInfo)) {
+        errInfo = errInfo.toString('utf8');
+      }
+    } else {
+      errInfo = err.message;
     }
+    console.error('❌ Error in /upload:', errInfo);
+
+    // Forward Flask error status/message or default 500
+    const status = err.response?.status || 500;
+    const message = (err.response?.data?.error) || (typeof errInfo === 'string' ? errInfo : 'Server error processing image.');
+    res.status(status).json({ message });
+  }
 });
 
-// Start server only after MongoDB connects
-mongoose.connection.once("open", () => {
-    console.log("🚀 MongoDB Connected. Starting server...");
-    app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
-});
-
-// Handle MongoDB connection errors
-mongoose.connection.on("error", (err) => {
-    console.error("❌ MongoDB Connection Error:", err);
-    process.exit(1);
-});
+// Start server
+mongoose.connection.once('open', () => app.listen(PORT, () => console.log(`✅ Server on port ${PORT}`)));
+mongoose.connection.on('error', err => { console.error('MongoDB Error:', err); process.exit(1); });
