@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import Pagination from "../components/ui/pagination";
+import MobileRoutineCard from "../components/routine/mobileRoutineCard";
+import RoutineCard from "../components/routine/routineCard";
 
 export default function Routine() {
   const [fadeIn, setFadeIn] = useState(0);
@@ -11,16 +13,11 @@ export default function Routine() {
   useEffect(() => {
     const timer = setTimeout(() => setFadeIn(1), 100);
 
-    const getSeverity = (score) => {
-      if (score <= 3) return "Mild";
-      if (score <= 6) return "Moderate";
-      return "Severe";
-    };
-
     const acne = parseFloat(localStorage.getItem("acneScore"));
     const darkspot = parseFloat(localStorage.getItem("darkspotScore"));
     const scar = parseFloat(localStorage.getItem("scarScore"));
     const wrinkles = parseFloat(localStorage.getItem("wrinklesScore"));
+    const underEye = parseFloat(localStorage.getItem("underEyeScore"));
 
     const descriptions = {
       Cleanse: () => {
@@ -64,6 +61,117 @@ export default function Routine() {
       },
     };
 
+    const products = {
+      Cleanse: () => {
+        if (acne > 6)
+          return {
+            name: "Salicylic Acid Daily Gentle Cleanser",
+            link: "https://s.shopee.co.th/9ABj9km0wg",
+            image:
+              "https://down-th.img.susercontent.com/file/0a8391828049fcbd5f393cad840a9dcc",
+          };
+        if (scar > 6)
+          return {
+            name: "Eucerin SPOTLESS BRIGHTENING GENTLE CLEANSING FOAM",
+            link: "https://s.shopee.co.th/4An3CdlqIW",
+            image:
+              "https://s3.konvy.com/static/team/2021/1221/16400792088075.jpg",
+          };
+        return {
+          name: "CeraVe Blemish Control Cleanser",
+          link: "https://s.shopee.co.th/1LSroaZm4Y",
+          image:
+            "https://media.allaboutyou.co.th/media/catalog/product/cache/68bd2c830b15d292727e06e369c4931c/9/f/9f825a6210d6cdfa13d249814c3a0f5a8ca9b6219f0fb7bfa58c41cb41fdf19d.jpeg",
+        };
+      },
+      Tone: () => {
+        if (darkspot > 6)
+          return {
+            name: "SKINTIFIC Niacinamide brightening essence toner",
+            link: "https://s.shopee.co.th/9KV9LwJxWk",
+            image:
+              "https://medias.watsons.co.th/publishing/WTCTH-BP_309630-front-zoom.jpg",
+          };
+        return {
+          name: "The Ordinary Glycolic Acid 7% Exfoliating toner",
+          link: "https://s.shopee.co.th/3LDwCPtK5a",
+          image:
+            "https://down-th.img.susercontent.com/file/th-11134207-7rasf-m518kz2d7ixp9c",
+        };
+      },
+      Serum: () => {
+        if (wrinkles > 6)
+          return {
+            name: "Gravich Max Retinal Youthless New Gen Serum",
+            link: "https://s.shopee.co.th/40TeQ0LGbo",
+            image:
+              "https://gravich.com/wp-content/uploads/2025/03/GP2502-0186-GRAVICH-BANNER-MAX-RETINAL-YOUTHLESS-NEW-GEN-SERUM-01.png",
+          };
+        if (darkspot > 6)
+          return {
+            name: "CeraVe Skin Renewing Vitamin C Serum",
+            link: "https://s.shopee.co.th/20iYcJyAqt",
+            image:
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSl5hZ1OYeiElnOUknAOCGXoDZJIUtF-5mbcQ&s",
+          };
+        return {
+          name: "INGU Brightening Crystal Serum",
+          link: "https://s.shopee.co.th/9zkq9Srjcd",
+          image:
+            "https://medias.watsons.co.th/publishing/WTCTH-314756-side-zoom.jpg?version=1731697813",
+        };
+      },
+      Moisturize: () => {
+        if (wrinkles > 6)
+          return {
+            name: "La Roche-Posay Cicaplast baume B5+",
+            link: "https://s.shopee.co.th/4VPtbR6WpE",
+            image:
+              "https://s3.konvy.com/static/team/2023/0127/16747905387250.jpg",
+          };
+        return {
+          name: "Cerave Facial Moisturising Lotion",
+          link: "https://s.shopee.co.th/5VIQnL5dvG",
+          image:
+            "https://s3.konvy.com/static/team/2024/0913/17262229266930.jpg",
+        };
+      },
+      Sunscreen: () => {
+        return {
+          name: "Loreal Paris UV Defender Invisible Fluid SPF50+ PA++++",
+          link: "https://s.shopee.co.th/xUFLfHdZ",
+          image:
+            "https://s3.konvy.com/static/team/2022/0901/16620001812876_600x600.jpg",
+        };
+      },
+      Exfoliate: () => {
+        if (scar > 6 || darkspot > 6)
+          return {
+            name: "COSRX AHA/BHA Clarifying Treatment Toner",
+            link: "https://s.shopee.co.th/5VIQndSgl7",
+            image:
+              "https://s3.konvy.com/static/team/2021/1027/16353156957760.jpg",
+          };
+        return null;
+      },
+      Overnight: () => {
+        if (wrinkles > 6)
+          return {
+            name: "JKxLAB 5C Peptide Ampoule Dose",
+            link: "https://s.shopee.co.th/2fyFQZRS76",
+            image:
+              "https://s3.konvy.com/static/team/2025/0130/17382234616621.jpg",
+          };
+        if (scar > 6)
+          return {
+            name: "SKINTIFIC 3% Tranexamic Acid",
+            link: "https://s.shopee.co.th/AA4GMQJ96a",
+            image: "https://cdn.thebeautrium.com/image-product/B0075269.png",
+          };
+        return null;
+      },
+    };
+
     const morningSteps = [
       "Cleanse",
       "Tone",
@@ -73,39 +181,75 @@ export default function Routine() {
     ];
     const nightSteps = ["Cleanse", "Serum", "Moisturize"];
 
-    const AM = morningSteps.map((title, i) => ({
-      step: i + 1,
-      title,
-      description: descriptions[title]() || "",
-      product: "Personalized by AI",
-    }));
-
-    const PM = [
-      ...nightSteps.map((title, i) => ({
+    const AM = morningSteps.map((title, i) => {
+      const product = products[title]();
+      return {
         step: i + 1,
         title,
         description: descriptions[title]() || "",
-        product: "Personalized by AI",
-      })),
-      descriptions["Exfoliate"]() && {
+        product: product ? (
+          <a href={product.link} target="_blank" rel="noopener noreferrer">
+            {product.name}
+          </a>
+        ) : null,
+        image: product ? product.image : null,
+      };
+    });
+
+    const PM = [
+      ...nightSteps.map((title, i) => {
+        const product = products[title]();
+        return {
+          step: i + 1,
+          title,
+          description: descriptions[title]() || "",
+          product: product ? (
+            <a href={product.link} target="_blank" rel="noopener noreferrer">
+              {product.name}
+            </a>
+          ) : null,
+          image: product ? product.image : null,
+        };
+      }),
+      products["Exfoliate"]() && {
         step: nightSteps.length + 1,
         title: "Exfoliate",
         description: descriptions["Exfoliate"](),
-        product: "Personalized by AI",
+        product: (
+          <a
+            href={products["Exfoliate"]().link}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {products["Exfoliate"]().name}
+          </a>
+        ),
+        image: products["Exfoliate"]().image,
       },
-      descriptions["Overnight"]() && {
+      products["Overnight"]() && {
         step: nightSteps.length + 2,
         title: "Overnight Treatment",
         description: descriptions["Overnight"](),
-        product: "Personalized by AI",
+        product: (
+          <a
+            href={products["Overnight"]().link}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {products["Overnight"]().name}
+          </a>
+        ),
+        image: products["Overnight"]().image,
       },
     ].filter(Boolean);
 
     setMorningRoutine(AM);
     setNightRoutine(PM);
+
     return () => clearTimeout(timer);
   }, []);
 
+  // 🔥 Add your full return here 👇
   return (
     <div
       className="min-h-screen flex flex-col items-center py-10 transition-opacity duration-1000 ease-in-out"
@@ -182,90 +326,18 @@ export default function Routine() {
       </div>
 
       <div className="flex justify-center gap-3 mt-5 md:hidden">
-        <Pagination current={2}/>
+        <div className="w-20 h-1 bg-[#003366] rounded-full"></div>
+        <div className="w-20 h-1 bg-gray-300 rounded-full"></div>
+        <div className="w-20 h-1 bg-gray-300 rounded-full"></div>
       </div>
       <div className="hidden md:flex gap-3 mt-5">
-      <Pagination current={2}/>
+        <div className="w-24 h-1 bg-[#14213D] rounded-full"></div>
+        <div className="w-24 h-1 bg-[#14213D] rounded-full"></div>
+        <div className="w-24 h-1 bg-gray-300 rounded-full"></div>
       </div>
     </div>
   );
+
+  // your existing return + MobileRoutineCard + DesktopRoutineCard code remains the same,
+  // just update the image part in <MobileRoutineStep> and <DesktopRoutineStep> like I showed above 👌
 }
-
-const MobileRoutineCard = ({ steps }) => (
-  <div className="relative pl-8 space-y-8">
-    <div
-      className="absolute left-6 top-4 w-1 bg-gray-300"
-      style={{ height: `calc(100% - 16px)` }}
-    ></div>
-    {steps.map((step, index) => (
-      <MobileRoutineStep key={index} stepData={step} />
-    ))}
-  </div>
-);
-
-const MobileRoutineStep = ({ stepData }) => (
-  <div className="relative flex items-start space-x-2 w-full">
-    <div className="absolute -left-3 top-1.5 w-3 h-3 bg-[#14213D] rounded-full"></div>
-    <div className="flex-1">
-      <div className="flex items-center mb-1">
-        <div className="bg-[#14213D] text-white font-lato text-xs px-3 py-1 rounded-md">
-          Step {stepData.step}
-        </div>
-        <h3 className="font-lato text-[#14213D] text-sm ml-2">
-          {stepData.title}
-        </h3>
-      </div>
-      <div className="flex items-start space-x-4">
-        <div className="flex-1 max-w-[210px]">
-          <p className="text-[#909090] font-lato font-light text-xs mb-2 mt-2 leading-5">
-            {stepData.description}
-          </p>
-          <div className="mt-2">
-            <p className="text-[#909090] font-lato text-xs font-medium">
-              Product: {stepData.product}
-            </p>
-          </div>
-        </div>
-        <div className="w-24 h-24 bg-gray-300 rounded-md mt-2"></div>
-      </div>
-    </div>
-  </div>
-);
-
-const RoutineCard = ({ title, steps }) => (
-  <div className="flex-1 bg-white shadow-md rounded-lg p-6 border border-[#CAC7C7]">
-    <h2 className="font-lato font-normal text-xl mb-4">{title}</h2>
-    <div className="space-y-6">
-      {steps.map((step, index) => (
-        <DesktopRoutineStep
-          key={step.step}
-          stepData={step}
-          isLast={index === steps.length - 1}
-        />
-      ))}
-    </div>
-  </div>
-);
-
-const DesktopRoutineStep = ({ stepData, isLast }) => (
-  <div className="relative flex items-start space-x-4">
-    <div className="relative flex flex-col items-center">
-      {!isLast && (
-        <div className="absolute top-5 bottom-[-125px] w-0.5 bg-gray-300"></div>
-      )}
-      <span className="relative z-10 bg-[#14213D] text-white px-2 py-1 text-xs font-lato rounded-full">
-        Step {stepData.step}
-      </span>
-    </div>
-    <div className="flex-1 max-w-[310px]">
-      <h3 className="font-lato text-[#14213D]">{stepData.title}</h3>
-      <p className="font-lato font-light text-[#909090] text-sm mt-1">
-        {stepData.description}
-      </p>
-      <p className="font-lato text-[#909090] text-sm mt-2">
-        Product: {stepData.product}
-      </p>
-    </div>
-    <div className="w-28 h-28 bg-gray-300 rounded-md relative left-[-4px]"></div>
-  </div>
-);

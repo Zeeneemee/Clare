@@ -5,14 +5,12 @@ import metricDetails from "../lib/skinanalysis"; // Assuming this is the correct
 import Pagination from "../components/ui/pagination";
 import Level from "../components/ui/level";
 
-
 export default function SkinAnalysisResult() {
   const navigate = useNavigate();
   const [fadeIn, setFadeIn] = useState(0);
   const [bioMetrics, setBioMetrics] = useState(null);
   const [isLevelOpen, setIsLevelOpen] = useState(false);
 
-  
   useEffect(() => {
     const timer = setTimeout(() => setFadeIn(1), 100);
 
@@ -48,17 +46,16 @@ export default function SkinAnalysisResult() {
   }, []);
   useEffect(() => {
     if (isLevelOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
-  
+
     // Clean up when component unmounts
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [isLevelOpen]);
-  
 
   const getMetricDescription = (metric, score) => {
     if (score < 0 || score > 10) return "Invalid score";
@@ -103,7 +100,6 @@ export default function SkinAnalysisResult() {
     <div
       className="min-h-screen flex flex-col items-center relative px-5 py-16 mt-12 transition-opacity duration-1000 ease-in-out"
       style={{ opacity: fadeIn }}
-      
     >
       <div
         className=" inset-0 bg-cover bg-center blur-lg opacity-30"
@@ -157,7 +153,10 @@ export default function SkinAnalysisResult() {
                 color="bg-[#FFEB40]"
                 title="Wrinkles"
                 value={bioMetrics.wrinkles.wrinklesScore || 0}
-                description={getMetricDescription("wrinkles", bioMetrics.wrinkles.wrinklesScore)}
+                description={getMetricDescription(
+                  "wrinkles",
+                  bioMetrics.wrinkles.wrinklesScore
+                )}
                 isWrinkles={true}
               />
               <MetricCard
@@ -207,7 +206,10 @@ export default function SkinAnalysisResult() {
                 color="bg-[#FFEB40]"
                 title="Wrinkles"
                 value={bioMetrics.wrinkles.wrinklesScore || 0}
-                description={getMetricDescription("wrinkles", bioMetrics.wrinkles.wrinklesScore)}
+                description={getMetricDescription(
+                  "wrinkles",
+                  bioMetrics.wrinkles.wrinklesScore
+                )}
                 isWrinkles={true}
               />
             </div>
@@ -261,16 +263,17 @@ export default function SkinAnalysisResult() {
           {/* Action Section */}
           <div className="text-center mt-6 md:mt-16 ">
             <button
-              onClick={() => navigate("/feedback")}
+              onClick={() => navigate("/skincareroutine")}
               className="font-lato mr-5 font-light text-sm md:text-lg bg-[#14213D] text-white px-6 py-3 rounded-full transition-colors duration-300 hover:opacity-80"
             >
-              Suggest My Skincare 
+              Suggest My Skincare
             </button>
             <button
-          onClick={() => setIsLevelOpen(true)}
-          className="cursor-pointer font-lato font-light text-sm md:text-lg bg-[#F0EA47] text-darkblue px-6 py-3 rounded-full transition-colors duration-300 hover:opacity-80"
-        >Check our scale</button>
-
+              onClick={() => setIsLevelOpen(true)}
+              className="cursor-pointer font-lato font-light text-sm md:text-lg bg-[#F0EA47] text-darkblue px-6 py-3 rounded-full transition-colors duration-300 hover:opacity-80"
+            >
+              Check our scale
+            </button>
 
             <Pagination current={1} />
           </div>

@@ -14,7 +14,7 @@
     "@vladmandic/face-api": "^1.7.15",
     "bootstrap": "^5.3.5",
     "face-api.js": "^0.22.2",
-    "framer-motion": "^12.4.5",
+    "framer-motion": "^12.9.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-responsive": "^10.0.1",
