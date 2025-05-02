@@ -4,8 +4,6 @@ import Pagination from "../components/ui/pagination";
 import MobileRoutineCard from "../components/routine/mobileRoutineCard";
 import RoutineCard from "../components/routine/routineCard";
 
-
-
 export default function Routine() {
   const [fadeIn, setFadeIn] = useState(0);
   const [activeRoutine, setActiveRoutine] = useState("morning");
@@ -69,18 +67,21 @@ export default function Routine() {
           return {
             name: "Salicylic Acid Daily Gentle Cleanser",
             link: "https://s.shopee.co.th/9ABj9km0wg",
-            image: "<PUT_IMAGE_URL_HERE>",
+            image:
+              "https://down-th.img.susercontent.com/file/0a8391828049fcbd5f393cad840a9dcc",
           };
         if (scar > 6)
           return {
             name: "Eucerin SPOTLESS BRIGHTENING GENTLE CLEANSING FOAM",
             link: "https://s.shopee.co.th/4An3CdlqIW",
-            image: "<PUT_IMAGE_URL_HERE>",
+            image:
+              "https://s3.konvy.com/static/team/2021/1221/16400792088075.jpg",
           };
         return {
           name: "CeraVe Blemish Control Cleanser",
           link: "https://s.shopee.co.th/1LSroaZm4Y",
-          image: "<PUT_IMAGE_URL_HERE>",
+          image:
+            "https://media.allaboutyou.co.th/media/catalog/product/cache/68bd2c830b15d292727e06e369c4931c/9/f/9f825a6210d6cdfa13d249814c3a0f5a8ca9b6219f0fb7bfa58c41cb41fdf19d.jpeg",
         };
       },
       Tone: () => {
@@ -88,31 +89,36 @@ export default function Routine() {
           return {
             name: "SKINTIFIC Niacinamide brightening essence toner",
             link: "https://s.shopee.co.th/9KV9LwJxWk",
-            image: "<PUT_IMAGE_URL_HERE>",
+            image:
+              "https://medias.watsons.co.th/publishing/WTCTH-BP_309630-front-zoom.jpg",
           };
         return {
           name: "The Ordinary Glycolic Acid 7% Exfoliating toner",
           link: "https://s.shopee.co.th/3LDwCPtK5a",
-          image: "<PUT_IMAGE_URL_HERE>",
+          image:
+            "https://down-th.img.susercontent.com/file/th-11134207-7rasf-m518kz2d7ixp9c",
         };
       },
       Serum: () => {
         if (wrinkles > 6)
           return {
-            name: "THESKINLIST Advanced Retinal HPR Anti-Wrinkles Serum",
-            link: "https://s.shopee.co.th/4An3C7pYae",
-            image: "<PUT_IMAGE_URL_HERE>",
+            name: "Gravich Max Retinal Youthless New Gen Serum",
+            link: "https://s.shopee.co.th/40TeQ0LGbo",
+            image:
+              "https://gravich.com/wp-content/uploads/2025/03/GP2502-0186-GRAVICH-BANNER-MAX-RETINAL-YOUTHLESS-NEW-GEN-SERUM-01.png",
           };
         if (darkspot > 6)
           return {
             name: "CeraVe Skin Renewing Vitamin C Serum",
             link: "https://s.shopee.co.th/20iYcJyAqt",
-            image: "<PUT_IMAGE_URL_HERE>",
+            image:
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSl5hZ1OYeiElnOUknAOCGXoDZJIUtF-5mbcQ&s",
           };
         return {
           name: "INGU Brightening Crystal Serum",
           link: "https://s.shopee.co.th/9zkq9Srjcd",
-          image: "<PUT_IMAGE_URL_HERE>",
+          image:
+            "https://medias.watsons.co.th/publishing/WTCTH-314756-side-zoom.jpg?version=1731697813",
         };
       },
       Moisturize: () => {
@@ -120,19 +126,22 @@ export default function Routine() {
           return {
             name: "La Roche-Posay Cicaplast baume B5+",
             link: "https://s.shopee.co.th/4VPtbR6WpE",
-            image: "<PUT_IMAGE_URL_HERE>",
+            image:
+              "https://s3.konvy.com/static/team/2023/0127/16747905387250.jpg",
           };
         return {
           name: "Cerave Facial Moisturising Lotion",
           link: "https://s.shopee.co.th/5VIQnL5dvG",
-          image: "<PUT_IMAGE_URL_HERE>",
+          image:
+            "https://s3.konvy.com/static/team/2024/0913/17262229266930.jpg",
         };
       },
       Sunscreen: () => {
         return {
           name: "Loreal Paris UV Defender Invisible Fluid SPF50+ PA++++",
           link: "https://s.shopee.co.th/xUFLfHdZ",
-          image: "<PUT_IMAGE_URL_HERE>",
+          image:
+            "https://s3.konvy.com/static/team/2022/0901/16620001812876_600x600.jpg",
         };
       },
       Exfoliate: () => {
@@ -140,7 +149,8 @@ export default function Routine() {
           return {
             name: "COSRX AHA/BHA Clarifying Treatment Toner",
             link: "https://s.shopee.co.th/5VIQndSgl7",
-            image: "<PUT_IMAGE_URL_HERE>",
+            image:
+              "https://s3.konvy.com/static/team/2021/1027/16353156957760.jpg",
           };
         return null;
       },
@@ -149,13 +159,14 @@ export default function Routine() {
           return {
             name: "JKxLAB 5C Peptide Ampoule Dose",
             link: "https://s.shopee.co.th/2fyFQZRS76",
-            image: "<PUT_IMAGE_URL_HERE>",
+            image:
+              "https://s3.konvy.com/static/team/2025/0130/17382234616621.jpg",
           };
         if (scar > 6)
           return {
             name: "SKINTIFIC 3% Tranexamic Acid",
             link: "https://s.shopee.co.th/AA4GMQJ96a",
-            image: "<PUT_IMAGE_URL_HERE>",
+            image: "https://cdn.thebeautrium.com/image-product/B0075269.png",
           };
         return null;
       },
@@ -238,6 +249,7 @@ export default function Routine() {
     return () => clearTimeout(timer);
   }, []);
 
+  // 🔥 Add your full return here 👇
   return (
     <div
       className="min-h-screen flex flex-col items-center py-10 transition-opacity duration-1000 ease-in-out"
@@ -314,12 +326,18 @@ export default function Routine() {
       </div>
 
       <div className="flex justify-center gap-3 mt-5 md:hidden">
-        <Pagination current={2}/>
+        <div className="w-20 h-1 bg-[#003366] rounded-full"></div>
+        <div className="w-20 h-1 bg-gray-300 rounded-full"></div>
+        <div className="w-20 h-1 bg-gray-300 rounded-full"></div>
       </div>
       <div className="hidden md:flex gap-3 mt-5">
-      <Pagination current={2}/>
+        <div className="w-24 h-1 bg-[#14213D] rounded-full"></div>
+        <div className="w-24 h-1 bg-[#14213D] rounded-full"></div>
+        <div className="w-24 h-1 bg-gray-300 rounded-full"></div>
       </div>
     </div>
   );
-}
 
+  // your existing return + MobileRoutineCard + DesktopRoutineCard code remains the same,
+  // just update the image part in <MobileRoutineStep> and <DesktopRoutineStep> like I showed above 👌
+}
