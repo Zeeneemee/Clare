@@ -28,12 +28,11 @@ export default function NavBar({ scrolled }) {
 
       {/* Desktop Menu */}
       <ul className="hidden lg:flex gap-10">
-        {['Home', 'Our Products', 'Skin Analysis', 'Contact Us'].map((item) => (
+        {['Home', 'Skin Analysis', 'Contact Us'].map((item) => (
           <li key={item}>
             <Link 
               to={
-                item === 'Our Products' ? 'https://vbicar-59.myshopify.com/collections/clare' 
-                : item === 'Home' ? '/' 
+                item === 'Home' ? '/' 
                 : item === 'Skin Analysis' ? '/skinanalysis' 
                 : item === 'Contact Us' ? '/contactus' 
                 : '#'
@@ -52,12 +51,11 @@ export default function NavBar({ scrolled }) {
       {isMobileMenuOpen && (
         <div className="absolute right-0 top-full mt-2 bg-white shadow-lg rounded-lg w-48 z-50 lg:hidden">
           <ul className="flex flex-col items-center">
-            {['Home', 'Our Products', 'Skin Analysis', 'Contact Us'].map((item) => (
+            {['Home', 'Skin Analysis', 'Contact Us'].map((item) => (
               <li key={item} className="w-full text-center py-3">
                 <Link
                   to={
-                    item === 'Our Products' ? 'https://vbicar-59.myshopify.com/collections/clare'
-                    : item === 'Home' ? '/'
+                    item === 'Home' ? '/'
                     : item === 'Skin Analysis' ? '/skinanalysis'
                     : item === 'Contact Us' ? '/contactus'
                     : '#'
