@@ -1,5 +1,10 @@
 import { Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
+import Pagination from "../components/ui/pagination";
+import MobileRoutineCard from "../components/routine/mobileRoutineCard";
+import RoutineCard from "../components/routine/routineCard";
+
+
 
 export default function Routine() {
   const [fadeIn, setFadeIn] = useState(0);
@@ -14,6 +19,7 @@ export default function Routine() {
     const darkspot = parseFloat(localStorage.getItem("darkspotScore"));
     const scar = parseFloat(localStorage.getItem("scarScore"));
     const wrinkles = parseFloat(localStorage.getItem("wrinklesScore"));
+    const underEye = parseFloat(localStorage.getItem("underEyeScore"));
 
     const descriptions = {
       Cleanse: () => {
@@ -232,6 +238,88 @@ export default function Routine() {
     return () => clearTimeout(timer);
   }, []);
 
-  // your existing return + MobileRoutineCard + DesktopRoutineCard code remains the same,
-  // just update the image part in <MobileRoutineStep> and <DesktopRoutineStep> like I showed above 👌
+  return (
+    <div
+      className="min-h-screen flex flex-col items-center py-10 transition-opacity duration-1000 ease-in-out"
+      style={{ opacity: fadeIn }}
+    >
+      <div className="mx-8 text-center md:hidden mt-24">
+        <h1 className="font-fanwood font-normal text-darkblue text-2xl leading-[62.93px]">
+          Personalized Skincare Routine
+        </h1>
+        <p className="font-lato font-light italic text-sm text-gray-500 mb-4">
+          Our AI has analyzed your skin and generated a detailed report with
+          personalized insights and recommendations.
+        </p>
+      </div>
+
+      <h1 className="hidden md:block font-fanwood font-normal text-darkblue text-4xl leading-[62.93px] text-center mb-1 mt-[100px]">
+        Personalized Skincare Routine
+      </h1>
+      <p className="hidden md:block font-lato font-light italic text-lg text-center text-gray-500 mb-8">
+        Our AI has analyzed your skin and generated a detailed report with
+        personalized <br /> insights and recommendations.
+      </p>
+
+      <div className="flex space-x-4 mb-6 mt-10 md:hidden">
+        <button
+          className={`px-6 py-3 rounded-full transition hover:opacity-80 text-sm font-lato font-light ${
+            activeRoutine === "morning"
+              ? "bg-[#14213D] text-white"
+              : "bg-white text-[#14213D] border border-[#14213D]"
+          }`}
+          onClick={() => setActiveRoutine("morning")}
+        >
+          Morning Routine
+        </button>
+        <button
+          className={`px-6 py-3 rounded-full transition hover:opacity-80 text-sm font-lato font-light ${
+            activeRoutine === "night"
+              ? "bg-[#14213D] text-white"
+              : "bg-white text-[#14213D] border border-[#14213D]"
+          }`}
+          onClick={() => setActiveRoutine("night")}
+        >
+          Night Routine
+        </button>
+      </div>
+
+      <div className="w-full max-w-3xl md:hidden">
+        {activeRoutine === "morning" && (
+          <MobileRoutineCard steps={morningRoutine} />
+        )}
+        {activeRoutine === "night" && (
+          <MobileRoutineCard steps={nightRoutine} />
+        )}
+      </div>
+
+      <div className="hidden md:flex w-full max-w-6xl flex-col lg:flex-row gap-10">
+        <RoutineCard title="Morning Routine" steps={morningRoutine} />
+        <RoutineCard title="Night Routine" steps={nightRoutine} />
+      </div>
+
+      <div className="flex space-x-3 md:space-x-6 mt-6">
+        <Link
+          to="/result"
+          className="font-lato font-light text-sm md:text-base px-16 md:px-20 py-3 border border-black text-black rounded-full hover:bg-gray-100 transition"
+        >
+          Back
+        </Link>
+        <Link
+          to="/signup"
+          className="font-lato font-light text-sm md:text-base px-16 md:px-20 py-3 bg-[#14213D] text-white rounded-full hover:opacity-80 transition"
+        >
+          Next
+        </Link>
+      </div>
+
+      <div className="flex justify-center gap-3 mt-5 md:hidden">
+        <Pagination current={2}/>
+      </div>
+      <div className="hidden md:flex gap-3 mt-5">
+      <Pagination current={2}/>
+      </div>
+    </div>
+  );
 }
+
