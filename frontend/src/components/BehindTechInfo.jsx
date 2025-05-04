@@ -48,7 +48,7 @@ export default function BehindTechInfo() {
         {/* Title and Description */}
         <h3 className="font-fanwood text-3xl lg:text-5xl text-darkblue mb-4">Behind the Tech</h3>
         <p className="font-lato font-light text-base lg:text-xl leading-7 text-darkblue max-w-[800px]">
-          With more than 85% accuracy, Claré is based on 20 years of skin research. Our tool uses a skin strength
+          With more than 85% accuracy. Our tool uses a skin strength
           database with 10,000 graded photos to give you an advanced skin analysis in one minute!
         </p>
 

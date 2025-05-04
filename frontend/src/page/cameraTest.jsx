@@ -96,8 +96,8 @@ export default function CameraCapture() {
           if (detection) {
             const { width, height } = detection.box;
             const size = Math.max(width, height);
-            const minSize = Math.min(canvas.width, canvas.height) * 0.1; // only 10% minimum!
-            const maxSize = Math.min(canvas.width, canvas.height) * 1.0; // allow very large face up to 80%!
+            const minSize = Math.min(canvas.width, canvas.height) * 0.6 // only 10% minimum!
+            const maxSize = Math.min(canvas.width, canvas.height) * 2.0; // allow very large face up to 80%!
 
 
             distanceValid = size >= minSize && size <= maxSize;
