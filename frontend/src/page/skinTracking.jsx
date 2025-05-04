@@ -22,7 +22,7 @@ const SkinTracking = () => {
         const wrinklePercentage = localStorage.getItem('wrinklePercentage') || 0;
         const acneScore = localStorage.getItem('acneScore') || 0;
         const darkCircleScore = localStorage.getItem('undereyeScore') || 0;
-        const darkSpotScore = localStorage.getItem('darkSpotScore') || 0;
+        const darkSpotScore = localStorage.getItem('darkspotScore') || 0;
         const scarScore = localStorage.getItem('scarScore') || 0;
         const wrinkleScore = localStorage.getItem('wrinklesScore') || 0;
         const users = JSON.parse(localStorage.getItem('user'));
