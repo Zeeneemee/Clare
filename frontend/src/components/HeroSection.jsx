@@ -16,15 +16,15 @@ export default function HeroSection({ scrollY }) {
     <motion.div
       className="min-h-screen bg-cover bg-center flex items-center justify-center relative px-6 pt-24 pb-24 sm:px-12 sm:pt-32 sm:pb-32"
       style={{
-        backgroundImage: "url('/assets/bg3.png')",
+        backgroundImage: "url('/assets/bg3.webp')",
       }}
-      animate={{
-        opacity: fadeIn * scrollOpacity,
-      }}
-      transition={{
-        duration: 0.4,
-        ease: "easeInOut",
-      }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{
+          duration: 1,
+          delay: 1,
+          easings: "easeOut",
+        }}
     >
       <div className="text-center text-white z-10">
         {/* Title */}

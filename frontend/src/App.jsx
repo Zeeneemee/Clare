@@ -26,6 +26,9 @@ import HandCream from "./page/productpages/HandCream";
 import SkincareSet from "./page/productpages/SkincareSet";
 import DayCream from "./page/productpages/DayCream";
 import NightSerum from "./page/productpages/NightSerum";
+import SkinTracking from "./page/skinTracking";
+
+import { RoutineProvider } from './lib/routineContext'; // adjust path if needed
 
 export default function App() {
   const [scrollY, setScrollY] = useState(0);
@@ -50,7 +53,7 @@ export default function App() {
                 <AboutUs />
                 <SkinProfileInfo />
                 <BehindTechInfo />
-                <OurProducts />
+                {/* <OurProducts /> */}
               </>
             }
           />
@@ -60,8 +63,6 @@ export default function App() {
           <Route path="/loading" element={<LoadingScreen />} />
           <Route path="/result" element={<SkinAnalysisResult />} />
           <Route path="/products" element={<ProductPage />} />
-          <Route path="/skincareroutine" element={<Routine />} />
-          <Route path="/signup" element={<Signup />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/contactus" element={<ContactUs />} /> {/* New route for ContactUs */}
@@ -74,7 +75,14 @@ export default function App() {
           <Route path="/products/skincare-set" element={<SkincareSet />} />
           <Route path="/products/day-cream" element={<DayCream />} />
           <Route path="/products/night-serum" element={<NightSerum />} />
-          <Route path="/skinanalysis" element={<SkinAnalysisLanding />} />
+          
+       
+            <Route path="/skinanalysis" element={<SkinAnalysisLanding />} />
+            <Route path='/skintracking' element={<SkinTracking />} />
+            <Route path="/skincareroutine" element={<Routine />} />
+            <Route path="/signup" element={<Signup />} />
+          
+
         </Routes>
       </div>
     </Router>

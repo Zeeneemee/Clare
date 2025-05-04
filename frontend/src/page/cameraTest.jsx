@@ -180,11 +180,14 @@ export default function CameraCapture() {
             console.log("✅ Processed Result:", result);
             localStorage.setItem("processedImage", result.processedImageUrl);
             localStorage.setItem("acneScore", result.acne.score);
+            localStorage.setItem("acneConf", result.acne.confidence);
             localStorage.setItem("wrinklesScore", result.wrinkles.score);
             localStorage.setItem("wrinklePercentage", result.wrinkles.percentage);
             localStorage.setItem("scarScore", result.scar.score);
+            localStorage.setItem("scarConf", result.scar.confidence);
             localStorage.setItem("undereyeScore", result.undereye.score);
             localStorage.setItem("darkspotScore", result.darkspot.score);
+            localStorage.setItem("darkspotConf", result.darkspot.confidence);
             localStorage.setItem("age", result.age);
             localStorage.setItem("gender", result.gender);
             setState(prev => ({ ...prev, isLoading: false }));
@@ -224,7 +227,7 @@ export default function CameraCapture() {
           <div className="flex flex-col items-center justify-center w-full mt-6">
           <div>
           {state.showConsent && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-3xl overflow-hidden z-10">
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50  overflow-hidden z-10">
                 <div className="bg-white p-6 rounded-xl shadow-lg text-center  max-h-[350px] sm:max-h-[400px] overflow-y-auto">
                   <h2 className="font-lato text-lg font-normal text-darkblue mb-4">
                     Biometric Data Processing Consent

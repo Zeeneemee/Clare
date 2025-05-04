@@ -34,9 +34,14 @@ export default function BehindTechInfo() {
   return (
     <motion.section
       id="behind-tech-info-section"
-      className="min-h-screen flex flex-col items-center px-5 pt-24 pb-32 bg-white mx-8"
-      animate={{ opacity }}
-      transition={{ duration: 0.4, ease: 'easeInOut' }}
+      className="min-h-screen flex flex-col items-center px-5 pt-24 bg-white mx-8"
+      initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{
+          duration: 1,
+          delay: 1,
+          easings: "easeOut",
+        }}
     >
       {/* Behind the Tech Section */}
       <div className="max-w-[900px] flex flex-col items-center text-center">
@@ -55,7 +60,7 @@ export default function BehindTechInfo() {
             loop
             muted
             playsInline
-            className="w-full max-w-[1600px] md:w-[1000px] lg:w-[1200px] rounded-2xl"
+            className="w-full  rounded-2xl"
           />
         </div>
       </div>

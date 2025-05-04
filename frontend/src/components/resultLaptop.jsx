@@ -26,7 +26,7 @@ const DesktopVersion = () => {
           {[1, 2, 3].map((num) => (
             <img
               key={num}
-              src={`/assets/${num}.png`}
+              src={`/assets/${num}.webp`}
               alt={`Step ${num}`}
               className="w-[320px] h-auto rounded-2xl"
             />

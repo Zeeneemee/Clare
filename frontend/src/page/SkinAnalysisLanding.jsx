@@ -7,8 +7,6 @@ import TabletVersion from "../components/resultTablet";
 import PhoneVersion from "../components/resultPhone";
 
 export default function SkinAnalysisLanding({ scrollY = 0 }) {
-  
-
   return (
       <>
         <MediaQuery minWidth={1024}>

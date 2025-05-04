@@ -1,14 +1,15 @@
 import { Link } from "react-router-dom";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Pagination from "../components/ui/pagination";
 import MobileRoutineCard from "../components/routine/mobileRoutineCard";
 import RoutineCard from "../components/routine/routineCard";
+import { RoutineContext } from "../lib/routineContext"; // adjust path if needed
 
 export default function Routine() {
   const [fadeIn, setFadeIn] = useState(0);
   const [activeRoutine, setActiveRoutine] = useState("morning");
-  const [morningRoutine, setMorningRoutine] = useState([]);
-  const [nightRoutine, setNightRoutine] = useState([]);
+  const { morningRoutine, setMorningRoutine, nightRoutine, setNightRoutine } = useContext(RoutineContext);
+
 
   useEffect(() => {
     const timer = setTimeout(() => setFadeIn(1), 100);
@@ -187,6 +188,7 @@ export default function Routine() {
         step: i + 1,
         title,
         description: descriptions[title]() || "",
+        name: product ? product.name : null,
         product: product ? (
           <a href={product.link} target="_blank" rel="noopener noreferrer">
             {product.name}
@@ -203,6 +205,7 @@ export default function Routine() {
           step: i + 1,
           title,
           description: descriptions[title]() || "",
+          name: product ? product.name : null,
           product: product ? (
             <a href={product.link} target="_blank" rel="noopener noreferrer">
               {product.name}
@@ -243,11 +246,12 @@ export default function Routine() {
       },
     ].filter(Boolean);
 
+    // Now set them in the global context
     setMorningRoutine(AM);
     setNightRoutine(PM);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [setMorningRoutine, setNightRoutine]);
 
   // 🔥 Add your full return here 👇
   return (
@@ -326,14 +330,8 @@ export default function Routine() {
       </div>
 
       <div className="flex justify-center gap-3 mt-5 md:hidden">
-        <div className="w-20 h-1 bg-[#003366] rounded-full"></div>
-        <div className="w-20 h-1 bg-gray-300 rounded-full"></div>
-        <div className="w-20 h-1 bg-gray-300 rounded-full"></div>
-      </div>
-      <div className="hidden md:flex gap-3 mt-5">
-        <div className="w-24 h-1 bg-[#14213D] rounded-full"></div>
-        <div className="w-24 h-1 bg-[#14213D] rounded-full"></div>
-        <div className="w-24 h-1 bg-gray-300 rounded-full"></div>
+        <Pagination current={2} />
+
       </div>
     </div>
   );

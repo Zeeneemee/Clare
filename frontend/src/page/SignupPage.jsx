@@ -1,10 +1,13 @@
 import { useState } from "react";
-import  Pagination  from "../components/ui/pagination";
-import { Link } from "react-router-dom";
+import Pagination from "../components/ui/pagination";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function SignUp() {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const validateEmail = (e) => {
     const inputEmail = e.target.value;
@@ -12,6 +15,45 @@ export default function SignUp() {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     setError(!emailRegex.test(inputEmail) && inputEmail !== "" ? "Invalid email format" : "");
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (error || !email || !firstName || !lastName) {
+      alert("Please fill in all fields correctly.");
+      return;
+    }
+
+    const userData = {
+      name: `${firstName} ${lastName}`,
+      email: email,
+    };
+
+    // Save to localStorage
+    localStorage.setItem("user", JSON.stringify(userData));
+    navigate("/skintracking"); // Navigate to skincare routine page
+    // Send to backend (adjust URL as needed)
+    // try {
+    //   const response = await fetch("https://your-backend-api.com/api/users", {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(userData),
+    //   });
+
+    //   if (response.ok) {
+    //     console.log("User saved successfully!");
+    //     navigate("/skintracking"); // Navigate to skin tracking page
+    //   } else {
+    //     console.error("Failed to save user:", await response.text());
+    //     alert("Something went wrong. Please try again.");
+    //   }
+    // } catch (err) {
+    //   console.error("Error:", err);
+    //   alert("Error connecting to server.");
+    // }
   };
 
   return (
@@ -30,7 +72,7 @@ export default function SignUp() {
 
       {/* Form Container */}
       <div className="w-full max-w-xs md:max-w-2xl mt-6 md:mt-10">
-        <form className="space-y-4 sm:space-y-6">
+        <form className="space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
           {/* Name Fields */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 md:gap-6">
             <div className="flex-1">
@@ -41,6 +83,8 @@ export default function SignUp() {
                 type="text"
                 className="font-lato font-light w-full border-b border-gray-400 focus:outline-none py-2 text-sm"
                 placeholder="First Name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
               />
             </div>
             <div className="flex-1">
@@ -51,6 +95,8 @@ export default function SignUp() {
                 type="text"
                 className="font-lato font-light w-full border-b border-gray-400 focus:outline-none py-2 text-sm"
                 placeholder="Last Name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
               />
             </div>
           </div>
@@ -69,8 +115,6 @@ export default function SignUp() {
             />
             {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
           </div>
-        </form>
-
         {/* "Not interested" Link */}
         <div className="flex justify-end mt-1 md:mt-4">
           <Link
@@ -80,32 +124,37 @@ export default function SignUp() {
             Not interested
           </Link>
         </div>
-      </div>
-
-      {/* Navigation Buttons */}
-      <div className="flex justify-center mt-8 md:mt-10 gap-4 sm:gap-6 md:gap-0 md:space-x-6">
-        <Link
-          to="/skincareroutine"
-          className="font-lato font-light text-sm px-8 sm:px-14 md:px-10 py-2 md:py-3 border border-black text-black rounded-full hover:bg-gray-100 transition"
-        >
+          {/* Submit Button */}
+        
+        <div className="flex justify-center mt-8 md:mt-10 gap-4 sm:gap-6 md:gap-0 md:space-x-6">
+          <Link
+            to="/skincareroutine"
+            className="font-lato font-light text-sm px-8 sm:px-14 md:px-10 py-2 md:py-3 border border-black text-black rounded-full hover:bg-gray-100 transition"
+          >
           Back
         </Link>
-        <Link
-          to="/"
+        <button
+          type="submit"
           className={`font-lato font-light text-sm px-8 sm:px-14 md:px-10 py-2 md:py-3 rounded-full transition ${
-            error
+            error || !email || !firstName || !lastName
               ? "bg-gray-300 text-gray-600 cursor-not-allowed"
               : "bg-[#14213D] text-white hover:opacity-80"
           }`}
+          disabled={error || !email || !firstName || !lastName}
         >
           Sign Up
-        </Link>
-      </div>
+        </button>
+        </div>
+      </form>
 
+       
+    </div>
       {/* Progress Bar */}
-      <div className="flex justify-center gap-3 md:gap-3 mt-8">
+      <div className="flex justify-center gap-3 md:gap-3 mt-4">
         <Pagination current={3} />
       </div>
     </div>
   );
 }
+
+
