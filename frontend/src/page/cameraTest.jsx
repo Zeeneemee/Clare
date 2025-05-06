@@ -171,7 +171,8 @@ export default function CameraCapture() {
           const formData = new FormData();
           formData.append("image", blob, "captured-image.jpg");
           try {
-            // http://localhost:5000/
+            // http://localhost:8000/
+            // https://clare-nrnl.onrender.com/upload
             const response = await fetch("https://clare-nrnl.onrender.com/upload", {
               method: "POST",
               body: formData,

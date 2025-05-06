@@ -1,46 +1,60 @@
 import sys
 import base64
 import json
-import os
 import io
-import uuid
 from PIL import Image
+import torch
 
 # ML imports
 from acne.acne import acne_detection
 from gender.gender import Gender
-from undereye.underEye import Predict_underEye
+# from undereye.underEye import Predict_underEye
 from darkspot.darkspot import darkspot_detection
 from scar.scar import Scar_detection
-from wrinkle.wrinkle import analyze_wrinkles, UNet
-import torch
+# from age.age import age_detection
+# from wrinkle.wrinkle import analyze_wrinkles, UNet
 
 # === Model loading at startup ===
-wrinkles_model = UNet()
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model_path = os.path.join(os.path.dirname(__file__), 'wrinkle/wrinkle_model.pth')
-wrinkles_model.load_state_dict(torch.load(model_path, map_location=device))
-wrinkles_model.eval()  # Put model in inference mode
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# wrinkles_model = UNet().to(device)
+# model_path = os.path.join(os.path.dirname(__file__), 'wrinkle/wrinkle_model.pth')
+# state_dict = torch.load(model_path, map_location=device)
+# wrinkles_model.load_state_dict(state_dict)
+# wrinkles_model.eval()  # Set model to eval mode
+
 
 # === Utility Functions ===
 def decode_base64_image(base64_string):
-    """Decode Base64 image and return PIL image."""
+    """Decode Base64 image and return PIL Image."""
     image_data = base64.b64decode(base64_string)
     return Image.open(io.BytesIO(image_data)).convert("RGB")
 
-def acne_score(confidences):
-    valid = [c for c in confidences if c > 0.1]
-    score = (sum(valid) / 7.46) * 10
-    return min(score, 10)
-
-def compute_score(confidences):
-    valid = [c for c in confidences if c > 0.1]
-    return (sum(valid) / len(valid)) * 10 if valid else 0.0
-
 def encode_image_to_base64(image: Image.Image) -> str:
+    """Encode PIL image to Base64 string."""
     buffer = io.BytesIO()
     image.save(buffer, format="JPEG")
     return base64.b64encode(buffer.getvalue()).decode("utf-8")
+
+def acne_score(confidences):
+    valid = [c for c in confidences if c > 0.1]
+    score = (sum(valid) / 4) * 10
+    return min(score, 10)
+
+def scar_score(confidences):
+    valid = [c for c in confidences if c >= 0.4]
+    if not valid:
+        return 0
+    conf_average = sum(valid) / len(valid)
+    if conf_average > 0.7:
+        return 10
+    step = (0.75 - 0.4) / 9  # ≈0.0389
+    score = int((conf_average - 0.4) / step) + 1
+    return max(1, min(score, 9))
+
+def darkspot_score(confidences):
+    valid = [c for c in confidences if c > 0.1]
+    score = (sum(valid) / 15) * 10
+    return min(score, 10)
 
 # === Main execution ===
 def main():
@@ -53,23 +67,14 @@ def main():
         # Decode base64 to PIL Image
         image = decode_base64_image(base64_input)
 
-        # Save temp file if needed for model compatibility
-        unique_filename = f"{uuid.uuid4().hex}.jpg"
-        temp_path = os.path.join("/tmp", unique_filename)
-        image.save(temp_path)
-
-        # Run models (using saved path if needed)
-        results_acne = acne_detection(temp_path)
-        result_gender = Gender(temp_path)
-        results_scar = Scar_detection(temp_path)
-        undereye_results = Predict_underEye(temp_path)
-        darkspot_results = darkspot_detection(temp_path)
-
-        severity_score, wrinkle_percent = analyze_wrinkles(wrinkles_model, temp_path)
-
-        # Clean up (optional)
-        if os.path.exists(temp_path):
-            os.remove(temp_path)
+        # Run ML models with PIL Image
+        results_acne = acne_detection(image)
+        result_gender = Gender(image)
+        results_scar = Scar_detection(image)
+        # undereye_results = Predict_underEye(image)
+        darkspot_results = darkspot_detection(image)
+        # age_results = age_detection(image)
+        # severity_score, wrinkle_percent = analyze_wrinkles(wrinkles_model, image)
 
         # Prepare result
         result = {
@@ -79,28 +84,28 @@ def main():
                 "confidence": results_acne.get("confidence", []),
                 "score": round(acne_score(results_acne.get("confidence", [])))
             },
-            "wrinkles": {
-                "severity": severity_score,
-                "percentage": wrinkle_percent
-            },
             "scar": {
                 "positions": results_scar.get("positions", []),
                 "confidence": results_scar.get("confidence", []),
-                "score": round(compute_score(results_scar.get("confidence", [])))
-            },
-            "undereye": {
-                "score": round(undereye_results[0]["dark_circle_score"]) if undereye_results else 0.0,
-                "label": undereye_results[0]["label"] if undereye_results else "Not Detected"
+                "score": scar_score(results_scar.get("confidence", []))
             },
             "darkspot": {
                 "positions": darkspot_results.get("positions", []),
                 "confidence": darkspot_results.get("confidence", []),
-                "score": round(compute_score(darkspot_results.get("confidence", [])))
+                "score": round(darkspot_score(darkspot_results.get("confidence", [])))
             },
-            "age": "Not Detected",
+            "age": "Not Detected",  # Placeholder (uncomment if using age model)
             "gender": {
                 "label": result_gender
             }
+            # "undereye": {
+            #     "score": round(undereye_results[0]["dark_circle_score"]) if undereye_results else 0.0,
+            #     "label": undereye_results[0]["label"] if undereye_results else "Not Detected"
+            # },
+            # "wrinkles": {
+            #     "score": severity_score,
+            #     "percentage": round(wrinkle_percent)
+            # }
         }
 
         print(json.dumps(result))

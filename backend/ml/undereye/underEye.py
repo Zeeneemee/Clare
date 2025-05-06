@@ -17,8 +17,9 @@ def calculate_brightness(region, image_rgb):
 # Function to calculate the dark circle score based on brightness difference
 def calculate_dark_circle_score(brightness_diff):
     # Map brightness difference to a score between 1 and 10
-    score = np.clip((brightness_diff - 10) / 10 + 5, 1, 10)
+    score = np.clip((brightness_diff - 20) / 15 + 3.5, 1, 10)
 
+    
     # Define score labels based on the score
     if score <= 2:
         label = "Minimal"
