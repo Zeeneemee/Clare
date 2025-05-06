@@ -10,7 +10,7 @@ def acne_detection(image_PIL):
     # ✅ Remove existing output directory if it exists
     model = YOLO(model_path)
     
-    results = model.predict(source=image, imgsz=1024,name="acne_result", conf=0.1, iou=0.4)  # Process the image
+    results = model.predict(source=image, imgsz=1024,name="acne_result", conf=0.1)  # Process the image
     for result in results:
         boxes = result.boxes  
         for box in boxes:

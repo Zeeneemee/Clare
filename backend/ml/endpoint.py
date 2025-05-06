@@ -38,7 +38,7 @@ def encode_image_to_base64(image: Image.Image) -> str:
 
 def acne_score(confidences):
     valid = [c for c in confidences if c > 0.1]
-    score = (sum(valid) / 4) * 10
+    score = (sum(valid) / 2) * 10
     return min(score, 10)
 
 def scar_score(confidences):
@@ -66,7 +66,7 @@ def scar_score(confidences):
 
 def darkspot_score(confidences):
     valid = [c for c in confidences if c > 0.1]
-    score = (sum(valid) / 15) * 10
+    score = (sum(valid) / 10) * 10
     return min(score, 10)
 
 # === Flask Routes ===

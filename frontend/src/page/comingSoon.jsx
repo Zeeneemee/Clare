@@ -1,10 +1,8 @@
 // src/pages/ComingSoon.jsx
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 export default function ComingSoon() {
 const [userImage, setUserImage] = useState(null);
-  const navigate = useNavigate();
   useEffect(() => {
     const userImage = localStorage.getItem("processedImage");
     return setUserImage(userImage);

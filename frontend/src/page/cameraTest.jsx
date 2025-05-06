@@ -85,39 +85,11 @@ export default function CameraCapture() {
           lightingMessage = "Too Bright";
         }
     
-        // Distance check
-        let distanceValid = false;
-        let distanceMessage = "";
-        try {
-          const detection = await faceapi.detectSingleFace(
-            canvas,
-            new faceapi.TinyFaceDetectorOptions()
-          );
-          if (detection) {
-            const { width, height } = detection.box;
-            const size = Math.max(width, height);
-            const minSize = Math.min(canvas.width, canvas.height) * 0.1 // only 10% minimum!
-            const maxSize = Math.min(canvas.width, canvas.height) * 2.0; // allow very large face up to 80%!
-
-
-            distanceValid = size >= minSize && size <= maxSize;
-            distanceMessage = distanceValid
-              ? "Distance is Good"
-              : "Move closer or farther away";
-          } else {
-            distanceMessage = "No face detected";
-          }
-        } catch (err) {
-          console.error("Face detection error", err);
-          distanceMessage = "Detection failed";
-        }
-    
         setState(prev => ({
           ...prev,
           lightingValid,
-          distanceValid,
           lightingMessage,
-          distanceMessage,
+          distanceValid: true,
           isValidating: false, // ✅ Finish validation
         }));
       };
@@ -363,28 +335,28 @@ export default function CameraCapture() {
     <div className="flex flex-col items-center w-[120px]">
       <label className="font-lato phone:text-[14px] mb-1">Distance</label>
       <div className={`w-full py-1 rounded-md text-center ${
-          state.isValidating 
-            ? "bg-gray-300"
-            : state.distanceValid
-              ? "bg-[#D1FADF]"
-              : "bg-[#FF8080]"
-        }`}
-      >
-        {state.isValidating ? (
-          <p className="font-lato phone:text-[12px] text-gray-600 animate-pulse">Checking...</p>
-        ) : (
-          <p className={`font-lato phone:text-[12px] ${
-            state.distanceValid ? "text-[#039855]" : "text-[#BD0101]"
-          }`}>
-            {state.distanceValid
-              ? "Okay"
-              : state.distanceMessage.includes("closer")
-                ? "Too Far"
-                : "Too Near"
-            }
-          </p>
-        )}
-      </div>
+         state.isValidating
+           ? "bg-gray-300"
+           : state.lightingValid
+             ? "bg-[#D1FADF]"
+             : "bg-[#FF8080]"
+       }`}
+     >
+       {state.isValidating ? (
+         <p className="font-lato phone:text-[12px] text-gray-600 animate-pulse">
+           Checking...
+         </p>
+       ) : (
+         <p className={`font-lato phone:text-[12px] ${
+           state.lightingValid ? "text-[#039855]" : "text-[#BD0101]"
+         }`}>
+           {state.lightingValid
+             ? "Okay"
+             : "adjust distance"
+           }
+         </p>
+       )}
+     </div>
     </div>
 
   </div>
