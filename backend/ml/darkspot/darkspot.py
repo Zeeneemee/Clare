@@ -15,7 +15,7 @@ def darkspot_detection(image_PIL):
     image = np.array(image_PIL)
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)  
     # Show the prediction window
-    results = model.predict(source=image, name="darkspot_result", conf=0.1, iou=0.4)  # Process the image
+    results = model.predict(source=image, name="darkspot_result", iou=0.4)  # Process the image
 
 
     # Process the detection results
